@@ -4,7 +4,11 @@
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('logo-eni.png') }}" />
+        <link href="{{ asset('assets/normalize-css/normalize.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/materialize/dist/css/materialize.css') }}" rel="stylesheet">
+        <script type="text/javascript" src="{{ asset('assets/jquery/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('assets/materialize/dist/js/materialize.js') }}"></script>
     </head>
     <body>
         {% block body %}{% endblock %}
