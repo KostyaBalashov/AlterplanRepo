@@ -17,3 +17,21 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+nav {
+    background-color: #134a80;
+}
+
+.page-footer{
+    padding-top: 0;
+    background-color: #134a80;
+}
+
+.brand-logo {
+    height: 64px;
+}
+
+.eni-logo{
+    zoom: 50%;
+    margin-top: 12px;
+}

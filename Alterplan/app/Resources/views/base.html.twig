@@ -12,11 +12,15 @@ You should have received a copy of the GNU Affero General Public License along w
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
+
         {% block stylesheets %}{% endblock %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('logo-eni.png') }}" />
         <link href="{{ asset('assets/normalize-css/normalize.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/materialize/dist/css/materialize.css') }}" rel="stylesheet">
         <link href="{{ asset('css/commun.css') }}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
         <script type="text/javascript" src="{{ asset('assets/jquery/jquery.js') }}"></script>
         <script type="text/javascript" src="{{ asset('assets/materialize/dist/js/materialize.js') }}"></script>
     </head>

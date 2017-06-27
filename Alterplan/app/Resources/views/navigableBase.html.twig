@@ -20,7 +20,11 @@ You should have received a copy of the GNU Affero General Public License along w
 {% block javascripts %}
     <script type="text/javascript">
         $( document ).ready(function(){
-            $(".dropdown-button").dropdown();
+            $(".dropdown-button").dropdown({
+                constrainWidth: false,
+                belowOrigin: true,
+                gutter: 1
+            });
             $(".button-collapse").sideNav();
         })
     </script>
