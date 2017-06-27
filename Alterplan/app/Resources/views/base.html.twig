@@ -1,3 +1,12 @@
+{#
+This file is part of Alterplan.
+
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,11 +16,20 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('logo-eni.png') }}" />
         <link href="{{ asset('assets/normalize-css/normalize.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/materialize/dist/css/materialize.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/commun.css') }}" rel="stylesheet">
         <script type="text/javascript" src="{{ asset('assets/jquery/jquery.js') }}"></script>
         <script type="text/javascript" src="{{ asset('assets/materialize/dist/js/materialize.js') }}"></script>
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <main>
+            {% block header %} {% endblock %}
+            {% block body %}{% endblock %}
+            {% block javascripts %}{% endblock %}
+        </main>
     </body>
+    <footer class="page-footer">
+        {% block footer %}
+            {% include '@footer/footer.html.twig' %}
+        {% endblock %}
+    </footer>
 </html>

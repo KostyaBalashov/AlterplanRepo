@@ -37,6 +37,9 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+    paths:
+      '%kernel.project_dir%/app/Resources/views/composants/header': header
+      '%kernel.project_dir%/app/Resources/views/composants/footer': footer
 
 # Doctrine Configuration
 doctrine:
