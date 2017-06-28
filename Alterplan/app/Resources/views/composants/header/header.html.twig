@@ -10,10 +10,15 @@ You should have received a copy of the GNU Affero General Public License along w
 <div class="navbar-fixed">
     <nav>
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo center"><img class="eni-logo" src="{{ asset('logo-eni.png') }}"></a>
-            {% include '@header/header_menue.html.twig' %}
+            {% block left %}
+                {% include '@header/header_menu.html.twig' %}
+            {% endblock %}
 
-            {% include '@header/header_user_menue.html.twig' %}
+            <a href="/" class="brand-logo center"><img class="eni-logo" src="{{ asset('logo-eni.png') }}"></a>
+
+            {% block right %}
+                {% include '@header/header_user_menu.html.twig' %}
+            {% endblock %}
         </div>
     </nav>
 </div>

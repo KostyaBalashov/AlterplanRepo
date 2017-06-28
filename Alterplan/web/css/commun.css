@@ -35,3 +35,7 @@ nav {
     zoom: 50%;
     margin-top: 12px;
 }
+
+#sidenav-overlay {
+    z-index: 1;
+}
