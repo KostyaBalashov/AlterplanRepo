@@ -50,7 +50,7 @@ class Utilisateur extends User
 
     /**
      * @var string
-     * @ORM\Column(name="MotDePasse", type="string")
+     * @ORM\Column(name="MotDePasse", type="string", nullable=false)
      */
     protected $password;
 
