@@ -60,7 +60,10 @@
     },
     "config": {
         "sort-packages": true,
-        "component-dir" : "web/assets"
+        "component-dir" : "web/assets",
+		"fxp-asset":{
+			"installer-paths":"web/assets"
+		}
     },
     "extra": {
         "symfony-app-dir": "app",
@@ -71,9 +74,6 @@
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
-        },
-        "asset-installer-paths": {
-            "bower-asset-library": "web/assets"
         },
         "branch-alias": null
     }
