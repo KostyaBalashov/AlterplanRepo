@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ModuleParUnite
  *
- * @ORM\Table(name="ModuleParUnite", indexes={@ORM\Index(name="IDX_53FF79899643ECE4", columns={"IdModule"}), @ORM\Index(name="IDX_53FF7989C51DBB99", columns={"IdUnite"})})
+ * @ORM\Table(name="ModuleParUnite")
  * @ORM\Entity
  */
 class ModuleParUnite

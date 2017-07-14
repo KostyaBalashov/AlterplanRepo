@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Calendrier
  *
- * @ORM\Table(name="Calendrier", indexes={@ORM\Index(name="IDX_FD283F69A68ED5A2", columns={"CodeFormation"}), @ORM\Index(name="IDX_FD283F69A9AC032C", columns={"CodeStagiaire"})})
+ * @ORM\Table(name="Calendrier")
  * @ORM\Entity
  */
 class Calendrier
@@ -15,8 +15,8 @@ class Calendrier
     /**
      * @var integer
      *
-     * @ORM\Column(name="CodeCalendrier", type="integer")
      * @ORM\Id
+     * @ORM\Column(name="CodeCalendrier", type="integer")
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $codeCalendrier;
@@ -75,6 +75,20 @@ class Calendrier
      * })
      */
     private $stagiaire;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="IsInscrit", nullable=false, type="boolean")
+     */
+    private $isInscrit;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="IsModele", nullable=false, type="boolean" )
+     */
+    private $isModele;
 
     /**
      * @return \DateTime
@@ -220,6 +234,41 @@ class Calendrier
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isInscrit()
+    {
+        return $this->isInscrit;
+    }
+
+    /**
+     * @param bool $isInscrit
+     * @return Calendrier
+     */
+    public function setIsInscrit($isInscrit)
+    {
+        $this->isInscrit = $isInscrit;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isModele()
+    {
+        return $this->isModele;
+    }
+
+    /**
+     * @param bool $isModele
+     * @return Calendrier
+     */
+    public function setIsModele($isModele)
+    {
+        $this->isModele = $isModele;
+        return $this;
+    }
 
 }
 

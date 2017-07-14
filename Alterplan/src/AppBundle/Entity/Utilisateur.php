@@ -44,13 +44,6 @@ class Utilisateur extends User
     private $isAdministrateur;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="MotDePasse", type="string", nullable=false)
-     */
-    private $motDePasse;
-
-    /**
      * @return int
      */
     public function getCodeUtilisateur()
@@ -125,7 +118,7 @@ class Utilisateur extends User
     /**
      * @return binary
      */
-    public function getisAdministrateur()
+    public function getIsAdministrateur()
     {
         return $this->isAdministrateur;
     }
@@ -143,20 +136,21 @@ class Utilisateur extends User
     /**
      * @return string
      */
-    public function getMotDePasse()
+    public function getPassword()
     {
-        return $this->motDePasse;
+        return parent::getPassword();
     }
 
     /**
-     * @param string $motDePasse
+     * @param string $password
      * @return Utilisateur
      */
-    public function setMotDePasse($motDePasse)
+    public function setPassword($password)
     {
-        $this->motDePasse = $motDePasse;
+        parent::setPassword($password);
         return $this;
     }
+
 
 }
 

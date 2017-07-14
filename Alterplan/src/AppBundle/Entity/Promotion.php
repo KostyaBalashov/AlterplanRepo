@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Promotion
  *
- * @ORM\Table(name="Promotion", indexes={@ORM\Index(name="IDX_43ECFF72A68ED5A2", columns={"CodeFormation"})})
+ * @ORM\Table(name="Promotion")
  * @ORM\Entity
  */
 class Promotion

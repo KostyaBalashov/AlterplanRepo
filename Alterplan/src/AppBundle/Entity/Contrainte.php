@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Contrainte
  *
- * @ORM\Table(name="Contrainte", indexes={@ORM\Index(name="IDX_58CF59A0F7BD16B7", columns={"Calendrier_CodeCalendrier"}), @ORM\Index(name="IDX_58CF59A0A3F4844E", columns={"CodeTypeContrainte"})})
+ * @ORM\Table(name="Contrainte")
  * @ORM\Entity
  */
 class Contrainte

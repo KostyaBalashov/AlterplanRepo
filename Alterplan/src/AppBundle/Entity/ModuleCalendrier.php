@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ModuleCalendrier
  *
- * @ORM\Table(name="ModuleCalendrier", indexes={@ORM\Index(name="IDX_FDEAFAC19643ECE4", columns={"IdModule"}), @ORM\Index(name="IDX_FDEAFAC1D1959E94", columns={"CodeCalendrier"})})
+ * @ORM\Table(name="ModuleCalendrier")
  * @ORM\Entity
  */
 class ModuleCalendrier
@@ -40,6 +40,14 @@ class ModuleCalendrier
      * })
      */
     private $calendrier;
+
+    /**
+     * @var Cours
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cours", fetch="LAZY")
+     * @ORM\JoinColumn(name="IdCours", referencedColumnName="IdCours", nullable=true)
+     */
+    private $cours;
 
     /**
      * @return int
@@ -94,6 +102,25 @@ class ModuleCalendrier
         $this->calendrier = $calendrier;
         return $this;
     }
+
+    /**
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
+    }
+
+    /**
+     * @param Cours $cours
+     * @return ModuleCalendrier
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+        return $this;
+    }
+
 
 }
 

@@ -44,7 +44,7 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: sqlsrv
+        driver: pdo_sqlsrv
         host: '%database_host%'
         dbname: '%database_name%'
         user: '%database_user%'
@@ -73,7 +73,13 @@ swiftmailer:
 fos_user:
     db_driver: orm
     firewall_name: main
-    user_class: UtilisateurBundle\Entite\Utilisateur
+    user_class: Entity\Utilisateur
     from_email:
       address: "test@test.test"
       sender_name: "test"
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations

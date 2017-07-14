@@ -25,6 +25,7 @@
         "components/jquery": "^3.2",
         "components/normalize.css": "^3.0",
         "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-migrations-bundle": "^1.2",
         "doctrine/orm": "^2.5",
         "friendsofsymfony/user-bundle": "^2.0",
         "fxp/composer-asset-plugin": "^1.3",
