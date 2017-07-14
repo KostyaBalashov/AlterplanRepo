@@ -36,18 +36,89 @@ class UniteParFormation
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
      */
-    private $codeformation;
+    private $formation;
 
     /**
      * @var \AppBundle\Entity\UniteFormation
      *
-     * @ORM\ManyToOne(targetEntity="UniteFormation.php")
+     * @ORM\ManyToOne(targetEntity="UniteFormation")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="IdUniteFormation", referencedColumnName="IdUniteFormation")
      * })
      */
-    private $iduniteformation;
+    private $uniteFormation;
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return UniteParFormation
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     * @return UniteParFormation
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
+    }
+
+    /**
+     * @return Formation
+     */
+    public function getFormation()
+    {
+        return $this->formation;
+    }
+
+    /**
+     * @param Formation $formation
+     * @return UniteParFormation
+     */
+    public function setFormation($formation)
+    {
+        $this->formation = $formation;
+        return $this;
+    }
+
+    /**
+     * @return UniteFormation
+     */
+    public function getUniteFormation()
+    {
+        return $this->uniteFormation;
+    }
+
+    /**
+     * @param UniteFormation $uniteFormation
+     * @return UniteParFormation
+     */
+    public function setUniteFormation($uniteFormation)
+    {
+        $this->uniteFormation = $uniteFormation;
+        return $this;
+    }
 
 }
 

@@ -19,7 +19,7 @@ class ModuleCalendrier
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codemodulecalendrier;
+    private $codeModuleCalendrier;
 
     /**
      * @var \AppBundle\Entity\Module
@@ -29,7 +29,7 @@ class ModuleCalendrier
      *   @ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")
      * })
      */
-    private $idmodule;
+    private $module;
 
     /**
      * @var \AppBundle\Entity\Calendrier
@@ -39,8 +39,61 @@ class ModuleCalendrier
      *   @ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")
      * })
      */
-    private $codecalendrier;
+    private $calendrier;
 
+    /**
+     * @return int
+     */
+    public function getCodeModuleCalendrier()
+    {
+        return $this->codeModuleCalendrier;
+    }
+
+    /**
+     * @param int $codeModuleCalendrier
+     * @return ModuleCalendrier
+     */
+    public function setCodeModuleCalendrier($codeModuleCalendrier)
+    {
+        $this->codeModuleCalendrier = $codeModuleCalendrier;
+        return $this;
+    }
+
+    /**
+     * @return Module
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * @param Module $module
+     * @return ModuleCalendrier
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+        return $this;
+    }
+
+    /**
+     * @return Calendrier
+     */
+    public function getCalendrier()
+    {
+        return $this->calendrier;
+    }
+
+    /**
+     * @param Calendrier $calendrier
+     * @return ModuleCalendrier
+     */
+    public function setCalendrier($calendrier)
+    {
+        $this->calendrier = $calendrier;
+        return $this;
+    }
 
 }
 

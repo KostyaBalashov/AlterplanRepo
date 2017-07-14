@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\User;
 
 /**
  * Utilisateur
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Utilisateur")
  * @ORM\Entity
  */
-class Utilisateur
+class Utilisateur extends User
 {
     /**
      * @var integer
@@ -19,7 +20,7 @@ class Utilisateur
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codeutilisateur;
+    private $codeUtilisateur;
 
     /**
      * @var string
@@ -36,19 +37,126 @@ class Utilisateur
     private $prenom;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="Email", type="string", length=100, nullable=true)
-     */
-    private $email;
-
-    /**
      * @var binary
      *
-     * @ORM\Column(name="IsAdministrateur", type="binary", nullable=true)
+     * @ORM\Column(name="IsAdministrateur", type="binary", nullable=false)
      */
-    private $isadministrateur;
+    private $isAdministrateur;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="MotDePasse", type="string", nullable=false)
+     */
+    private $motDePasse;
+
+    /**
+     * @return int
+     */
+    public function getCodeUtilisateur()
+    {
+        return $this->codeUtilisateur;
+    }
+
+    /**
+     * @param int $codeUtilisateur
+     * @return Utilisateur
+     */
+    public function setCodeUtilisateur($codeUtilisateur)
+    {
+        $this->codeUtilisateur = $codeUtilisateur;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * @param string $nom
+     * @return Utilisateur
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrenom()
+    {
+        return $this->prenom;
+    }
+
+    /**
+     * @param string $prenom
+     * @return Utilisateur
+     */
+    public function setPrenom($prenom)
+    {
+        $this->prenom = $prenom;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return parent::getEmail();
+    }
+
+    /**
+     * @param string $email
+     * @return Utilisateur
+     */
+    public function setEmail($email)
+    {
+        parent::setEmail($email);
+        return $this;
+    }
+
+    /**
+     * @return binary
+     */
+    public function getisAdministrateur()
+    {
+        return $this->isAdministrateur;
+    }
+
+    /**
+     * @param binary $isAdministrateur
+     * @return Utilisateur
+     */
+    public function setIsAdministrateur($isAdministrateur)
+    {
+        $this->isAdministrateur = $isAdministrateur;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMotDePasse()
+    {
+        return $this->motDePasse;
+    }
+
+    /**
+     * @param string $motDePasse
+     * @return Utilisateur
+     */
+    public function setMotDePasse($motDePasse)
+    {
+        $this->motDePasse = $motDePasse;
+        return $this;
+    }
 
 }
 

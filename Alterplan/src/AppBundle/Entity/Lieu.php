@@ -19,7 +19,7 @@ class Lieu
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codelieu;
+    private $codeLieu;
 
     /**
      * @var string
@@ -40,35 +40,35 @@ class Lieu
      *
      * @ORM\Column(name="GestionEmargement", type="boolean", nullable=true)
      */
-    private $gestionemargement;
+    private $gestionEmargement;
 
     /**
      * @var string
      *
      * @ORM\Column(name="DebutAM", type="string", length=5, nullable=true)
      */
-    private $debutam;
+    private $debutAM;
 
     /**
      * @var string
      *
      * @ORM\Column(name="FinAM", type="string", length=5, nullable=true)
      */
-    private $finam;
+    private $finAM;
 
     /**
      * @var string
      *
      * @ORM\Column(name="DebutPM", type="string", length=5, nullable=true)
      */
-    private $debutpm;
+    private $debutPM;
 
     /**
      * @var string
      *
      * @ORM\Column(name="FinPM", type="string", length=5, nullable=true)
      */
-    private $finpm;
+    private $finPM;
 
     /**
      * @var string
@@ -91,6 +91,202 @@ class Lieu
      */
     private $ville;
 
+    /**
+     * @return int
+     */
+    public function getCodeLieu()
+    {
+        return $this->codeLieu;
+    }
 
+    /**
+     * @param int $codeLieu
+     * @return Lieu
+     */
+    public function setCodeLieu($codeLieu)
+    {
+        $this->codeLieu = $codeLieu;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return Lieu
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArchive()
+    {
+        return $this->archive;
+    }
+
+    /**
+     * @param bool $archive
+     * @return Lieu
+     */
+    public function setArchive($archive)
+    {
+        $this->archive = $archive;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGestionEmargement()
+    {
+        return $this->gestionEmargement;
+    }
+
+    /**
+     * @param bool $gestionEmargement
+     * @return Lieu
+     */
+    public function setGestionEmargement($gestionEmargement)
+    {
+        $this->gestionEmargement = $gestionEmargement;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDebutAM()
+    {
+        return $this->debutAM;
+    }
+
+    /**
+     * @param string $debutAM
+     * @return Lieu
+     */
+    public function setDebutAM($debutAM)
+    {
+        $this->debutAM = $debutAM;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFinAM()
+    {
+        return $this->finAM;
+    }
+
+    /**
+     * @param string $finAM
+     * @return Lieu
+     */
+    public function setFinAM($finAM)
+    {
+        $this->finAM = $finAM;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDebutPM()
+    {
+        return $this->debutPM;
+    }
+
+    /**
+     * @param string $debutPM
+     * @return Lieu
+     */
+    public function setDebutPM($debutPM)
+    {
+        $this->debutPM = $debutPM;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFinPM()
+    {
+        return $this->finPM;
+    }
+
+    /**
+     * @param string $finPM
+     * @return Lieu
+     */
+    public function setFinPM($finPM)
+    {
+        $this->finPM = $finPM;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Lieu
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCp()
+    {
+        return $this->cp;
+    }
+
+    /**
+     * @param int $cp
+     * @return Lieu
+     */
+    public function setCp($cp)
+    {
+        $this->cp = $cp;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVille()
+    {
+        return $this->ville;
+    }
+
+    /**
+     * @param string $ville
+     * @return Lieu
+     */
+    public function setVille($ville)
+    {
+        $this->ville = $ville;
+        return $this;
+    }
 }
 

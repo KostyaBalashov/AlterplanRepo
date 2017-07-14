@@ -19,7 +19,7 @@ class TypeContrainte
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codetypecontrainte;
+    private $codeTypeContrainte;
 
     /**
      * @var string
@@ -31,10 +31,63 @@ class TypeContrainte
     /**
      * @var integer
      *
-     * @ORM\Column(name="NbParamèrtres", type="integer", nullable=true)
+     * @ORM\Column(name="NbParametres", type="integer", nullable=true)
      */
-    private $nbparam�rtres;
+    private $nbParametres;
 
+    /**
+     * @return int
+     */
+    public function getCodeTypeContrainte()
+    {
+        return $this->codeTypeContrainte;
+    }
+
+    /**
+     * @param int $codeTypeContrainte
+     * @return TypeContrainte
+     */
+    public function setCodeTypeContrainte($codeTypeContrainte)
+    {
+        $this->codeTypeContrainte = $codeTypeContrainte;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return TypeContrainte
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNbParametres()
+    {
+        return $this->nbParametres;
+    }
+
+    /**
+     * @param int $nbParametres
+     * @return TypeContrainte
+     */
+    public function setNbParametres($nbParametres)
+    {
+        $this->nbParametres = $nbParametres;
+        return $this;
+    }
 
 }
 

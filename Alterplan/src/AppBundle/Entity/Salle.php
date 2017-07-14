@@ -19,7 +19,7 @@ class Salle
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codesalle;
+    private $codeSalle;
 
     /**
      * @var string
@@ -42,6 +42,77 @@ class Salle
      */
     private $lieu;
 
+    /**
+     * @return string
+     */
+    public function getCodeSalle()
+    {
+        return $this->codeSalle;
+    }
+
+    /**
+     * @param string $codeSalle
+     * @return Salle
+     */
+    public function setCodeSalle($codeSalle)
+    {
+        $this->codeSalle = $codeSalle;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return Salle
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCapacite()
+    {
+        return $this->capacite;
+    }
+
+    /**
+     * @param int $capacite
+     * @return Salle
+     */
+    public function setCapacite($capacite)
+    {
+        $this->capacite = $capacite;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLieu()
+    {
+        return $this->lieu;
+    }
+
+    /**
+     * @param int $lieu
+     * @return Salle
+     */
+    public function setLieu($lieu)
+    {
+        $this->lieu = $lieu;
+        return $this;
+    }
 
 }
 

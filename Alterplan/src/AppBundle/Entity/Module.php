@@ -19,7 +19,7 @@ class Module
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $idmodule;
+    private $idModule;
 
     /**
      * @var string
@@ -33,35 +33,35 @@ class Module
      *
      * @ORM\Column(name="DureeEnHeures", type="smallint", nullable=false)
      */
-    private $dureeenheures;
+    private $dureeEnHeures;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateCreation", type="datetime", nullable=false)
      */
-    private $datecreation;
+    private $dateCreation;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="DureeEnSemaines", type="smallint", nullable=false)
      */
-    private $dureeensemaines;
+    private $dureeEnSemaines;
 
     /**
      * @var float
      *
      * @ORM\Column(name="PrixPublicEnCours", type="float", precision=53, scale=0, nullable=false)
      */
-    private $prixpublicencours;
+    private $prixPublicEnCours;
 
     /**
      * @var string
      *
      * @ORM\Column(name="LibelleCourt", type="string", length=20, nullable=false)
      */
-    private $libellecourt;
+    private $libelleCourt;
 
     /**
      * @var boolean
@@ -75,8 +75,169 @@ class Module
      *
      * @ORM\Column(name="TypeModule", type="integer", nullable=true)
      */
-    private $typemodule;
+    private $typeModule;
 
+    /**
+     * @return int
+     */
+    public function getIdModule()
+    {
+        return $this->idModule;
+    }
+
+    /**
+     * @param int $idModule
+     * @return Module
+     */
+    public function setIdModule($idModule)
+    {
+        $this->idModule = $idModule;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return Module
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDureeEnHeures()
+    {
+        return $this->dureeEnHeures;
+    }
+
+    /**
+     * @param int $dureeEnHeures
+     * @return Module
+     */
+    public function setDureeEnHeures($dureeEnHeures)
+    {
+        $this->dureeEnHeures = $dureeEnHeures;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
+     * @return Module
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDureeEnSemaines()
+    {
+        return $this->dureeEnSemaines;
+    }
+
+    /**
+     * @param int $dureeEnSemaines
+     * @return Module
+     */
+    public function setDureeEnSemaines($dureeEnSemaines)
+    {
+        $this->dureeEnSemaines = $dureeEnSemaines;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrixPublicEnCours()
+    {
+        return $this->prixPublicEnCours;
+    }
+
+    /**
+     * @param float $prixPublicEnCours
+     * @return Module
+     */
+    public function setPrixPublicEnCours($prixPublicEnCours)
+    {
+        $this->prixPublicEnCours = $prixPublicEnCours;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelleCourt()
+    {
+        return $this->libelleCourt;
+    }
+
+    /**
+     * @param string $libelleCourt
+     * @return Module
+     */
+    public function setLibelleCourt($libelleCourt)
+    {
+        $this->libelleCourt = $libelleCourt;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArchiver()
+    {
+        return $this->archiver;
+    }
+
+    /**
+     * @param bool $archiver
+     * @return Module
+     */
+    public function setArchiver($archiver)
+    {
+        $this->archiver = $archiver;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTypeModule()
+    {
+        return $this->typeModule;
+    }
+
+    /**
+     * @param int $typeModule
+     * @return Module
+     */
+    public function setTypeModule($typeModule)
+    {
+        $this->typeModule = $typeModule;
+        return $this;
+    }
 
 }
 

@@ -19,7 +19,7 @@ class OrdreModule
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codeordremodule;
+    private $codeOrdreModule;
 
     /**
      * @var \AppBundle\Entity\Module
@@ -29,7 +29,7 @@ class OrdreModule
      *   @ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")
      * })
      */
-    private $idmodule;
+    private $module;
 
     /**
      * @var \AppBundle\Entity\Formation
@@ -39,8 +39,61 @@ class OrdreModule
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
      */
-    private $codeformation;
+    private $formation;
 
+    /**
+     * @return int
+     */
+    public function getCodeOrdreModule()
+    {
+        return $this->codeOrdreModule;
+    }
+
+    /**
+     * @param int $codeOrdreModule
+     * @return OrdreModule
+     */
+    public function setCodeOrdreModule($codeOrdreModule)
+    {
+        $this->codeOrdreModule = $codeOrdreModule;
+        return $this;
+    }
+
+    /**
+     * @return Module
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * @param Module $module
+     * @return OrdreModule
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+        return $this;
+    }
+
+    /**
+     * @return Formation
+     */
+    public function getFormation()
+    {
+        return $this->formation;
+    }
+
+    /**
+     * @param Formation $formation
+     * @return OrdreModule
+     */
+    public function setFormation($formation)
+    {
+        $this->formation = $formation;
+        return $this;
+    }
 
 }
 

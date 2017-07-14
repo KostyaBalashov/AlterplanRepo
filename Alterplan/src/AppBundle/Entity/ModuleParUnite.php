@@ -36,18 +36,89 @@ class ModuleParUnite
      *   @ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")
      * })
      */
-    private $idmodule;
+    private $module;
 
     /**
      * @var \AppBundle\Entity\UniteParFormation
      *
-     * @ORM\ManyToOne(targetEntity="UniteParFormation.php")
+     * @ORM\ManyToOne(targetEntity="UniteParFormation")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="IdUnite", referencedColumnName="Id")
      * })
      */
-    private $idunite;
+    private $uniteParFormation;
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return ModuleParUnite
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     * @return ModuleParUnite
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
+    }
+
+    /**
+     * @return Module
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * @param Module $module
+     * @return ModuleParUnite
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+        return $this;
+    }
+
+    /**
+     * @return UniteParFormation
+     */
+    public function getUniteParFormation()
+    {
+        return $this->uniteParFormation;
+    }
+
+    /**
+     * @param UniteParFormation $uniteParFormation
+     * @return ModuleParUnite
+     */
+    public function setUniteParFormation($uniteParFormation)
+    {
+        $this->uniteParFormation = $uniteParFormation;
+        return $this;
+    }
 
 }
 

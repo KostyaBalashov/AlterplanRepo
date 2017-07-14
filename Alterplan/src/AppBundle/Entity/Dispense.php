@@ -19,32 +19,103 @@ class Dispense
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codedispense;
+    private $codeDispense;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateDebut", type="datetime", nullable=true)
      */
-    private $datedebut;
+    private $dateDebut;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateFin", type="datetime", nullable=true)
      */
-    private $datefin;
+    private $dateFin;
 
     /**
      * @var \AppBundle\Entity\ModuleCalendrier
      *
-     * @ORM\ManyToOne(targetEntity="ModuleCalendrier.php")
+     * @ORM\ManyToOne(targetEntity="ModuleCalendrier")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeModuleCalendrier", referencedColumnName="CodeModuleCalendrier")
      * })
      */
-    private $codemodulecalendrier;
+    private $moduleCalendrier;
 
+    /**
+     * @return int
+     */
+    public function getCodeDispense()
+    {
+        return $this->codeDispense;
+    }
 
+    /**
+     * @param int $codeDispense
+     * @return Dispense
+     */
+    public function setCodeDispense($codeDispense)
+    {
+        $this->codeDispense = $codeDispense;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateDebut()
+    {
+        return $this->dateDebut;
+    }
+
+    /**
+     * @param \DateTime $dateDebut
+     * @return Dispense
+     */
+    public function setDateDebut($dateDebut)
+    {
+        $this->dateDebut = $dateDebut;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateFin()
+    {
+        return $this->dateFin;
+    }
+
+    /**
+     * @param \DateTime $dateFin
+     * @return Dispense
+     */
+    public function setDateFin($dateFin)
+    {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * @return ModuleCalendrier
+     */
+    public function getModuleCalendrier()
+    {
+        return $this->moduleCalendrier;
+    }
+
+    /**
+     * @param ModuleCalendrier $moduleCalendrier
+     * @return Dispense
+     */
+    public function setModuleCalendrier($moduleCalendrier)
+    {
+        $this->moduleCalendrier = $moduleCalendrier;
+        return $this;
+    }
+    
 }
 

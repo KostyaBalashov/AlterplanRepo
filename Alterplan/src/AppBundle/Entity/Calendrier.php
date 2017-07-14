@@ -19,7 +19,7 @@ class Calendrier
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codecalendrier;
+    private $codeCalendrier;
 
     /**
      * @var string
@@ -33,28 +33,28 @@ class Calendrier
      *
      * @ORM\Column(name="DateCreation", type="datetime", nullable=false)
      */
-    private $datecreation;
+    private $dateCreation;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateDebut", type="datetime", nullable=true)
      */
-    private $datedebut;
+    private $dateDebut;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateFin", type="datetime", nullable=true)
      */
-    private $datefin;
+    private $dateFin;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="DureeEnHeures", type="integer", nullable=true)
      */
-    private $dureeenheures;
+    private $dureeEnHeures;
 
     /**
      * @var \AppBundle\Entity\Formation
@@ -64,7 +64,7 @@ class Calendrier
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
      */
-    private $codeformation;
+    private $formation;
 
     /**
      * @var \AppBundle\Entity\Stagiaire
@@ -74,7 +74,151 @@ class Calendrier
      *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
      * })
      */
-    private $codestagiaire;
+    private $stagiaire;
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateDebut()
+    {
+        return $this->dateDebut;
+    }
+
+    /**
+     * @param \DateTime $dateDebut
+     * @return Calendrier
+     */
+    public function setDateDebut($dateDebut)
+    {
+        $this->dateDebut = $dateDebut;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCodeCalendrier()
+    {
+        return $this->codeCalendrier;
+    }
+
+    /**
+     * @param int $codeCalendrier
+     * @return Calendrier
+     */
+    public function setCodeCalendrier($codeCalendrier)
+    {
+        $this->codeCalendrier = $codeCalendrier;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitre()
+    {
+        return $this->titre;
+    }
+
+    /**
+     * @param string $titre
+     * @return Calendrier
+     */
+    public function setTitre($titre)
+    {
+        $this->titre = $titre;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
+     * @return Calendrier
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateFin()
+    {
+        return $this->dateFin;
+    }
+
+    /**
+     * @param \DateTime $dateFin
+     * @return Calendrier
+     */
+    public function setDateFin($dateFin)
+    {
+        $this->dateFin = $dateFin;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDureeEnHeures()
+    {
+        return $this->dureeEnHeures;
+    }
+
+    /**
+     * @param int $dureeEnHeures
+     * @return Calendrier
+     */
+    public function setDureeEnHeures($dureeEnHeures)
+    {
+        $this->dureeEnHeures = $dureeEnHeures;
+        return $this;
+    }
+
+    /**
+     * @return Formation
+     */
+    public function getFormation()
+    {
+        return $this->formation;
+    }
+
+    /**
+     * @param Formation $formation
+     * @return Calendrier
+     */
+    public function setFormation($formation)
+    {
+        $this->formation = $formation;
+        return $this;
+    }
+
+    /**
+     * @return Stagiaire
+     */
+    public function getStagiaire()
+    {
+        return $this->stagiaire;
+    }
+
+    /**
+     * @param Stagiaire $stagiaire
+     * @return Calendrier
+     */
+    public function setStagiaire($stagiaire)
+    {
+        $this->stagiaire = $stagiaire;
+        return $this;
+    }
 
 
 }

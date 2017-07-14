@@ -19,7 +19,7 @@ class Promotion
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $codepromotion;
+    private $codePromotion;
 
     /**
      * @var string
@@ -47,42 +47,42 @@ class Promotion
      *
      * @ORM\Column(name="PrixPublicAffecte", type="float", precision=53, scale=0, nullable=false)
      */
-    private $prixpublicaffecte;
+    private $prixPublicAffecte;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="DateCreation", type="datetime", nullable=false)
      */
-    private $datecreation;
+    private $dateCreation;
 
     /**
      * @var float
      *
      * @ORM\Column(name="PrixPECAffecte", type="float", precision=53, scale=0, nullable=false)
      */
-    private $prixpecaffecte;
+    private $prixPecAffecte;
 
     /**
      * @var float
      *
      * @ORM\Column(name="PrixFinanceAffecte", type="float", precision=53, scale=0, nullable=false)
      */
-    private $prixfinanceaffecte;
+    private $prixFinanceAffecte;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="CodeContactENI", type="integer", nullable=true)
      */
-    private $codecontacteni;
+    private $codeContactEni;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="CodeLieu", type="integer", nullable=true)
      */
-    private $codelieu;
+    private $codeLieu;
 
     /**
      * @var \AppBundle\Entity\Formation
@@ -92,8 +92,205 @@ class Promotion
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
      */
-    private $codeformation;
+    private $formation;
 
+    /**
+     * @return string
+     */
+    public function getCodePromotion()
+    {
+        return $this->codePromotion;
+    }
+
+    /**
+     * @param string $codePromotion
+     * @return Promotion
+     */
+    public function setCodePromotion($codePromotion)
+    {
+        $this->codePromotion = $codePromotion;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     * @return Promotion
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDebut()
+    {
+        return $this->debut;
+    }
+
+    /**
+     * @param \DateTime $debut
+     * @return Promotion
+     */
+    public function setDebut($debut)
+    {
+        $this->debut = $debut;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getFin()
+    {
+        return $this->fin;
+    }
+
+    /**
+     * @param \DateTime $fin
+     * @return Promotion
+     */
+    public function setFin($fin)
+    {
+        $this->fin = $fin;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrixPublicAffecte()
+    {
+        return $this->prixPublicAffecte;
+    }
+
+    /**
+     * @param float $prixPublicAffecte
+     * @return Promotion
+     */
+    public function setPrixPublicAffecte($prixPublicAffecte)
+    {
+        $this->prixPublicAffecte = $prixPublicAffecte;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
+     * @return Promotion
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrixPecAffecte()
+    {
+        return $this->prixPecAffecte;
+    }
+
+    /**
+     * @param float $prixPecAffecte
+     * @return Promotion
+     */
+    public function setPrixPecAffecte($prixPecAffecte)
+    {
+        $this->prixPecAffecte = $prixPecAffecte;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrixFinanceAffecte()
+    {
+        return $this->prixFinanceAffecte;
+    }
+
+    /**
+     * @param float $prixFinanceAffecte
+     * @return Promotion
+     */
+    public function setPrixFinanceAffecte($prixFinanceAffecte)
+    {
+        $this->prixFinanceAffecte = $prixFinanceAffecte;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCodeContactEni()
+    {
+        return $this->codeContactEni;
+    }
+
+    /**
+     * @param int $codeContactEni
+     * @return Promotion
+     */
+    public function setCodeContactEni($codeContactEni)
+    {
+        $this->codeContactEni = $codeContactEni;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCodeLieu()
+    {
+        return $this->codeLieu;
+    }
+
+    /**
+     * @param int $codeLieu
+     * @return Promotion
+     */
+    public function setCodeLieu($codeLieu)
+    {
+        $this->codeLieu = $codeLieu;
+        return $this;
+    }
+
+    /**
+     * @return Formation
+     */
+    public function getFormation()
+    {
+        return $this->formation;
+    }
+
+    /**
+     * @param Formation $formation
+     * @return Promotion
+     */
+    public function setFormation($formation)
+    {
+        $this->formation = $formation;
+        return $this;
+    }
 
 }
 
