@@ -98,19 +98,13 @@ class Contrainte
      */
     private $typeP5;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="CodeCalendrier", type="integer", nullable=false)
-     */
-    private $codeCalendrier;
 
     /**
      * @var \AppBundle\Entity\Calendrier
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Calendrier_CodeCalendrier", referencedColumnName="CodeCalendrier")
+     *   @ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")
      * })
      */
     private $calendrier;
