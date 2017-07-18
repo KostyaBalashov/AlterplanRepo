@@ -17,7 +17,7 @@ class Promotion
      *
      * @ORM\Column(name="CodePromotion", type="string", length=8)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codePromotion;
 

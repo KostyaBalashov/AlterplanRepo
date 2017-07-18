@@ -17,7 +17,7 @@ class Formation
      *
      * @ORM\Column(name="CodeFormation", type="string", length=8)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeFormation;
 

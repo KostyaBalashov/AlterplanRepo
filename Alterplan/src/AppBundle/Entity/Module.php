@@ -17,7 +17,7 @@ class Module
      *
      * @ORM\Column(name="IdModule", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $idModule;
 

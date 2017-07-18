@@ -17,7 +17,7 @@ class StagiaireParEntreprise
      *
      * @ORM\Column(name="NumLien", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $numLien;
 

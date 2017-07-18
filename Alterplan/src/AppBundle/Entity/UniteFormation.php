@@ -17,7 +17,7 @@ class UniteFormation
      *
      * @ORM\Column(name="IdUniteFormation", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $idUniteFormation;
 

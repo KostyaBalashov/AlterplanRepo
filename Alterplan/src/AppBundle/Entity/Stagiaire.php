@@ -17,7 +17,7 @@ class Stagiaire
      *
      * @ORM\Column(name="CodeStagiaire", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeStagiaire;
 

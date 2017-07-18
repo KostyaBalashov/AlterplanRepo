@@ -17,7 +17,7 @@ class Lieu
      *
      * @ORM\Column(name="CodeLieu", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeLieu;
 

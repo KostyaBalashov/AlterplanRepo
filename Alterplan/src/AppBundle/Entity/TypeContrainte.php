@@ -17,7 +17,7 @@ class TypeContrainte
      *
      * @ORM\Column(name="CodeTypeContrainte", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeTypeContrainte;
 

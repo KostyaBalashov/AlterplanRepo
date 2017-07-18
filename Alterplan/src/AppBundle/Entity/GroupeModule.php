@@ -17,7 +17,7 @@ class GroupeModule
      *
      * @ORM\Column(name="CodeGroupeModule", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeGroupeModule;
 

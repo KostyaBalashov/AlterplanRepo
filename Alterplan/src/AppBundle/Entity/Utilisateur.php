@@ -18,7 +18,7 @@ class Utilisateur extends User
      *
      * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeUtilisateur;
 

@@ -17,7 +17,7 @@ class Dispense
      *
      * @ORM\Column(name="CodeDispense", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeDispense;
 

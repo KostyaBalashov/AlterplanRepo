@@ -17,7 +17,7 @@ class Calendrier
      *
      * @ORM\Id
      * @ORM\Column(name="CodeCalendrier", type="integer")
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeCalendrier;
 

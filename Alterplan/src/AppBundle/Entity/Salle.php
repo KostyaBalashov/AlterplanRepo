@@ -17,7 +17,7 @@ class Salle
      *
      * @ORM\Column(name="CodeSalle", type="string", length=5)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeSalle;
 

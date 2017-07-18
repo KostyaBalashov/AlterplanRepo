@@ -17,7 +17,7 @@ class Cours
      *
      * @ORM\Column(name="IdCours", type="guid")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $idCours;
 
