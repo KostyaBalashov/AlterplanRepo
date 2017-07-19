@@ -1,0 +1,13 @@
+<h4>{{ titre }}</h4>
+{{ form_start(form, {'attr': {'id': 'user_create', 'action': '/utilisateurs/new'}}) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.prenom) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.password) }}
+    <div class="row">
+        <label for="pwd_confirmation">Confirmation du mot de passe</label>
+        <input id="pwd_confirmation" type="password"/>
+    </div>
+{#{{ form_row(form.isAdministrateur) }}#}
+{{ form_end(form) }}

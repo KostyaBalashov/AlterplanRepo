@@ -1,0 +1,59 @@
+{% extends 'consultationBase.html.twig' %}
+
+{% block title %} Utilisateurs {% endblock %}
+
+{% block resultListTitle %} Liste des utilisateurs ({{ utilisateurs|length }}) {% endblock %}
+
+{% block resultListActionPanel %}
+    {% embed 'modalButtonBase.html.twig'%}
+        {% block modal_btn_id %}btn_create_user{% endblock %}
+        {% block modal_btn_labael %} Nouveau {% endblock %}
+        {% block modal_action_buttons %}
+            <button class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+            <button type="submit" form="user_create" class="modal-action waves-effect waves-green btn">Valider</button>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{#href="{{ path('utilisateurs_new') }}"#}
+{% block resultRenderer %}
+    <table class="bordered highlight">
+        <thead>
+            <tr>
+                <th>Identifiant</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr class="clickable-row" data-href="{{ path('utilisateurs_show', { 'codeUtilisateur': utilisateur.codeUtilisateur }) }}">
+                <td>{{ utilisateur.username }}</a></td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>{{ utilisateur.prenom }}</td>
+                <td>{{ utilisateur.isAdministrateur }}</td>
+                <td>
+                    <a href="{{ path('utilisateurs_edit', { 'codeUtilisateur': utilisateur.codeUtilisateur }) }}">
+                        <i class="material-icons">delete</i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block customJS %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.clickable-row').click(function() {
+                window.location = $(this).data("href");
+            });
+            $('#btn_create_user').click(function () {
+                renderModal('btn_create_user','/utilisateurs/new');
+            });
+        });
+    </script>
+{% endblock %}
