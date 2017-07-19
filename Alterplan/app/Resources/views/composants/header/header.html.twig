@@ -11,13 +11,13 @@ You should have received a copy of the GNU Affero General Public License along w
     <nav>
         <div class="nav-wrapper">
             {% block left %}
-                {% include '@header/header_menu.html.twig' %}
+                {% include ':composants/header:header_menu.html.twig' %}
             {% endblock %}
 
             <a href="/" class="brand-logo center"><img class="eni-logo" src="{{ asset('logo-eni.png') }}"></a>
 
             {% block right %}
-                {% include '@header/header_user_menu.html.twig' %}
+                {% include ':composants/header:header_user_menu.html.twig' %}
             {% endblock %}
         </div>
     </nav>

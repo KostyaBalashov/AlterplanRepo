@@ -9,7 +9,7 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 <ul id="dropdown1" class="dropdown-content">
     <li><a href="#">Mon compte</a></li>
-    <li><a href="#">Gérer les comptes</a></li>
+    <li><a href="{{ path('utilisateurs_index') }}">Gérer les comptes</a></li>
     <li class="divider"></li>
     <li><a href="{{ path('fos_user_security_logout') }}">Se déconnecter</a></li>
 </ul>
@@ -19,3 +19,13 @@ You should have received a copy of the GNU Affero General Public License along w
         <a class="dropdown-button" href="#" data-activates="dropdown1">Utilisateur <i class="material-icons right">perm_identity</i></a>
     </li>
 </ul>
+
+<script type="text/javascript">
+    $( document ).ready(function(){
+        $(".dropdown-button").dropdown({
+            constrainWidth: false,
+            belowOrigin: true,
+            gutter: 1
+        });
+    })
+</script>

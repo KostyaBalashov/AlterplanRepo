@@ -13,8 +13,9 @@ use FOS\UserBundle\Model\User;
  */
 class Utilisateur extends User
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\Id
@@ -37,11 +38,18 @@ class Utilisateur extends User
     private $prenom;
 
     /**
-     * @var binary
+     * @var bool
      *
-     * @ORM\Column(name="IsAdministrateur", type="binary", nullable=false)
+     * @ORM\Column(name="IsAdministrateur", nullable=false)
      */
     private $isAdministrateur;
+
+    function __construct()
+    {
+        parent::setEnabled(true);
+        parent::setRoles(array('ROLE_USER'));
+        $this->setIsAdministrateur(true);
+    }
 
     /**
      * @return int
@@ -112,11 +120,12 @@ class Utilisateur extends User
     public function setEmail($email)
     {
         parent::setEmail($email);
+        parent::setEmailCanonical($email);
         return $this;
     }
 
     /**
-     * @return binary
+     * @return bool
      */
     public function getIsAdministrateur()
     {
@@ -124,12 +133,17 @@ class Utilisateur extends User
     }
 
     /**
-     * @param binary $isAdministrateur
+     * @param bool $isAdministrateur
      * @return Utilisateur
      */
     public function setIsAdministrateur($isAdministrateur)
     {
-        $this->isAdministrateur = $isAdministrateur;
+        $this->isAdministrateur = (bool)$isAdministrateur;
+        if ($isAdministrateur){
+            parent::addRole('ROLE_ADMIN');
+        }else{
+            parent::removeRole('ROLE_ADMIN');
+        }
         return $this;
     }
 
@@ -151,6 +165,22 @@ class Utilisateur extends User
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return parent::getUsername();
+    }
 
+    /**
+     * @param string $username
+     * @return Utilisateur
+     */
+    public function setUsername($username)
+    {
+        parent::setUsername($username);
+        return $this;
+    }
 }
 

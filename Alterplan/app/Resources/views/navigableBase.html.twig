@@ -10,22 +10,5 @@ You should have received a copy of the GNU Affero General Public License along w
 {% extends 'base.html.twig' %}
 
 {% block header %}
-    {#
-        @header -> espace de nom configuré au niveau de config.yml
-        (https://symfony.com/doc/current/templating/namespaced_paths.html)
-    #}
-    {% include '@header/header.html.twig' %}
-{% endblock %}
-
-{% block javascripts %}
-    <script type="text/javascript">
-        $( document ).ready(function(){
-            $(".dropdown-button").dropdown({
-                constrainWidth: false,
-                belowOrigin: true,
-                gutter: 1
-            });
-            $(".btn-collapse").sideNav();
-        })
-    </script>
+    {% include ':composants/header:header.html.twig' %}
 {% endblock %}

@@ -1,4 +1,4 @@
-/*
+{#
 This file is part of Alterplan. 
  
 Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
@@ -6,40 +6,15 @@ Alterplan is free software: you can redistribute it and/or modify it under the t
 Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
  
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
-*/
+#}
 
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
+<button id="{% block modal_btn_id %}{% endblock %}" class="waves-effect waves-light btn">{% block modal_btn_labael %}Nouveau{% endblock %}</button>
 
-main {
-    flex: 1 0 auto;
-}
+<div class="modal modal-fixed-footer left-align" data-target="{{ block('modal_btn_id') }}">
+    <div class="modal-content">
 
-nav {
-    background-color: #134a80;
-}
-
-.page-footer{
-    padding-top: 0;
-    background-color: #134a80;
-}
-
-.brand-logo {
-    height: 64px;
-}
-
-.eni-logo{
-    zoom: 50%;
-    margin-top: 12px;
-}
-
-#sidenav-overlay {
-    z-index: 1;
-}
-
-.bordered .highlight td:hover{
-    cursor: pointer;
-}
+    </div>
+    <div class="modal-footer">
+        {% block modal_action_buttons %} {% endblock %}
+    </div>
+</div>

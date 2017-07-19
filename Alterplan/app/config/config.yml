@@ -37,19 +37,17 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
-    paths:
-      '%kernel.project_dir%/app/Resources/views/composants/header': header
-      '%kernel.project_dir%/app/Resources/views/composants/footer': footer
 
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: pdo_sqlsrv
+        driver: sqlsrv
         host: '%database_host%'
         dbname: '%database_name%'
         user: '%database_user%'
         password: '%database_password%'
         charset: UTF-8
+        #
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.project_dir%/var/data/data.sqlite"
@@ -83,3 +81,9 @@ doctrine_migrations:
     namespace: Application\Migrations
     table_name: migration_versions
     name: Application Migrations
+
+assetic:
+    debug: '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~

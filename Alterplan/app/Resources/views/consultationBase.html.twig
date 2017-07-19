@@ -1,0 +1,56 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+{% extends 'navigableBase.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="card">
+            <div class="card-content">
+                <h5 class="card-title">Recherche</h5>
+                {% block searchPanel %} {% endblock %}
+                <div class="card-action right-align">
+                    <a class="waves-effect waves-light btn">Rechercher</a>
+                    <a class="waves-effect waves-light btn red lighten-3">Effacer les critères</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row center">
+        <div class="preloader-wrapper">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-title">
+                <h5>{% block resultListTitle %} {% endblock %}</h5>
+                <div class="card-action right-align">
+                    {% block resultListActionPanel %}{% endblock %}
+                </div>
+            </div>
+            {% block resultRenderer %} {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block customJS %}
+    {% block searchJS %} {% endblock %}
+{% endblock %}
