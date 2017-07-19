@@ -1,0 +1,39 @@
+/*
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body{
+    text-align: center;
+}
+
+#logo_eni{
+    margin-top:20px;
+}
+
+#loginPanel {
+    margin: auto;
+    display: inline-block;
+    padding: 32px 48px 0px 48px;
+    border: 1px solid #EEE;
+}
+
+#remember_me{
+    float: left;
+}
+
+#forgotten_password {
+    float: right;
+    font-size: 14px;
+    margin-left: 50px;
+    padding-top: 2px;
+}
+
+#_submit{
+    padding-top: 20px;
+}

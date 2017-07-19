@@ -37,6 +37,8 @@ security:
             csrf_token_generator: security.csrf.token_manager
           logout: true
           anonymous: true
+          remember_me:
+              secret: '%secret%'
 
             # anonymous: ~
             # activate different ways to authenticate
