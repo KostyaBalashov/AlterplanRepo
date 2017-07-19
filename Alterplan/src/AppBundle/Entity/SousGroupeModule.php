@@ -50,16 +50,6 @@ class SousGroupeModule
     private $module4;
 
     /**
-     * @var \AppBundle\Entity\Module
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Module")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")
-     * })
-     */
-    private $module;
-
-    /**
      * @return int
      */
     public function getCodeSousGroupeModule()
@@ -148,24 +138,5 @@ class SousGroupeModule
         $this->module4 = $module4;
         return $this;
     }
-
-    /**
-     * @return Module
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
-     * @param Module $module
-     * @return SousGroupeModule
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-        return $this;
-    }
-
 }
 
