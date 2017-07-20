@@ -1,13 +1,35 @@
 <h4>{{ titre }}</h4>
+{#<form name="user_create" id="user_create" action="{{ path('utilisateurs_new') }}">
+    <div class="row">
+        <label for="nom"></label>
+        <input id="nom" type="text" required value="{{ utilisateurs.nom}}">
+    </div>
+    <div class="row">
+        <label for="prenom"></label>
+        <input id="prenom" type="text" required value="{{ utilisateurs.prenom }}">
+    </div>
+    <div class="row">
+        <label for="usrname"></label>
+        <input id="usrname" type="text" required value="{{ utilisateurs.username }}">
+    </div>
+    <div class="row">
+        <label for="email"></label>
+        <input id="email" type="email" required value="{{ utilisateurs.email }}">
+    </div>
+    <div class="row">
+        <label for="mdp"></label>
+        <input id="mdp" type="password" required value="{{ utilisateurs.password }}">
+    </div>
+    <div class="row">
+        <label for="pwd_confirmation">Confirmation du mot de passe</label>
+        <input id="pwd_confirmation" type="password"/>
+    </div>
+</form>#}
 {{ form_start(form, {'attr': {'id': 'user_create', 'action': '/utilisateurs/new', 'name': 'user_create'}}) }}
     {{ form_row(form.nom) }}
     {{ form_row(form.prenom) }}
     {{ form_row(form.username) }}
     {{ form_row(form.email) }}
     {{ form_row(form.password) }}
-    <div class="row">
-        <label for="pwd_confirmation">Confirmation du mot de passe</label>
-        <input id="pwd_confirmation" type="password"/>
-    </div>
     {{ form_widget(form) }}
 {{ form_end(form) }}

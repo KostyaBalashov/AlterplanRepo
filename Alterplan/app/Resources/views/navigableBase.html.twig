@@ -12,3 +12,14 @@ You should have received a copy of the GNU Affero General Public License along w
 {% block header %}
     {% include ':composants/header:header.html.twig' %}
 {% endblock %}
+
+{% block modal %}
+    <div class="modal modal-fixed-footer left-align" data-target="{% block modal_id %}edit_current_user{% endblock %}">
+        <div class="modal-content">
+
+        </div>
+        <div class="modal-footer">
+            {% block modal_action_buttons %} {% endblock %}
+        </div>
+    </div>
+{% endblock %}
