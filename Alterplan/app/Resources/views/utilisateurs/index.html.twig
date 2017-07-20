@@ -5,14 +5,7 @@
 {% block resultListTitle %} Liste des utilisateurs ({{ utilisateurs|length }}) {% endblock %}
 
 {% block resultListActionPanel %}
-    {% embed 'modalButtonBase.html.twig'%}
-        {% block modal_btn_id %}btn_create_user{% endblock %}
-        {% block modal_btn_labael %} Nouveau {% endblock %}
-        {% block modal_action_buttons %}
-            <button class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
-            <button type="submit" form="user_create" class="modal-action waves-effect waves-green btn">Valider</button>
-        {% endblock %}
-    {% endembed %}
+    <button id="btn_create_user" class="waves-effect waves-light btn">Nouveau</button>
 {% endblock %}
 
 {#href="{{ path('utilisateurs_new') }}"#}
@@ -43,6 +36,14 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% embed 'modalContentBase.html.twig'%}
+        {% block modal_id %}create_user{% endblock %}
+        {% block modal_action_buttons %}
+            <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+            <button type="submit" form="user_create" class="modal-action waves-effect waves-green btn">Valider</button>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}
 
 {% block customJS %}
@@ -52,7 +53,7 @@
                 window.location = $(this).data("href");
             });
             $('#btn_create_user').click(function () {
-                renderModal('btn_create_user','/utilisateurs/new');
+                renderModal('create_user','/utilisateurs/new');
             });
         });
     </script>

@@ -9,16 +9,26 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 <ul id="dropdown1" class="dropdown-content">
     <li><a href="#">Mon compte</a></li>
-    <li><a href="{{ path('utilisateurs_index') }}">Gérer les comptes</a></li>
+    {% if is_granted('ROLE_ADMIN') %}
+        <li><a href="{{ path('utilisateurs_index') }}">Gérer les comptes</a></li>
+    {% endif %}
     <li class="divider"></li>
     <li><a href="{{ path('fos_user_security_logout') }}">Se déconnecter</a></li>
 </ul>
 
 <ul class="right hide-on-med-and-down">
     <li>
-        <a class="dropdown-button" href="#" data-activates="dropdown1">Utilisateur <i class="material-icons right">perm_identity</i></a>
+        <a class="dropdown-button" href="#" data-activates="dropdown1">{{ app.user.username }}<i class="material-icons right">perm_identity</i></a>
     </li>
 </ul>
+
+{% embed 'modalContentBase.html.twig'%}
+    {% block modal_id %}edit_current_user{% endblock %}
+    {% block modal_action_buttons %}
+        <button class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+        <button type="submit" form="user_create" class="modal-action waves-effect waves-green btn">Valider</button>
+    {% endblock %}
+{% endembed %}
 
 <script type="text/javascript">
     $( document ).ready(function(){
@@ -27,5 +37,8 @@ You should have received a copy of the GNU Affero General Public License along w
             belowOrigin: true,
             gutter: 1
         });
+       /* $('#btn_create_user').click(function () {
+            renderModal('create_user','/utilisateurs/new');
+        });*/
     })
 </script>

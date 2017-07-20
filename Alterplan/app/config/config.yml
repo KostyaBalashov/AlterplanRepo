@@ -41,7 +41,7 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: sqlsrv
+        driver: pdo_sqlsrv
         host: '%database_host%'
         dbname: '%database_name%'
         user: '%database_user%'

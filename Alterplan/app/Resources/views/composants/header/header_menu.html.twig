@@ -10,8 +10,10 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <ul class="side-nav" id="left-menu">
     <li><a class="waves-effect waves-light btn">Rechercher un stagiaire <i class="material-icons right">search</i></a></li>
-    <li><a class="waves-effect waves-light btn">Gérer les modèles</a></li>
-    <li><a class="waves-effect waves-light btn">Gérer l'ordre logique</a></li>
+    {% if is_granted('ROLE_ADMIN') %}
+        <li><a class="waves-effect waves-light btn">Gérer les modèles</a></li>
+        <li><a class="waves-effect waves-light btn">Gérer l'ordre logique</a></li>
+    {% endif %}
 </ul>
 <a href="#" class="btn-collapse left hide-on-med-and-down" data-activates="left-menu"><i class="material-icons">menu</i></a>
 
