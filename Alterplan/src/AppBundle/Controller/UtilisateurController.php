@@ -7,6 +7,7 @@ use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Utilisateur controller.
@@ -20,6 +21,7 @@ class UtilisateurController extends Controller
     function __construct(UserManagerInterface $userManager) {
         $this->userManager = $userManager;
     }
+
 
     /**
      * Lists all utilisateurs entities.
@@ -47,17 +49,22 @@ class UtilisateurController extends Controller
     public function newAction(Request $request)
     {
         $utilisateur = new Utilisateur();
-        $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur);
+        $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur,
+            array('attr' => array('id' => 'user_create'),
+                'action' =>$this->generateUrl('utilisateurs_new'),
+                'method'=>'POST'));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $this->userManager->updateUser($utilisateur);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($utilisateur);
             $em->flush();
 
-            return $this->redirectToRoute('utilisateurs_show', array('codeUtilisateur' => $utilisateur->getCodeutilisateur()));
+
+            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été enregistré.');
         }
 
         return $this->render('utilisateurs/new.html.twig', array(
@@ -142,5 +149,11 @@ class UtilisateurController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function createNewForm(Utilisateur $utilisateur){
+        return $this->createFormBuilder($utilisateur)
+            ->setAction($this->generateUrl('utilisateurs_new'))
+            ->setMethod('POST');
     }
 }

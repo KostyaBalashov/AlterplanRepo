@@ -20,7 +20,7 @@ class UtilisateurType extends AbstractType
         $builder->add('nom',TextType::class)
             ->add('prenom', TextType::class)
             ->add('username', TextType::class)
-            ->add('password', PasswordType::class)
+            ->add('plainPassword', PasswordType::class)
             ->add('email', EmailType::class);
             /*->add('isAdministrateur', CheckboxType::class, array(
                 'label' => 'Administrateur',

@@ -17,8 +17,8 @@ class Utilisateur extends User
     /**
      * @var int
      *
-     * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\Id
+     * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $codeUtilisateur;
@@ -50,6 +50,14 @@ class Utilisateur extends User
         parent::setRoles(array('ROLE_USER'));
         $this->setIsAdministrateur(true);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPlainPassword($password){
+        parent::setPlainPassword($password);
+    }
+
 
     /**
      * @return int

@@ -14,8 +14,31 @@ function renderModal(idModalTarget,controllerUrl) {
     $(".preloader-wrapper").addClass("active");
     $.get(controllerUrl, function( data ) {
         $( ".modal-content" ).html( data );
-        $(selector).modal('open');
+        $(selector).modal('open',{
+            ready: function () {
+                $('#user_create').submit(function (event) {
+                    event.preventDefault();
+                    $.post( "/utilisateurs/new", $('#user_create').serialize())
+                        .done(function (data) {
+                            $('[data-target=create_user]').modal('close');
+                            showToast(data)
+                        }).fail(function () {
+                        showToast('Erreur d\'enregistrement');
+                    });
+                });
+            }
+        });
     }).always(function(){
         $(".preloader-wrapper").removeClass("active");
     });
+}
+
+function showToast(content, msgType) {
+    var toastColor;
+    if ('error' === msgType){
+        toastColor = 'red';
+    }else {
+        toastColor = 'blue';
+    }
+    Materialize.toast(content, 5000, toastColor);
 }
