@@ -14,6 +14,7 @@ You should have received a copy of the GNU Affero General Public License along w
         <div class="card">
             <div class="card-content">
                 <h5 class="card-title">Recherche</h5>
+                {# sert à afficher le form de recherche #}
                 {% block searchPanel %} {% endblock %}
                 <div class="card-action right-align">
                     <a class="waves-effect waves-light btn">Rechercher</a>
@@ -23,8 +24,15 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 
-    <div class="row center">
-        <div class="preloader-wrapper">
+    <div class="row">
+        <div class="card">
+            {# C'est là qu'on affiche le tableau de résultats #}
+            {% block resultRenderer %} {% endblock %}
+        </div>
+    </div>
+
+    <div class="preloader-background" style="display: none">
+        <div class="preloader-wrapper active">
             <div class="spinner-layer spinner-blue-only">
                 <div class="circle-clipper left">
                     <div class="circle"></div>
@@ -34,18 +42,6 @@ You should have received a copy of the GNU Affero General Public License along w
                     <div class="circle"></div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="card">
-            <div class="card-title">
-                <h5>{% block resultListTitle %} {% endblock %}</h5>
-                <div class="card-action right-align">
-                    {% block resultListActionPanel %}{% endblock %}
-                </div>
-            </div>
-            {% block resultRenderer %} {% endblock %}
         </div>
     </div>
 

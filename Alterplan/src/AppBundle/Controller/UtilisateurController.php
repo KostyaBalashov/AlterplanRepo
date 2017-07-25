@@ -6,7 +6,8 @@ use AppBundle\Entity\Utilisateur;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -29,15 +30,33 @@ class UtilisateurController extends Controller
      * @Route("/", name="utilisateurs_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $utilisateurs = $em->getRepository('AppBundle:Utilisateur')->findAll();
+        //Si c'est un get
+        if ($request->getMethod() == 'GET'){
 
-        return $this->render('utilisateurs/index.html.twig', array(
-            'utilisateurs' => $utilisateurs,
-        ));
+            //On charge tous les utilisateurs
+            $utilisateurs = $em->getRepository('AppBundle:Utilisateur')->findAll();
+
+            //Si c'est de l'ajax
+            if ($request->isXmlHttpRequest()){
+                //On retourne que le tableau des utilisateurs.
+                return $this->render(':utilisateurs:table.html.twig', array(
+                    'utilisateurs' => $utilisateurs,
+                ));
+
+            }else {
+                //Si non on render le twig normal.
+                return $this->render('utilisateurs/index.html.twig', array(
+                    'utilisateurs' => $utilisateurs,
+                ));
+            }
+        }else{
+            //Gestion des recherches
+            return new Response();
+        }
     }
 
     /**
@@ -49,10 +68,13 @@ class UtilisateurController extends Controller
     public function newAction(Request $request)
     {
         $utilisateur = new Utilisateur();
+
+        //Création du formulaire de création d'utilisateur
         $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur,
-            array('attr' => array('id' => 'user_create'),
-                'action' =>$this->generateUrl('utilisateurs_new'),
-                'method'=>'POST'));
+            array('attr' => array('id' => 'user'),
+                'action' => $this->generateUrl('utilisateurs_new'),
+                'method' => 'POST'));
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -64,7 +86,7 @@ class UtilisateurController extends Controller
             $em->flush();
 
 
-            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été enregistré.');
+            return new Response('Utlisateur ' . $utilisateur->getNom() . ' ' . $utilisateur->getPrenom() . ' a bien été enregistré.');
         }
 
         return $this->render('utilisateurs/new.html.twig', array(
@@ -75,43 +97,32 @@ class UtilisateurController extends Controller
     }
 
     /**
-     * Finds and displays a utilisateurs entity.
-     *
-     * @Route("/{codeUtilisateur}", name="utilisateurs_show")
-     * @Method("GET")
-     */
-    public function showAction(Utilisateur $utilisateur)
-    {
-        $deleteForm = $this->createDeleteForm($utilisateur);
-
-        return $this->render('utilisateurs/show.html.twig', array(
-            'utilisateurs' => $utilisateur,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing utilisateurs entity.
      *
-     * @Route("/{codeUtilisateur}/edit", name="utilisateurs_edit")
+     * @Route("/{codeUtilisateur}", name="utilisateurs_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Utilisateur $utilisateur)
     {
-        $deleteForm = $this->createDeleteForm($utilisateur);
-        $editForm = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur);
-        $editForm->handleRequest($request);
+        $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur,
+            array('attr' => array('id' => 'user'),
+                'action' =>$this->generateUrl('utilisateurs_edit',
+                    array('codeUtilisateur'=>$utilisateur->getCodeUtilisateur())),
+                'method'=>'POST'));
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->userManager->updateUser($utilisateur);
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('utilisateurs_edit', array('codeUtilisateur' => $utilisateur->getCodeutilisateur()));
+            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été modifié.');
         }
 
-        return $this->render('utilisateur/edit.html.twig', array(
+        return $this->render(':utilisateurs:new.html.twig', array(
             'utilisateurs' => $utilisateur,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'form' => $form->createView(),
+            'titre' => 'Modification d\'un utilisateur'
         ));
     }
 
@@ -123,37 +134,13 @@ class UtilisateurController extends Controller
      */
     public function deleteAction(Request $request, Utilisateur $utilisateur)
     {
-        $form = $this->createDeleteForm($utilisateur);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->isXmlHttpRequest()){
             $em = $this->getDoctrine()->getManager();
             $em->remove($utilisateur);
             $em->flush();
+            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été supprimé.');
+        }else{
+            return new Response('Ajax s\'il vous plait.');
         }
-
-        return $this->redirectToRoute('utilisateurs_index');
-    }
-
-    /**
-     * Creates a form to delete a utilisateurs entity.
-     *
-     * @param Utilisateur $utilisateur The utilisateurs entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Utilisateur $utilisateur)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('utilisateurs_delete', array('codeUtilisateur' => $utilisateur->getCodeutilisateur())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
-    }
-
-    private function createNewForm(Utilisateur $utilisateur){
-        return $this->createFormBuilder($utilisateur)
-            ->setAction($this->generateUrl('utilisateurs_new'))
-            ->setMethod('POST');
     }
 }

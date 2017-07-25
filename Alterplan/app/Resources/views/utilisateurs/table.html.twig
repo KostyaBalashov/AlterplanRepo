@@ -1,0 +1,93 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+{# Les tableau des utilisateurs avec sa barre d'action #}
+<div class="row">
+    <div class="col s6">
+        <h5>Liste des utilisateurs ({{ utilisateurs|length }}) </h5>
+    </div>
+    <div class="col s6 right-align" style="margin-top: 0.82rem">
+        <button id="btn_create_user" class="waves-effect waves-light btn">Nouveau</button>
+    </div>
+</div>
+<table class="bordered highlight">
+    <thead>
+    <tr>
+        <th>Identifiant</th>
+        <th>Nom</th>
+        <th>Prenom</th>
+        <th>Type</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for utilisateur in utilisateurs %}
+        <tr class="clickable-row" data-href="{{ path('utilisateurs_edit', { 'codeUtilisateur': utilisateur.codeUtilisateur }) }}">
+            <td>{{ utilisateur.username }}</a></td>
+            <td>{{ utilisateur.nom }}</td>
+            <td>{{ utilisateur.prenom }}</td>
+            <td>{{ utilisateur.isAdministrateur }}</td>
+            <td>
+                <a href="#">
+                    <i class="material-icons" data-href="{{ path('utilisateurs_delete', {'codeUtilisateur': utilisateur.codeUtilisateur})}}">delete</i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{# les actions spécifiques aux utilisateurs #}
+<script type="text/javascript">
+
+    function refreshTable() {
+        $.get('/utilisateurs', function (data) {
+            var userTableDiv = $('#user_table');
+            userTableDiv.empty();
+            userTableDiv.html(data);
+        });
+    }
+    
+    function deleteUser(urlAction) {
+        showLoader();
+        $.ajax({
+            url: urlAction,
+            type: 'DELETE',
+            success: function (data) {
+                dismissLoader();
+                showToast(data);
+                refreshTable();
+            },
+            error: function () {
+                dismissLoader();
+                showToast('Erreur de la suppression', 'error');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        //abonnement au click de la ligne (toute la ligne sauf la dernière colonne)
+        $('.clickable-row td:not(:last-child)').click(function() {
+            //Récupération de la ligne contenant l'url cible
+            var url = $(this).closest('tr').data("href");
+
+            renderModal('user', url, refreshTable);
+        });
+
+        $('.material-icons').click(function () {
+            var url = $(this).data("href");
+            deleteUser(url);
+        })
+    });
+
+    $('#btn_create_user').click(function () {
+        renderModal('user','/utilisateurs/new', refreshTable);
+    })
+</script>
