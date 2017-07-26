@@ -33,3 +33,9 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    utilisateur.password_resetting:
+        class: FOS\UserBundle\EventListener\PasswordResettingListener
+        arguments: [ '@router' ]
+        tags:
+            - { name: kernel.event_subscriber }

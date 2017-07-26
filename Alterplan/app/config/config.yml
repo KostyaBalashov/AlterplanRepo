@@ -73,8 +73,13 @@ fos_user:
     firewall_name: main
     user_class: AppBundle\Entity\Utilisateur
     from_email:
-      address: "test@test.test"
-      sender_name: "test"
+      address: '%mailer_user%'
+      sender_name: '%mailer_user%'
+    service:
+      mailer: fos_user.mailer.twig_swift
+    resetting:
+      email:
+        template: email/password_resetting.email.twig
 
 doctrine_migrations:
     dir_name: "%kernel.root_dir%/DoctrineMigrations"

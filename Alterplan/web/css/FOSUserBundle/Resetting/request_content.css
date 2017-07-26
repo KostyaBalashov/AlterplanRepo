@@ -1,0 +1,38 @@
+/*
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body{
+    text-align: center;
+}
+
+#logo_eni{
+    margin-top:20px;
+}
+
+#request_panel{
+    margin-top: 20px;
+    display: inline-block;
+    padding: 20px;
+    border: 1px solid #EEE;
+}
+
+#texte{
+    font-size: 16px;
+    color: steelblue;
+    margin-bottom: 20px;
+}
+
+#row_login{
+    margin-top: 20px;
+}
+
+#submit{
+    display: inline-block;
+}

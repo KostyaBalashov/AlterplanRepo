@@ -29,14 +29,14 @@ You should have received a copy of the GNU Affero General Public License along w
     </thead>
     <tbody>
     {% for utilisateur in utilisateurs %}
-        <tr class="clickable-row" data-href="{{ path('utilisateurs_edit', { 'codeUtilisateur': utilisateur.codeUtilisateur }) }}">
+        <tr class="clickable-row" data-href="{{ path('utilisateurs_edit', { 'id': utilisateur.id }) }}">
             <td>{{ utilisateur.username }}</a></td>
             <td>{{ utilisateur.nom }}</td>
             <td>{{ utilisateur.prenom }}</td>
             <td>{{ utilisateur.isAdministrateur }}</td>
             <td>
                 <a href="#">
-                    <i class="material-icons" data-href="{{ path('utilisateurs_delete', {'codeUtilisateur': utilisateur.codeUtilisateur})}}">delete</i>
+                    <i class="material-icons" data-href="{{ path('utilisateurs_delete', {'id': utilisateur.id})}}">delete</i>
                 </a>
             </td>
         </tr>

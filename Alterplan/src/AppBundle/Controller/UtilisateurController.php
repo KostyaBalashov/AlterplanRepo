@@ -99,7 +99,7 @@ class UtilisateurController extends Controller
     /**
      * Displays a form to edit an existing utilisateurs entity.
      *
-     * @Route("/{codeUtilisateur}", name="utilisateurs_edit")
+     * @Route("/{id}", name="utilisateurs_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Utilisateur $utilisateur)
@@ -107,7 +107,7 @@ class UtilisateurController extends Controller
         $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur,
             array('attr' => array('id' => 'user'),
                 'action' =>$this->generateUrl('utilisateurs_edit',
-                    array('codeUtilisateur'=>$utilisateur->getCodeUtilisateur())),
+                    array('id'=>$utilisateur->getId())),
                 'method'=>'POST'));
 
         $form->handleRequest($request);
@@ -129,7 +129,7 @@ class UtilisateurController extends Controller
     /**
      * Deletes a utilisateurs entity.
      *
-     * @Route("/{codeUtilisateur}", name="utilisateurs_delete")
+     * @Route("/{id}", name="utilisateurs_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Utilisateur $utilisateur)

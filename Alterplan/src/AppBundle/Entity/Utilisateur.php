@@ -21,7 +21,7 @@ class Utilisateur extends User
      * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $codeUtilisateur;
+    protected $id;
 
     /**
      * @var string
@@ -62,18 +62,18 @@ class Utilisateur extends User
     /**
      * @return int
      */
-    public function getCodeUtilisateur()
+    public function getId()
     {
-        return $this->codeUtilisateur;
+        return $this->id;
     }
 
     /**
-     * @param int $codeUtilisateur
+     * @param int $id
      * @return Utilisateur
      */
-    public function setCodeUtilisateur($codeUtilisateur)
+    public function setId($id)
     {
-        $this->codeUtilisateur = $codeUtilisateur;
+        $this->id = $id;
         return $this;
     }
 
