@@ -1,12 +1,14 @@
 {% trans_default_domain 'FOSUserBundle' %}
-
-{{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}
-    {{ form_widget(form) }}
-    <div>
-        <label for="fos_user_resetting_form_plainPassword_first" class="required">Nouveau mot de passe</label>
-        <input type="password" id="fos_user_resetting_form_plainPassword_first" name="fos_user_resetting_form[plainPassword][first]" required="required"></div>
-
-    <div>
-        <input type="submit" value="{{ 'resetting.reset.submit'|trans }}" />
+<link href="{{ asset('css/FOSUserBundle/Resetting/request_content.css') }}" rel="stylesheet">
+<a href="/" ><img id="logo_eni" src="{{ asset('logo-eni.png') }}"></a>
+<div class="container">
+    <div class="z-depth-1 grey lighten-4 row" id="request_panel">
+        {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}), 'attr': { 'class': 'fos_user_resetting_reset' } }) }}
+            {{ form_row(form.plainPassword.first ,{ 'label': 'Nouveau mot de passe' })}}
+            {{ form_row(form.plainPassword.second ,{ 'label': 'Confirmation' })}}
+            <div>
+                <input type="submit" value="Valider" class=" col s12 btn btn-large waves-effect indigo"/>
+            </div>
+        {{ form_end(form) }}
     </div>
-{{ form_end(form) }}
+</div>

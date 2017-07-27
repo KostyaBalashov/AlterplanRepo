@@ -1,5 +1,5 @@
 {% extends "@FOSUser/layout.html.twig" %}
-
+{% block title %} Réinitialisation du mot de passe {% endblock %}
 {% trans_default_domain 'FOSUserBundle' %}
 
 {% block fos_user_content %}
@@ -7,9 +7,8 @@
 <a href="/" ><img id="logo_eni" src="{{ asset('logo-eni.png') }}"></a>
 <div class="container">
     <div class="z-depth-1 grey lighten-4 row" id="request_panel">
-        <p>
-
-        Un email a été envoyé à l'adresse de l'utilisateur renseigné. Veuillez suivre les indications de l'email pour réinitialiser votre mot de passe.
+        <p id="texte">
+            Un email a été envoyé à l'adresse de l'utilisateur renseigné (si celui-ci existe bien). Veuillez suivre les indications de l'email pour réinitialiser votre mot de passe.
         </p>
     </div>
 </div>
