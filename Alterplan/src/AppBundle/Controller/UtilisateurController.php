@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Utilisateur;
+use AppBundle\Filtre\UtilisateurFiltre;
+use AppBundle\Form\UtilisateurFiltreType;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -23,40 +25,56 @@ class UtilisateurController extends Controller
         $this->userManager = $userManager;
     }
 
-
     /**
-     * Lists all utilisateurs entities.
+     * Liste les utilisateurs correspondants aux critères de recherche.
      *
      * @Route("/", name="utilisateurs_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getRepository(Utilisateur::class);
+
+        $filtre = new  UtilisateurFiltre();
+        $form = $this->createForm(UtilisateurFiltreType::class, $filtre, array(
+            'attr' => array('id' => 'user_search'),
+            'action' => $this->generateUrl('utilisateurs_index'),
+            'method' => 'POST'
+        ));
+
+        $utilisateurs = null;
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()){
+            $utilisateurs = $repo->search($filtre);
+
+            //On retourne que le tableau des utilisateurs.
+            return $this->render(':utilisateurs:table.html.twig', array(
+                'utilisateurs' => $utilisateurs,
+            ));
+        }
+
+        //On charge tous les utilisateurs
+        $utilisateurs = $repo->search();
 
         //Si c'est un get
         if ($request->getMethod() == 'GET'){
 
-            //On charge tous les utilisateurs
-            $utilisateurs = $em->getRepository('AppBundle:Utilisateur')->findAll();
-
             //Si c'est de l'ajax
             if ($request->isXmlHttpRequest()){
+
                 //On retourne que le tableau des utilisateurs.
                 return $this->render(':utilisateurs:table.html.twig', array(
                     'utilisateurs' => $utilisateurs,
                 ));
-
-            }else {
-                //Si non on render le twig normal.
-                return $this->render('utilisateurs/index.html.twig', array(
-                    'utilisateurs' => $utilisateurs,
-                ));
             }
-        }else{
-            //Gestion des recherches
-            return new Response();
         }
+
+        return $this->render('utilisateurs/index.html.twig', array(
+            'utilisateurs' => $utilisateurs,
+            'formSearch' => $form->createView()
+        ));
     }
 
     /**
@@ -89,7 +107,7 @@ class UtilisateurController extends Controller
             return new Response('Utlisateur ' . $utilisateur->getNom() . ' ' . $utilisateur->getPrenom() . ' a bien été enregistré.');
         }
 
-        return $this->render('utilisateurs/new.html.twig', array(
+        return $this->render(':utilisateurs:userForm.html.twig', array(
             'utilisateurs' => $utilisateur,
             'form' => $form->createView(),
             'titre' => 'Création d\'un utilisateur',
@@ -119,7 +137,7 @@ class UtilisateurController extends Controller
             return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été modifié.');
         }
 
-        return $this->render(':utilisateurs:new.html.twig', array(
+        return $this->render(':utilisateurs:userForm.html.twig', array(
             'utilisateurs' => $utilisateur,
             'form' => $form->createView(),
             'titre' => 'Modification d\'un utilisateur'
@@ -134,12 +152,12 @@ class UtilisateurController extends Controller
      */
     public function deleteAction(Request $request, Utilisateur $utilisateur)
     {
-        if ($request->isXmlHttpRequest()){
+        if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($utilisateur);
             $em->flush();
-            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été supprimé.');
-        }else{
+            return new Response('Utlisateur ' . $utilisateur->getNom() . ' ' . $utilisateur->getPrenom() . ' a bien été supprimé.');
+        } else {
             return new Response('Ajax s\'il vous plait.');
         }
     }

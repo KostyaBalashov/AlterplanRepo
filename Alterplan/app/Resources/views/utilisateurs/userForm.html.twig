@@ -1,0 +1,18 @@
+<h4>{{ titre }}</h4>
+{{ form_start(form) }}
+    {{ form_row(form.nom, {'label':'Nom'}) }}
+    {{ form_row(form.prenom, {'label':'Prénom'}) }}
+    {{ form_row(form.username, {'label':'Login'}) }}
+    {{ form_row(form.email, {'label':'Email'}) }}
+    {{ form_row(form.plainPassword, {'label':'Mot de passe'} )}}
+    <div class="row">
+        <label for="appbundle_utilisateur_isAdministrateur" class="required col s6">Administrateur</label>
+        <input type="checkbox" id="appbundle_utilisateur_isAdministrateur" name="appbundle_utilisateur[isAdministrateur]" class="col s6">
+    </div>
+{#
+    {{ form_row(form.isAdministrateur, {'label':'Administrateur'}) }}
+    {{ form_widget(form) }}
+#}
+
+{{ form_end(form) }}
+

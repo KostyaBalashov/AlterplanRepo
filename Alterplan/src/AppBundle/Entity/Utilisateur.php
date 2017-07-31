@@ -9,7 +9,7 @@ use FOS\UserBundle\Model\User;
  * Utilisateur
  *
  * @ORM\Table(name="Utilisateur")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UtilisateurRepository")
  */
 class Utilisateur extends User
 {
@@ -137,7 +137,7 @@ class Utilisateur extends User
      */
     public function getIsAdministrateur()
     {
-        return $this->isAdministrateur;
+        return (bool)$this->isAdministrateur;
     }
 
     /**

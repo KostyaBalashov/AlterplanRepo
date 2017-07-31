@@ -2,6 +2,15 @@
 
 {% block title %} Utilisateurs {% endblock %}
 
+{% block searchPanel %}
+    {% include ':utilisateurs:searchForm.html.twig' %}
+{% endblock %}
+
+{% block search_action_buttons %}
+    <button type="submit" form="user_search" class="waves-effect waves-light btn">Rechercher</button>
+    <button type="reset" form="user_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+{% endblock %}
+
 {# affichage du tableau #}
 {% block resultRenderer %}
     <div id="user_table">
@@ -14,4 +23,26 @@
 {% block modal_action_buttons %}
     <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
     <button type="submit" form="user" class="modal-action waves-effect waves-green btn">Valider</button>
+{% endblock %}
+
+{% block searchJS %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var frm = $('#user_search');
+            frm.submit(function (event) {
+                showLoader();
+                event.preventDefault();
+                var url = frm.attr('action');
+                $.post(url, frm.serialize(), function (data) {
+                    var userTableDiv = $('#user_table');
+                    userTableDiv.empty();
+                    userTableDiv.html(data);
+                }).fail(function () {
+                    showToast('Erreur de recherche', 'error');
+                }).always(function () {
+                    dismissLoader();
+                })
+            });
+        })
+    </script>
 {% endblock %}

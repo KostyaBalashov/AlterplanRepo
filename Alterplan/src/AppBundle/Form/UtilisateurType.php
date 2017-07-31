@@ -22,10 +22,6 @@ class UtilisateurType extends AbstractType
             ->add('username', TextType::class)
             ->add('plainPassword', PasswordType::class)
             ->add('email', EmailType::class);
-            /*->add('isAdministrateur', CheckboxType::class, array(
-                'label' => 'Administrateur',
-                'required' => 'false'
-            ));*/
     }
 
     /**

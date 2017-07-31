@@ -36,7 +36,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <td>{{ utilisateur.isAdministrateur }}</td>
             <td>
                 <a href="#">
-                    <i class="material-icons" data-href="{{ path('utilisateurs_delete', {'id': utilisateur.id})}}">delete</i>
+                    <i class="material-icons deleteIcon" data-href="{{ path('utilisateurs_delete', {'id': utilisateur.id})}}">delete</i>
                 </a>
             </td>
         </tr>
@@ -81,7 +81,7 @@ You should have received a copy of the GNU Affero General Public License along w
             renderModal('user', url, refreshTable);
         });
 
-        $('.material-icons').click(function () {
+        $('.deleteIcon').click(function () {
             var url = $(this).data("href");
             deleteUser(url);
         })

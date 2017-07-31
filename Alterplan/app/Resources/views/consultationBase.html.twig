@@ -17,8 +17,7 @@ You should have received a copy of the GNU Affero General Public License along w
                 {# sert à afficher le form de recherche #}
                 {% block searchPanel %} {% endblock %}
                 <div class="card-action right-align">
-                    <a class="waves-effect waves-light btn">Rechercher</a>
-                    <a class="waves-effect waves-light btn red lighten-3">Effacer les critères</a>
+                    {% block search_action_buttons %} {% endblock %}
                 </div>
             </div>
         </div>
