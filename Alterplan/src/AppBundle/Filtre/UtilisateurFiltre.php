@@ -17,26 +17,33 @@ You should have received a copy of the GNU Affero General Public License along w
 
 namespace AppBundle\Filtre;
 
-
+/**
+ * Class UtilisateurFiltre représente les critères de filtre sur les utilisateurs.
+ * @package AppBundle\Filtre
+ */
 class UtilisateurFiltre
 {
     /**
      * @var string
+     * Filtre sur le nom
      */
     private $nom;
 
     /**
      * @var string
+     * Filtre sur le prénom
      */
     private $prenom;
 
     /**
      * @var string
+     * Filtre sur le login
      */
     private $identifiant;
 
     /**
      * @var bool
+     * Filtre sur le type d'utilisateur
      */
     private $isAdministrateur;
 

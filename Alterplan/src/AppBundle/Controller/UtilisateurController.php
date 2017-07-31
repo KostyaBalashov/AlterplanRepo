@@ -33,9 +33,13 @@ class UtilisateurController extends Controller
      */
     public function indexAction(Request $request)
     {
+        //Récupération du repository
         $repo = $this->getDoctrine()->getRepository(Utilisateur::class);
 
+        //Création de l'objet filtre
         $filtre = new  UtilisateurFiltre();
+
+        //Création du formulaire de recherche
         $form = $this->createForm(UtilisateurFiltreType::class, $filtre, array(
             'attr' => array('id' => 'user_search'),
             'action' => $this->generateUrl('utilisateurs_index'),
@@ -44,33 +48,35 @@ class UtilisateurController extends Controller
 
         $utilisateurs = null;
 
+        //Le formulaire écoute les requêtes (pour le submit)
         $form->handleRequest($request);
 
+        //Si le formulaire est sousmis
         if ($form->isSubmitted()){
+            //On recherche les utilisateurs avec les critères de filtre
             $utilisateurs = $repo->search($filtre);
 
-            //On retourne que le tableau des utilisateurs.
+            //Réponse à la recherche
             return $this->render(':utilisateurs:table.html.twig', array(
                 'utilisateurs' => $utilisateurs,
             ));
         }
 
+        //Dans tous les autres cas
         //On charge tous les utilisateurs
         $utilisateurs = $repo->search();
 
-        //Si c'est un get
         if ($request->getMethod() == 'GET'){
-
-            //Si c'est de l'ajax
             if ($request->isXmlHttpRequest()){
-
-                //On retourne que le tableau des utilisateurs.
+                //La réponse au GET en ajax
+                //survient après la création ou la modification de l'utilisateur
                 return $this->render(':utilisateurs:table.html.twig', array(
                     'utilisateurs' => $utilisateurs,
                 ));
             }
         }
 
+        //La réponse au GET normal
         return $this->render('utilisateurs/index.html.twig', array(
             'utilisateurs' => $utilisateurs,
             'formSearch' => $form->createView()

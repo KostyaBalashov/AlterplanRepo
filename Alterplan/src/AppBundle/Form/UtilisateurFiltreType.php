@@ -24,6 +24,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class UtilisateurFiltreType gère la construction du formulaire de recherche.
+ * @package AppBundle\Form
+ */
 class UtilisateurFiltreType extends AbstractType
 {
     /**

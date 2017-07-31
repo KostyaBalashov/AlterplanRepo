@@ -28,12 +28,17 @@
 {% block searchJS %}
     <script type="text/javascript">
         $(document).ready(function () {
+            //Récupération du formulaire de recherche
             var frm = $('#user_search');
+
+            //Abonnement à l'événement submit du formulaire
             frm.submit(function (event) {
                 showLoader();
                 event.preventDefault();
+
                 var url = frm.attr('action');
                 $.post(url, frm.serialize(), function (data) {
+                    //En cas de succès on mets à jour le tabeau
                     var userTableDiv = $('#user_table');
                     userTableDiv.empty();
                     userTableDiv.html(data);
