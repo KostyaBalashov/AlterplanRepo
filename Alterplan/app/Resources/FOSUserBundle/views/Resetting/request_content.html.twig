@@ -5,11 +5,11 @@
     <div class="z-depth-1 grey lighten-4 row" id="request_panel">
         <form action="{{ path('fos_user_resetting_send_email') }}" method="POST" class="fos_user_resetting_request">
             <div>
-                <label id="texte" for="username">Veuillez entrer votre nom d'utilisateur. Un email sera envoyé à l'adresse lié au compte pour réinitialiser le mot de passe</label>
+                <label id="texte" for="username">Veuillez entrer votre adresse mail. Un email vous sera envoyé pour réinitialiser le mot de passe</label>
                 <input type="text" id="username" name="username" required="required" />
             </div>
             <div>
-                <input type="submit" value="Valider " class=" col s12 btn btn-large waves-effect indigo" />
+                <button type="submit" class=" col s12 btn btn-large waves-effect indigo">Valider</button>
             </div>
         </form>
     </div>
