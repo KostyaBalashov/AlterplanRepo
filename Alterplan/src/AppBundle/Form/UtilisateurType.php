@@ -9,9 +9,17 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UtilisateurType extends AbstractType
 {
+    private $tokenStorage;
+
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,7 +29,10 @@ class UtilisateurType extends AbstractType
             ->add('prenom', TextType::class)
             ->add('username', TextType::class)
             ->add('plainPassword', PasswordType::class)
-            ->add('email', EmailType::class);
+            ->add('email', EmailType::class)
+            ->add('isAdministrateur', CheckboxType::class, array(
+                'required' => false
+            ));
     }
 
     /**
@@ -41,6 +52,4 @@ class UtilisateurType extends AbstractType
     {
         return 'appbundle_utilisateur';
     }
-
-
 }

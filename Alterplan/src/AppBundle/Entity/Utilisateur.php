@@ -48,7 +48,7 @@ class Utilisateur extends User
     {
         parent::setEnabled(true);
         parent::setRoles(array('ROLE_USER'));
-        $this->setIsAdministrateur(true);
+        $this->setIsAdministrateur(false);
     }
 
     /**

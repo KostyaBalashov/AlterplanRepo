@@ -1,18 +1,32 @@
 <h4>{{ titre }}</h4>
 {{ form_start(form) }}
-    {{ form_row(form.nom, {'label':'Nom'}) }}
-    {{ form_row(form.prenom, {'label':'Prénom'}) }}
-    {{ form_row(form.username, {'label':'Login'}) }}
-    {{ form_row(form.email, {'label':'Email'}) }}
-    {{ form_row(form.plainPassword, {'label':'Mot de passe'} )}}
-    <div class="row">
-        <label for="appbundle_utilisateur_isAdministrateur" class="required col s6">Administrateur</label>
-        <input type="checkbox" id="appbundle_utilisateur_isAdministrateur" name="appbundle_utilisateur[isAdministrateur]" class="col s6">
+    <div class="row valign-wrapper">
+        {{ form_label(form.nom, 'Nom', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.nom) }}
     </div>
-{#
-    {{ form_row(form.isAdministrateur, {'label':'Administrateur'}) }}
-    {{ form_widget(form) }}
-#}
-
+    <div class="row valign-wrapper">
+        {{ form_label(form.prenom, 'Prénom', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.prenom) }}
+    </div>
+    <div class="row valign-wrapper">
+        {{ form_label(form.username, 'Identifiant', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.username) }}
+    </div>
+    <div class="row valign-wrapper">
+        {{ form_label(form.email, 'Email', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.email) }}
+    </div>
+    <div class="row valign-wrapper">
+        {{ form_label(form.plainPassword, 'Mot de passe', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.plainPassword) }}
+    </div>
+    <div class="row valign-wrapper">
+        <label class="col s2" for="check_password">Confirmation mot de passe</label>
+        <input type="password" id="check_password" required>
+    </div>
+    <div class="row valign-wrapper">
+        {{ form_label(form.isAdministrateur, 'Administrateur', {'label_attr':{'class':'col s2'}}) }}
+        {{ form_widget(form.isAdministrateur) }}
+    </div>
 {{ form_end(form) }}
 

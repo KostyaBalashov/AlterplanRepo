@@ -12,7 +12,7 @@
 /*
 * Affiche un formulaire dans une fenêtre modale
 * */
-function renderModal(idModalForm,controllerUrl, postSubmitCallback) {
+function renderModal(idModalForm,controllerUrl,postSubmitCallback, customValidation) {
     var modalSelector ="[data-target='"+idModalForm+"']";
     var formSelector = '#'+idModalForm;
 
@@ -33,34 +33,15 @@ function renderModal(idModalForm,controllerUrl, postSubmitCallback) {
 
                 //abonnement au submit du form
                 frm.submit(function (event) {
-
-                    //interception du comportement par défaut
                     event.preventDefault();
-                    showLoader();
 
-                    //Récupération de l'url pour post
-                    var action = frm.attr('action');
-
-                    //post en ajax des données
-                    $.post(action, frm.serialize()).done(function (data) {
-                        //si le post réussit
-                        //fermeture de la modale
-                        $(modalSelector).modal('close');
-
-                        //appelle de la méthode postSubmit
-                        if (postSubmitCallback !== undefined){
-                            postSubmitCallback();
+                    if (customValidation !== undefined){
+                        if (!customValidation()){
+                            return false;
                         }
+                    }
 
-                        //affichage du message retourné par le controller
-                        showToast(data);
-
-                    }).fail(function () {
-                        //en cas d'échec affichage du msg d'erreur
-                        showToast('Erreur d\'enregistrement', 'error');
-                    }).always(function () {
-                        dismissLoader();
-                    });
+                    postForm(frm, postSubmitCallback, modalSelector);
                 });
             }
         });
@@ -73,7 +54,7 @@ function renderModal(idModalForm,controllerUrl, postSubmitCallback) {
 function showToast(content, msgType) {
     var toastColor;
     if ('error' === msgType){
-        toastColor = 'light-red';
+        toastColor = 'red';
     }else {
         toastColor = 'light-blue';
     }
@@ -90,4 +71,48 @@ function showLoader() {
 function dismissLoader() {
     $(".preloader-background").fadeOut('slow');
     $(".preloader-wrapper").fadeOut('slow');
+}
+
+function postForm(form, postSubmitCallback, modalSelector) {
+
+    showLoader();
+
+    //Récupération de l'url pour post
+    var action = form.attr('action');
+
+    //post en ajax des données
+    $.post(action, form.serialize()).done(function (data) {
+        //si le post réussit
+        //fermeture de la modale
+        $(modalSelector).modal('close');
+
+        //appelle de la méthode postSubmit
+        if (postSubmitCallback !== undefined){
+            postSubmitCallback();
+        }
+
+        //affichage du message retourné par le controller
+        showToast(data);
+
+    }).fail(function () {
+        //en cas d'échec affichage du msg d'erreur
+        showToast('Erreur d\'enregistrement', 'error');
+    }).always(function () {
+        dismissLoader();
+    });
+}
+
+function validatePassword() {
+    var firstPwd = $('#appbundle_utilisateur_plainPassword');
+    var secondPwd = $('#check_password');
+    var res = false;
+
+    if (firstPwd.val() !== secondPwd.val()){
+        secondPwd.get(0).setCustomValidity('Les deux mots de passes ne correspondent pas');
+    }else {
+        res = true;
+        secondPwd.get(0).setCustomValidity('');
+    }
+
+    return res;
 }

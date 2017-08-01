@@ -17,23 +17,30 @@ You should have received a copy of the GNU Affero General Public License along w
         <button id="btn_create_user" class="waves-effect waves-light btn">Nouveau</button>
     </div>
 </div>
-<table class="bordered highlight">
+
+<table class="bordered highlight centered">
     <thead>
     <tr>
-        <th>Identifiant</th>
-        <th>Nom</th>
-        <th>Prenom</th>
-        <th>Type</th>
+        <th class="col s2">Identifiant</th>
+        <th class="col s3">Nom</th>
+        <th class="col s3">Prenom</th>
+        <th class="col s3">Type</th>
         <th></th>
     </tr>
     </thead>
     <tbody>
     {% for utilisateur in utilisateurs %}
         <tr class="clickable-row" data-href="{{ path('utilisateurs_edit', { 'id': utilisateur.id }) }}">
-            <td>{{ utilisateur.username }}</a></td>
-            <td>{{ utilisateur.nom }}</td>
-            <td>{{ utilisateur.prenom }}</td>
-            <td>{{ utilisateur.isAdministrateur }}</td>
+            <td class="col s2" style="padding:15px 5px">{{ utilisateur.username }}</a></td>
+            <td class="col s3" style="padding:15px 5px">{{ utilisateur.nom }}</td>
+            <td class="col s3" style="padding:15px 5px">{{ utilisateur.prenom }}</td>
+            <td class="col s3" style="padding:15px 5px">
+                {% if utilisateur.isAdministrateur == true %}
+                    Administrateur
+                {% else %}
+                    Utilisateur autorisé
+                {% endif %}
+            </td>
             <td>
                 <a href="#">
                     <i class="material-icons deleteIcon" data-href="{{ path('utilisateurs_delete', {'id': utilisateur.id})}}">delete</i>
@@ -43,6 +50,7 @@ You should have received a copy of the GNU Affero General Public License along w
     {% endfor %}
     </tbody>
 </table>
+
 
 {# les actions spécifiques aux utilisateurs #}
 <script type="text/javascript">
@@ -78,7 +86,7 @@ You should have received a copy of the GNU Affero General Public License along w
             //Récupération de la ligne contenant l'url cible
             var url = $(this).closest('tr').data("href");
 
-            renderModal('user', url, refreshTable);
+            renderModal('user', url, refreshTable, validatePassword);
         });
 
         $('.deleteIcon').click(function () {
@@ -88,6 +96,6 @@ You should have received a copy of the GNU Affero General Public License along w
     });
 
     $('#btn_create_user').click(function () {
-        renderModal('user','/utilisateurs/new', refreshTable);
+        renderModal('user','/utilisateurs/new', refreshTable, validatePassword);
     })
 </script>
