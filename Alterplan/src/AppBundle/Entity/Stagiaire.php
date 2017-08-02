@@ -176,6 +176,16 @@ class Stagiaire
     private $historique;
 
     /**
+     * @var stagiaire
+     *
+     * @ORM\OneToMany(targetEntity="Stagiaire", mappedBy="stagiaire")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
+     * })
+     */
+    private $stagiaireParEntreprise;
+
+    /**
      * @return int
      */
     public function getCodeStagiaire()
@@ -587,6 +597,22 @@ class Stagiaire
     {
         $this->historique = $historique;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStagiaireParEntreprise()
+    {
+        return $this->stagiaireParEntreprise;
+    }
+
+    /**
+     * @param mixed $stagiaireParEntreprise
+     */
+    public function setStagiaireParEntreprise($stagiaireParEntreprise)
+    {
+        $this->stagiaireParEntreprise = $stagiaireParEntreprise;
     }
 
 }

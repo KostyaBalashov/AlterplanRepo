@@ -127,6 +127,17 @@ class StagiaireParEntreprise
     private $codeContactEni;
 
     /**
+     * @var stagiaire
+     *
+     * @ORM\ManyToOne(targetEntity="Stagiaire", inversedBy="stagiaireParEntreprise")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
+     * })
+     */
+    private $stagiaire;
+
+    //private $entreprise;
+    /**
      * @return int
      */
     public function getNumLien()
@@ -412,6 +423,22 @@ class StagiaireParEntreprise
     {
         $this->codeContactEni = $codeContactEni;
         return $this;
+    }
+
+    /**
+     * @return stagiaire
+     */
+    public function getStagiaire()
+    {
+        return $this->stagiaire;
+    }
+
+    /**
+     * @param stagiaire $stagiaire
+     */
+    public function setStagiaire($stagiaire)
+    {
+        $this->stagiaire = $stagiaire;
     }
 
 }
