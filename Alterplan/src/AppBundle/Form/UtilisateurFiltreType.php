@@ -46,12 +46,11 @@ class UtilisateurFiltreType extends AbstractType
             ))
             ->add('isAdministrateur', ChoiceType::class, array(
                 'required' => false,
-                'label' => 'Type d\'utilisateur',
                 'choices' => array(
-                    'Type d\'utilisateur' => null,
                     'Administrateur' => true,
                     'Utilisateur autorisé' => false
-                )
+                ),
+                'placeholder' => 'Type d\'utilisateur'
             ));
     }
 

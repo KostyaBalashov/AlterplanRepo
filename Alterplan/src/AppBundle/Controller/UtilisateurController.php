@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Utilisateur;
 use AppBundle\Filtre\UtilisateurFiltre;
 use AppBundle\Form\UtilisateurFiltreType;
+use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -102,7 +103,7 @@ class UtilisateurController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $utilisateur->setIsAdministrateur($form->getData()->getIsAdministrateur());
             $this->userManager->updateUser($utilisateur);
 
             $em = $this->getDoctrine()->getManager();
@@ -143,10 +144,18 @@ class UtilisateurController extends Controller
             return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été modifié.');
         }
 
+        $titre = 'Modification de l\'utilisateur ';
+
+        if ($this->getUser()->getId() !== $utilisateur->getId()){
+            $titre = $titre.$utilisateur->getUsername();
+        }else{
+            $titre = 'Mon compte';
+        }
+
         return $this->render(':utilisateurs:userForm.html.twig', array(
             'utilisateurs' => $utilisateur,
             'form' => $form->createView(),
-            'titre' => 'Modification d\'un utilisateur'
+            'titre' => $titre
         ));
     }
 

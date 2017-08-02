@@ -12,7 +12,7 @@
 /*
 * Affiche un formulaire dans une fenêtre modale
 * */
-function renderModal(idModalForm,controllerUrl,postSubmitCallback, customValidation) {
+function renderModal(idModalForm,controllerUrl,postSubmitCallback, onModalOpen) {
     var modalSelector ="[data-target='"+idModalForm+"']";
     var formSelector = '#'+idModalForm;
 
@@ -29,19 +29,20 @@ function renderModal(idModalForm,controllerUrl,postSubmitCallback, customValidat
 
             //à l'ouverture de la modale
             ready: function () {
+
+                if (onModalOpen !== undefined){
+                    onModalOpen();
+                }
+
                 var frm = $(formSelector);
 
                 //abonnement au submit du form
                 frm.submit(function (event) {
+
                     event.preventDefault();
 
-                    if (customValidation !== undefined){
-                        if (!customValidation()){
-                            return false;
-                        }
-                    }
-
                     postForm(frm, postSubmitCallback, modalSelector);
+
                 });
             }
         });
@@ -102,17 +103,16 @@ function postForm(form, postSubmitCallback, modalSelector) {
     });
 }
 
-function validatePassword() {
+function passwordCheck() {
     var firstPwd = $('#appbundle_utilisateur_plainPassword');
-    var secondPwd = $('#check_password');
-    var res = false;
+    var secondPwd = $('#appbundle_utilisateur_checkPassword');
 
-    if (firstPwd.val() !== secondPwd.val()){
-        secondPwd.get(0).setCustomValidity('Les deux mots de passes ne correspondent pas');
-    }else {
-        res = true;
-        secondPwd.get(0).setCustomValidity('');
-    }
+    secondPwd.change(function () {
+        if (firstPwd.val() !== secondPwd.val()){
+            secondPwd.get(0).setCustomValidity('Les deux mots de passes ne correspondent pas');
+        }else {
+            secondPwd.get(0).setCustomValidity('');
+        }
+    });
 
-    return res;
 }

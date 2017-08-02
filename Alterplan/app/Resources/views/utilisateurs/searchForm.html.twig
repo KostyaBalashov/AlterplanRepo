@@ -33,8 +33,14 @@ You should have received a copy of the GNU Affero General Public License along w
         <div class="col s6">
             <div class="row valign-wrapper">
                 <i class="material-icons col s1">group</i>
-                {{ form_widget(formSearch.isAdministrateur) }}
+                {{ form_widget(formSearch.isAdministrateur, {'attr': {'class':'col s11'}}) }}
             </div>
         </div>
     </div>
 {{ form_end(formSearch) }}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#appbundle_utilisateur_filtre_isAdministrateur').material_select();
+    })
+</script>

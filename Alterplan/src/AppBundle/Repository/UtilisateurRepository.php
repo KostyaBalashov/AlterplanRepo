@@ -44,15 +44,17 @@ class UtilisateurRepository extends EntityRepository
             //et dans ce cas on ajoute une clause Where à la requette
 
             if ($filter->getPrenom() !== null && trim($filter->getPrenom()) !== ''){
-                $query->andWhere('u.prenom LIKE :prenom')->setParameter('prenom', $filter->getPrenom());
+                $query->andWhere('u.prenom LIKE :prenom')->setParameter('prenom', $filter->getPrenom().'%');
             }
             if ($filter->getNom() !== null && trim($filter->getNom()) !== ''){
-                $query->andWhere('u.nom LIKE :nom')->setParameter('nom', $filter->getNom());
+                $query->andWhere('u.nom LIKE :nom')->setParameter('nom', $filter->getNom().'%');
             }
             if ($filter->getIdentifiant() != null && trim($filter->getIdentifiant()) !== ''){
-                $query->andWhere('u.username LIKE :login')->setParameter('login', $filter->getIdentifiant());
+                $query->andWhere('u.username LIKE :login')->setParameter('login', $filter->getIdentifiant().'%');
             }
-            //TODO : traiter le type d'utilisateur
+            if ($filter->isAdministrateur() !== null){
+                $query->andWhere('u.isAdministrateur = :adm')->setParameter('adm', $filter->isAdministrateur());
+            }
 
             //On retourne le résultat
             return $query->getQuery()->getResult();
