@@ -1,0 +1,65 @@
+{#
+This file is part of Alterplan.
+
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+
+
+{% extends 'consultationBase.html.twig' %}
+
+{% block title %} Formations {% endblock %}
+
+{% block searchPanel %}
+    {% include ':formations:searchForm.html.twig' %}
+{% endblock %}
+
+{% block search_action_buttons %}
+    <button type="submit" form="formation_search" class="waves-effect waves-light btn">Rechercher</button>
+    <button type="reset" form="formation_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+{% endblock %}
+
+{# affichage du tableau #}
+{% block resultRenderer %}
+    <div id="formation_table" class="col s12">
+        {% include ':formations:table.html.twig' %}
+    </div>
+{% endblock %}
+
+{# paramétrage de la modale #}
+{% block modal_id %}formation{% endblock %}
+{% block modal_action_buttons %}
+    <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+    <button type="submit" form="formation" class="modal-action waves-effect waves-green btn">Valider</button>
+{% endblock %}
+
+{% block searchJS %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Récupération du formulaire de recherche
+            var frm = $('#formation_search');
+
+            //Abonnement à l'événement submit du formulaire
+            frm.submit(function (event) {
+                showLoader();
+                event.preventDefault();
+
+                var url = frm.attr('action');
+                $.post(url, frm.serialize(), function (data) {
+                    //En cas de succès on mets à jour le tabeau
+                    var formationTableDiv = $('#formation_table');
+                    formationTableDiv.empty();
+                    formationTableDiv.html(data);
+                }).fail(function () {
+                    showToast('Erreur de recherche', 'error');
+                }).always(function () {
+                    dismissLoader();
+                })
+            });
+        })
+    </script>
+{% endblock %}

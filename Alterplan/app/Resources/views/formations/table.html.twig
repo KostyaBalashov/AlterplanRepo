@@ -1,0 +1,52 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+{# Les tableau des formations avec sa barre d'action #}
+<div class="row">
+    <div class="col s6">
+        <h5>Liste des formations ({{ formations|length }}) </h5>
+    </div>
+</div>
+
+<table class="bordered highlight centered">
+    <thead>
+    <tr>
+        <th class="col s2">Titre</th>
+        <th class="col s3">Code</th>
+        <th class="col s3">Lieu</th>
+        <th class="col s3">Durée en semaines</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for formation in formations %}
+        {#<tr class="clickable-row" data-href="{{ path('formations_edit', { 'codeFormation': formation.CodeFormation }) }}">#}
+            <td class="col s2" style="padding:15px 5px">{{ formation.libelleCourt }}</a></td>
+            <td class="col s3" style="padding:15px 5px">{{ formation.codeFormation }}</td>
+            <td class="col s3" style="padding:15px 5px">{{ formation.Lieu }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{# les actions spécifiques aux utilisateurs #}
+<script type="text/javascript">
+
+
+    $(document).ready(function() {
+        //abonnement au click de la ligne (toute la ligne sauf la dernière colonne)
+        $('.clickable-row td:not(:last-child)').click(function() {
+            //Récupération de la ligne contenant l'url cible
+            var url = $(this).closest('tr').data("href");
+
+            renderModal('formation', url, refreshTable, validatePassword);
+        });
+    });
+</script>

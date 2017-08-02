@@ -3,12 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * Formation
  *
  * @ORM\Table(name="Formation")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\FormationRepository")
  */
 class Formation
 {
@@ -126,12 +128,22 @@ class Formation
      */
     private $typeFormation;
 
+
+    // ...
+
     /**
-     * @var integer
+     * Many Users have One Address.
+     * @ManyToOne(targetEntity="Address")
+     * @JoinColumn(name="address_id", referencedColumnName="id")
+     */
+    /**
+     * @var Lieu
      *
      * @ORM\Column(name="CodeLieu", type="integer", nullable=true)
+     * @ManyToOne(targetEntity="Lieu")
+     * @JoinColumn(name="codeLieu", referencedColumnName="codeLieu")
      */
-    private $codeLieu;
+    private $lieu;
 
     /**
      * @return string
@@ -422,20 +434,20 @@ class Formation
     }
 
     /**
-     * @return int
+     * @return Lieu
      */
-    public function getCodeLieu()
+    public function getLieu()
     {
-        return $this->codeLieu;
+        return $this->lieu;
     }
 
     /**
-     * @param int $codeLieu
+     * @param Lieu $lieu
      * @return Formation
      */
-    public function setCodeLieu($codeLieu)
+    public function setLieu($lieu)
     {
-        $this->codeLieu = $codeLieu;
+        $this->lieu = $lieu;
         return $this;
     }
 }
