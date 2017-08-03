@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </div>
 </div>
 
-<table id="table_promotions" class="bordered highlight centered">
+<table class="bordered highlight centered">
     <thead>
     <tr>
         <th class="col s2">Titre</th>
@@ -31,13 +31,13 @@ You should have received a copy of the GNU Affero General Public License along w
         <tr>
             <td class="col s2" style="padding:15px 5px">{{ promotion.libelle }}</a></td>
             <td class="col s2" style="padding:15px 5px">{% if promotion.formation %}{{ promotion.formation.libelleCourt }}{% endif %}</td>
-            <td class="col s3" style="padding:15px 5px">{% if promotion.debut %}{{ promotion.debut|date('d-m-Y ') }}{% endif %}</td>
+            <td class="col s3" style="padding:15px 5px">{% if promotion.debut %}{{ promotion.debut|date('d-m-Y') }}{% endif %}</td>
             <td class="col s3" style="padding:15px 5px">{% if promotion.fin %}{{ promotion.fin|date('d-m-Y') }}{% endif %}</td>
             <td class="col s2" style="padding:15px 5px">
                 <input id="{{ promotion.codePromotion }}"
                        name="checkbox_{{ promotion.codePromotion }}"
                        value="{{ promotion.active }}" type="checkbox"
-                {% if promotion.active %}checked{% endif %}>
+                {% if promotion.active %}checked{% endif %} onchange="activeChanged(event)">
                 <label for="{{ promotion.codePromotion }}"></label>
             </td>
         </tr>
@@ -48,19 +48,37 @@ You should have received a copy of the GNU Affero General Public License along w
 {% set jsonPromos = promotions|json_encode()|raw %}
 
 <script type="text/javascript">
+
+    //Objet capturant les changements sur les promotions
+    var changes = {};
+
+    //Réagit au check/uncheck des checkbox
+    function activeChanged(event) {
+        //Si la promotion n'est pas dans la liste des changements
+        if (!(event.target.id in changes)){
+            //On l'ajoute
+            changes[event.target.id] = event.target.checked;
+        }else {
+            //Si non ça veut dire qu'on revient à la valeur d'origine donc on supprime de la liste des changements
+            delete changes[event.target.id];
+        }
+    }
+
+    //Quand on clique sur "Enregistrer"
     $('#btn_save_promotions').click(function () {
         showLoader();
-        var url ="{{ path('promotions_save') }}";
-        var serialised = new Array();
-
-        {% for promotion in promotions %}
-            serialised.push({{ promotion|json_encode() }});
-        {% endfor %}
-
-        $.post(url, serialised).done(function (data) {
-            showToast(data);
+        //On récupère les changements
+        var donnees = {'changedPromotions' : changes};
+        var url = "{{ path('promotions_save') }}";
+        //On post les changements
+        $.post(url, donnees).done(function (data) {
+            showToast('Enregistrement effectué');
+            //En cas de succès on mets à jour le tabeau
+            var promotionsTableDiv = $('#promotion_table');
+            promotionsTableDiv.empty();
+            promotionsTableDiv.html(data);
         }).fail(function () {
-            showToast('Erreur d\'enregistrement')
+            showToast('Erreur d\'enregistrement', 'error')
         }).always(function () {
             dismissLoader();
         })

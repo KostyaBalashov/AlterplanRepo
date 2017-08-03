@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Promotion controller.
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PromotionController extends Controller
 {
     /**
-     * Lists all promotion entities.
+     * Liste les promotions recherchées.
      *
      * @Route("/", name="promotions_index")
      * @Method({"GET", "POST"})
@@ -69,12 +70,33 @@ class PromotionController extends Controller
     }
 
     /**
-     * @param Request $request
+     * Enregistre les promotions
+     *
+     * @param Request $request la requête
+     * @return Response tableau des promotions
      *
      * @Route("/save", name="promotions_save")
      * @Method("POST")
      */
     public function savePromotions(Request $request){
-        $promotions = null;
+        //On récupère les changements envoyés
+        $promos = $request->get('changedPromotions');
+        $repo = $this->getDoctrine()->getRepository(Promotion::class);
+
+        //Pour chaque changement
+        foreach ($promos as $code => $active){
+            //On update la ligne en table
+            $repo->updateActive($code, $active);
+        }
+        //Update provoque une désynchro entre les entités dans EntityManager et ce qu'il y a en base
+        $repo->clear();
+
+        //On récupère les propres entités
+        $promos = $repo->search();
+
+        //On retourne le tableau des promotions
+        return $this->render(':promotions:table.html.twig', array(
+            'promotions' => $promos
+        ));
     }
 }

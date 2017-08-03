@@ -21,8 +21,18 @@ namespace AppBundle\Repository;
 use AppBundle\Filtre\PromotionFiltre;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Class PromotionRepository repository pour les Promotions
+ * @package AppBundle\Repository
+ */
 class PromotionRepository extends EntityRepository
 {
+    /**
+     * Recherche les promotions
+     *
+     * @param PromotionFiltre|null $filtre les critères de recherche (null par défaut)
+     * @return array liste des promotions correspondants au filtre (toutes si filtre est null).
+     */
     public function search(PromotionFiltre $filtre = null){
         if ($filtre !== null){
             $qb = $this->createQueryBuilder('p');
@@ -35,4 +45,19 @@ class PromotionRepository extends EntityRepository
         }
     }
 
+    /**
+     * Met l'état d'une promotion
+     *
+     * @param $codePromotion string le code de la promotion
+     * @param $activeValue boolean état de la promotion (active ou non)
+     */
+    public function updateActive($codePromotion, $activeValue){
+        $query = $this->createQueryBuilder('p');
+        $query->update()
+            ->set('p.isActive', $activeValue)
+            ->where('p.codePromotion = :code')
+            ->setParameter('code', $codePromotion);
+
+        $query->getQuery()->execute();
+    }
 }
