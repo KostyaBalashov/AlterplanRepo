@@ -32,7 +32,7 @@ class FormationRepository extends EntityRepository
     public  function search(FormationFiltre $filter = null){
         //Si le filtre n'est pas null
         if ($filter !== null){
-            //On créé l'objet QueryBuilder
+            //On crée l'objet QueryBuilder
             //(doc: http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/query-builder.html)
             $query = $this->createQueryBuilder('u');
 
@@ -40,14 +40,14 @@ class FormationRepository extends EntityRepository
             //et dans ce cas on ajoute une clause Where à la requette
 
             if ($filter->getLibelleCourt() !== null && trim($filter->getLibelleCourt()) !== ''){
-                $query->andWhere('u.libelleCourt LIKE :libelleCourt')->setParameter('libelleCourt', $filter->getLibelleCourt());
+                $query->andWhere('u.libelleCourt LIKE :libelleCourt')->setParameter('libelleCourt','%'. $filter->getLibelleCourt().'%');
             }
             if ($filter->getCodeFormation() !== null && trim($filter->getCodeFormation()) !== ''){
-                $query->andWhere('u.codeFormation LIKE :codeFormation')->setParameter('codeFormation', $filter->getCodeFormation());
+                $query->andWhere('u.codeFormation LIKE :codeFormation')->setParameter('codeFormation','%'.  $filter->getCodeFormation().'%');
             }
-            if ($filter->getLieu() != null && trim($filter->getLieu()) !== ''){
-                $query->andWhere('u.codeLieu LIKE :codeLieu')->setParameter('codeLieu', $filter->getLieu()->getCodeLieu());
-            }
+            if ($filter->getLieu() !== null) {
+                $query->andWhere('u.lieu = :lieu')->setParameter('lieu','%'.  $filter->getLieu().'%');
+            };
 
             //On retourne le résultat
             return $query->getQuery()->getResult();

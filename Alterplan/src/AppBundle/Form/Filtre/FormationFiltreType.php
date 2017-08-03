@@ -15,13 +15,14 @@ You should have received a copy of the GNU Affero General Public License along w
 */
 
 
-namespace AppBundle\Form;
+namespace AppBundle\Form\Filtre;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Entity\Lieu;
 
 class FormationFiltreType  extends AbstractType
 {
@@ -37,16 +38,12 @@ class FormationFiltreType  extends AbstractType
             ->add('codeFormation', TextType::class, array(
                 'required' => false
             ))
-            ->add('lieu', ChoiceType::class, array(
+            ->add('lieu',  EntityType::class, array(
+                'class' => 'AppBundle:Lieu',
+                'placeholder' => 'Lieu',
                 'required' => false,
-                'label' => 'Lieu',
-//               A voir comment faire pour mettre les données de la bdd
-//                'choices' => array(
-//                    'Type d\'utilisateur' => null,
-//                    'Administrateur' => true,
-//                    'Utilisateur autorisé' => false
-//                )
-            ));
+                'choice_label' => 'libelle')
+            );
     }
 
     /**

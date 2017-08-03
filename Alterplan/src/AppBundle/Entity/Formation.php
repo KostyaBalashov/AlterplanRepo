@@ -132,16 +132,12 @@ class Formation
     // ...
 
     /**
-     * Many Users have One Address.
-     * @ManyToOne(targetEntity="Address")
-     * @JoinColumn(name="address_id", referencedColumnName="id")
-     */
-    /**
      * @var Lieu
      *
-     * @ORM\Column(name="CodeLieu", type="integer", nullable=true)
-     * @ManyToOne(targetEntity="Lieu")
-     * @JoinColumn(name="codeLieu", referencedColumnName="codeLieu")
+     * @ManyToOne(targetEntity="Lieu", inversedBy="Formation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeLieu", referencedColumnName="CodeLieu", nullable=true)
+     * })
      */
     private $lieu;
 

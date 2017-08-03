@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License along w
 
 namespace AppBundle\Filtre;
 
+use AppBundle\Entity\Lieu;
+
 /**
  * Class UtilisateurFiltre représente les critères de filtre sur les utilisateurs.
  * @package AppBundle\Filtre
@@ -36,7 +38,7 @@ class FormationFiltre
     private $codeFormation;
 
     /**
-     * @var lieu
+     * @var Lieu
      * Filtre sur le lieu
      */
     private $lieu;

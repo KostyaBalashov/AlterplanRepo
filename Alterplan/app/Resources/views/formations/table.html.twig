@@ -27,10 +27,11 @@ You should have received a copy of the GNU Affero General Public License along w
     </thead>
     <tbody>
     {% for formation in formations %}
-        {#<tr class="clickable-row" data-href="{{ path('formations_edit', { 'codeFormation': formation.CodeFormation }) }}">#}
+        {#<tr class="clickable-row" data-href="{{ path('formations_edit', { 'formation': formation }) }}">#}
             <td class="col s2" style="padding:15px 5px">{{ formation.libelleCourt }}</a></td>
             <td class="col s3" style="padding:15px 5px">{{ formation.codeFormation }}</td>
-            <td class="col s3" style="padding:15px 5px">{{ formation.Lieu }}</td>
+            <td class="col s3" style="padding:15px 5px">{{ formation.Lieu ? formation.lieu.libelle }}</td>
+            <td class="col s3" style="padding:15px 5px">{{ formation.dureeEnSemaines }}</td>
         </tr>
     {% endfor %}
     </tbody>

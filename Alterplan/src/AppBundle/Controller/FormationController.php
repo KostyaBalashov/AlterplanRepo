@@ -20,7 +20,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Formation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Filtre\FormationFiltre;
-use AppBundle\Form\FormationFiltreType;
+use AppBundle\Form\Filtre\FormationFiltreType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;

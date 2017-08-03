@@ -12,13 +12,13 @@ You should have received a copy of the GNU Affero General Public License along w
 <div class="row">
     <div class="col s6">
         <div class="row valign-wrapper">
-            <i class="material-icons col s1">person</i>
+            <i class="material-icons col s1">title</i>
             {{ form_widget(formSearch.libelleCourt, {'attr':{'placeholder':'Titre'}}) }}
         </div>
     </div>
     <div class="col s6">
         <div class="row valign-wrapper">
-            <i class="material-icons col s1">person</i>
+            <i class="material-icons col s1">title</i>
             {{ form_widget(formSearch.codeFormation, {'attr':{'placeholder':'Code'}}) }}
         </div>
     </div>
@@ -26,9 +26,15 @@ You should have received a copy of the GNU Affero General Public License along w
 <div class="row">
     <div class="col s6">
         <div class="row valign-wrapper">
-            <i class="material-icons col s1">person</i>
+            <i class="material-icons col s1">place</i>
             {{ form_widget(formSearch.lieu, {'attr':{'placeholder':'Lieu'}}) }}
         </div>
     </div>
 </div>
 {{ form_end(formSearch) }}
+
+<script>
+    $(document).ready(function () {
+        $('#appbundle_formation_filtre_lieu').material_select();
+    })
+</script>
