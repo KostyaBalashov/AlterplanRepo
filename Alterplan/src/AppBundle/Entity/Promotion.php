@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Promotion
  *
  * @ORM\Table(name="Promotion")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PromotionRepository")
  */
 class Promotion
 {
@@ -93,6 +93,30 @@ class Promotion
      * })
      */
     private $formation;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="IsActive", type="boolean", nullable=false)
+     */
+    private $isActive = true;
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     * @return Promotion
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
 
     /**
      * @return string

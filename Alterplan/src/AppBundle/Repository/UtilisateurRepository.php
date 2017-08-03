@@ -33,7 +33,7 @@ class UtilisateurRepository extends EntityRepository
      * @param UtilisateurFiltre|null $filter les critères de filtre. Par défaut vaut null.
      * @return array liste des utilisateurs correspondants aux critères de filtre
      */
-    public  function search(UtilisateurFiltre $filter = null){
+    public function search(UtilisateurFiltre $filter = null){
         //Si le filtre n'est pas null
         if ($filter !== null){
             //On crée l'objet QueryBuilder

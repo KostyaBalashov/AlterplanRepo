@@ -1,0 +1,68 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+<div class="row">
+    <div class="col s6">
+        <h5>Liste des promotions ({{ promotions|length }}) </h5>
+    </div>
+    <div class="col s6 right-align" style="margin-top: 0.82rem">
+        <button id="btn_save_promotions" class="waves-effect waves-light btn">Enregistrer</button>
+    </div>
+</div>
+
+<table id="table_promotions" class="bordered highlight centered">
+    <thead>
+    <tr>
+        <th class="col s2">Titre</th>
+        <th class="col s2">Formation</th>
+        <th class="col s3">Date début</th>
+        <th class="col s3">Date fin</th>
+        <th class="col s2" style="padding-right:25px">Active</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for promotion in promotions %}
+        <tr>
+            <td class="col s2" style="padding:15px 5px">{{ promotion.libelle }}</a></td>
+            <td class="col s2" style="padding:15px 5px">{% if promotion.formation %}{{ promotion.formation.libelleCourt }}{% endif %}</td>
+            <td class="col s3" style="padding:15px 5px">{% if promotion.debut %}{{ promotion.debut|date('d-m-Y ') }}{% endif %}</td>
+            <td class="col s3" style="padding:15px 5px">{% if promotion.fin %}{{ promotion.fin|date('d-m-Y') }}{% endif %}</td>
+            <td class="col s2" style="padding:15px 5px">
+                <input id="{{ promotion.codePromotion }}"
+                       name="checkbox_{{ promotion.codePromotion }}"
+                       value="{{ promotion.active }}" type="checkbox"
+                {% if promotion.active %}checked{% endif %}>
+                <label for="{{ promotion.codePromotion }}"></label>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% set jsonPromos = promotions|json_encode()|raw %}
+
+<script type="text/javascript">
+    $('#btn_save_promotions').click(function () {
+        showLoader();
+        var url ="{{ path('promotions_save') }}";
+        var serialised = new Array();
+
+        {% for promotion in promotions %}
+            serialised.push({{ promotion|json_encode() }});
+        {% endfor %}
+
+        $.post(url, serialised).done(function (data) {
+            showToast(data);
+        }).fail(function () {
+            showToast('Erreur d\'enregistrement')
+        }).always(function () {
+            dismissLoader();
+        })
+    });
+</script>

@@ -1,0 +1,17 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+{{ form_start(formSearch, {'attr': {'id':'promotion_search', 'method': 'POST'}}) }}
+    <div class="row center-align">
+        <div class="valign-wrapper col s6 offset-s3">
+            <i class="material-icons col s1">title</i>
+            {{ form_widget(formSearch.titre, {'attr':{'placeholder':'Titre'}}) }}
+        </div>
+    </div>
+{{ form_end(formSearch) }}

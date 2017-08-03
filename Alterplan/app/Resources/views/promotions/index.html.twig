@@ -1,0 +1,45 @@
+{% extends 'consultationBase.html.twig' %}
+
+{% block title %} Promotions {% endblock %}
+
+{% block searchPanel %}
+    {% include ':promotions:searchForm.html.twig' %}
+{% endblock %}
+
+{% block search_action_buttons %}
+    <button type="submit" form="promotion_search" class="waves-effect waves-light btn">Rechercher</button>
+    <button type="reset" form="promotion_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+{% endblock %}
+
+{% block resultRenderer %}
+    <div id="promotion_table" class="col s12">
+        {% include 'promotions/table.html.twig' %}
+    </div>
+{% endblock %}
+
+{% block searchJS %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Récupération du formulaire de recherche
+            var frm = $('#promotion_search');
+
+            //Abonnement à l'événement submit du formulaire
+            frm.submit(function (event) {
+                showLoader();
+                event.preventDefault();
+
+                var url = frm.attr('action');
+                $.post(url, frm.serialize(), function (data) {
+                    //En cas de succès on mets à jour le tabeau
+                    var userTableDiv = $('#promotion_table');
+                    userTableDiv.empty();
+                    userTableDiv.html(data);
+                }).fail(function () {
+                    showToast('Erreur de recherche', 'error');
+                }).always(function () {
+                    dismissLoader();
+                })
+            });
+        })
+    </script>
+{% endblock %}

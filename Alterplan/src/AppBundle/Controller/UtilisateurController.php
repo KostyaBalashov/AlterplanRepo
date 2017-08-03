@@ -42,9 +42,7 @@ class UtilisateurController extends Controller
 
         //Création du formulaire de recherche
         $form = $this->createForm(UtilisateurFiltreType::class, $filtre, array(
-            'attr' => array('id' => 'user_search'),
-            'action' => $this->generateUrl('utilisateurs_index'),
-            'method' => 'POST'
+            'action' => $this->generateUrl('utilisateurs_index')
         ));
 
         $utilisateurs = null;
