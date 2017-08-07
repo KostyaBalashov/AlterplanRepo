@@ -28,13 +28,13 @@ You should have received a copy of the GNU Affero General Public License along w
         <tr>
 
             <td>
-                <a href="{{ path('stagiaires_show', { 'codeStagiaire': stagiaireEntreprise.codeStagiaire }) }}">{{ stagiaireEntreprise.stagiaire.nom }}</a>
+                <a href="{{ path('stagiaires_show', { 'codeStagiaire': stagiaireEntreprise.stagiaire.codeStagiaire }) }}">{{ stagiaireEntreprise.stagiaire.nom }} {{ stagiaireEntreprise.stagiaire.prenom }}</a>
             </td>
             <td>
-                {{ stagiaireEntreprise.codeStagiaire }}
+                {{ stagiaireEntreprise.stagiaire.email }}
             </td>
             <td>
-                {{ stagiaireEntreprise.codeEntreprise }}
+                {{ stagiaireEntreprise.entreprise.raisonsociale }}
             </td>
             <td>
                 2

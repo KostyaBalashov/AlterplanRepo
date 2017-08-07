@@ -155,6 +155,16 @@ class Entreprise
     private $codeOrganismeFavoris;
 
     /**
+     * @var stagiaireParEntreprise
+     *
+     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="entreprise")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="codeEntreprise", referencedColumnName="codeEntreprise")
+     * })
+     */
+    private $stagiaireParEntreprise;
+
+    /**
      * @return int
      */
     public function getCodeEntreprise()
@@ -513,5 +523,22 @@ class Entreprise
         $this->codeOrganismeFavoris = $codeOrganismeFavoris;
         return $this;
     }
+
+    /**
+     * @return stagiaire
+     */
+    public function getStagiaireParEntreprise()
+    {
+        return $this->stagiaireParEntreprise;
+    }
+
+    /**
+     * @param stagiaire $stagiaireParEntreprise
+     */
+    public function setStagiaireParEntreprise($stagiaireParEntreprise)
+    {
+        $this->stagiaireParEntreprise = $stagiaireParEntreprise;
+    }
+
 }
 

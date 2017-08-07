@@ -21,12 +21,6 @@ class StagiaireParEntreprise
      */
     private $numLien;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="CodeStagiaire", type="integer", nullable=false)
-     */
-    private $codeStagiaire;
 
     /**
      * @var integer
@@ -136,7 +130,15 @@ class StagiaireParEntreprise
      */
     private $stagiaire;
 
-    //private $entreprise;
+    /**
+     * @var entreprises
+     *
+     * @ORM\ManyToOne(targetEntity="Entreprise", inversedBy="stagiaireParEntreprise")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeEntreprise", referencedColumnName="CodeEntreprise")
+     * })
+     */
+    private $entreprise;
     /**
      * @return int
      */
@@ -439,6 +441,22 @@ class StagiaireParEntreprise
     public function setStagiaire($stagiaire)
     {
         $this->stagiaire = $stagiaire;
+    }
+
+    /**
+     * @return stagiaire
+     */
+    public function getEntreprise()
+    {
+        return $this->entreprise;
+    }
+
+    /**
+     * @param stagiaire $entreprise
+     */
+    public function setEntreprise($entreprise)
+    {
+        $this->entreprise = $entreprise;
     }
 
 }

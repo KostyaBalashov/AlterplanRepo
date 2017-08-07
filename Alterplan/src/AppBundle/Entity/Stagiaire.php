@@ -176,9 +176,9 @@ class Stagiaire
     private $historique;
 
     /**
-     * @var stagiaire
+     * @var stagiaireParEntreprise
      *
-     * @ORM\OneToMany(targetEntity="Stagiaire", mappedBy="stagiaire")
+     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="stagiaire")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
      * })
