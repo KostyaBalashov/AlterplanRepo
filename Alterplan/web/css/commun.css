@@ -58,3 +58,7 @@ nav {
     right: 0;
     bottom: 0;
 }
+
+.over {
+    transform: scale(1.1, 1.1);
+}

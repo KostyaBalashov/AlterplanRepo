@@ -1,0 +1,153 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+{% extends '::navigableBase.html.twig' %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}" />
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col s3 card">
+            <div class="card-content">
+                <span class="card-title">Modules</span>
+            </div>
+        </div>
+
+        <div class="col s6 card">
+            <div class="card-content draggable-container centre">
+                <span class="card-title">Modules précédents le module <span id="selected-module-titre">[TITRE]</span></span>
+            </div>
+        </div>
+
+        <div class="col s3 card">
+            <div class="card-content draggable-container droite">
+                <span class="card-title">Modules disponibles</span>
+                {% for i in 0..10 %}
+                    <div id="module-a-placer-{{ i }}" class="flow-text valign-wrapper card-panel module">
+                        <span class="card-title">Module-{{ i }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block customJS %}
+    <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var drake = new dragula({
+                isContainer: function (el) {
+                    return el.classList.contains('draggable-container');
+                },
+                moves: function (el, source, handle, sibling) {
+                    if (source.classList.contains('droite')) {
+                        return el.classList.contains('module');
+                    } else if (source.classList.contains('centre')) {
+                        return el.classList.contains('groupe');
+                    } else if (source.classList.contains('groupe')) {
+                        return el.classList.contains('sous-groupe');
+                    } else if (source.classList.contains('sous-groupe')) {
+                        return el.classList.contains('module')
+                    }
+                },
+                accepts: function (el, target, source, sibling) {
+                    var ok = el.classList.contains('module');
+
+                    if (target.classList.contains('centre')) {
+                        ok |= el.classList.contains('groupe');
+                    } else if (target.classList.contains('groupe')) {
+                        ok |= el.classList.contains('sous-groupe');
+                    }
+
+                    return ok || sibling === null || !sibling.classList.contains('card-title');
+                },
+                revertOnSpill: false
+            });
+
+            drake.on('drop',function (el, target, source, sibling) {
+                if (el.classList.contains('module')
+                    && (target.classList.contains('centre')
+                        || target.classList.contains('groupe') || target.classList.contains('sous-groupe'))){
+                    appendModule(target, el);
+                }else if (el.classList.contains('sous-groupe')){
+
+                }else if (el.classList.contains('groupe')){
+
+                }
+            });
+        });
+
+        function appendModule(target, module) {
+            if (target.classList.contains('centre')){
+                var groupe = creatGroupe(module);
+                target.appendChild(groupe);
+            }else if (target.classList.contains('groupe')){
+                if (target.dataset.nbSousGroups < 2){
+                    appendSousGroupe(target, createSousGroupe(module));
+                }
+            }else if (target.classList.contains('sous-groupe')){
+                target.appendChild(module);
+            }
+        }
+
+        function appendSousGroupe(target, sousGroupe) {
+            if (target.classList.contains('groupe')){
+                target.appendChild(sousGroupe);
+            }
+        }
+
+        function creatGroupe(content) {
+            var groupe = document.createElement('div');
+            groupe.classList.add('col');
+            groupe.classList.add('s12');
+            groupe.classList.add('card');
+            groupe.classList.add('groupe');
+            groupe.classList.add('groupe');
+            groupe.classList.add('valign-wrapper');
+            groupe.classList.add('draggable-container');
+
+
+            var sousGroupe = content;
+
+            if (sousGroupe.classList.contains('module')){
+                sousGroupe = createSousGroupe(content);
+            }
+
+            sousGroupe.classList.add('col');
+            sousGroupe.classList.add('s12');
+            groupe.appendChild(sousGroupe);
+
+            groupe.dataset.nbSousGroups = groupe.dataset.nbSousGroups++;
+
+            var plus = document.createElement('i');
+            plus.classList.add('material-icons');
+            plus.classList.add('right');
+            plus.innerHTML = 'add_circle_outline';
+
+            groupe.appendChild(plus);
+
+            return groupe;
+        }
+
+        function createSousGroupe(module) {
+            var sousGroupe = document.createElement('div');
+            sousGroupe.classList.add('card');
+            sousGroupe.classList.add('sous-groupe');
+            sousGroupe.classList.add('draggable-container');
+
+            sousGroupe.appendChild(module);
+
+            return sousGroupe;
+        }
+    </script>
+{% endblock %}

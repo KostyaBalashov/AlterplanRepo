@@ -18,17 +18,16 @@ You should have received a copy of the GNU Affero General Public License along w
 <table class="bordered highlight centered">
     <thead>
     <tr>
-        <th class="col s2">Titre</th>
+        <th class="col s3">Titre</th>
         <th class="col s3">Code</th>
         <th class="col s3">Lieu</th>
         <th class="col s3">Durée en semaines</th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
     {% for formation in formations %}
-        {#<tr class="clickable-row" data-href="{{ path('formations_edit', { 'formation': formation }) }}">#}
-            <td class="col s2" style="padding:15px 5px">{{ formation.libelleCourt }}</a></td>
+        <tr class="clickable-row" data-href="{{ path('formations_edit', { 'codeFormation': formation.codeFormation }) }}">
+            <td class="col s3" style="padding:15px 5px">{{ formation.libelleCourt }}</td>
             <td class="col s3" style="padding:15px 5px">{{ formation.codeFormation }}</td>
             <td class="col s3" style="padding:15px 5px">{{ formation.Lieu ? formation.lieu.libelle }}</td>
             <td class="col s3" style="padding:15px 5px">{{ formation.dureeEnSemaines }}</td>
@@ -39,15 +38,10 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {# les actions spécifiques aux utilisateurs #}
 <script type="text/javascript">
-
-
     $(document).ready(function() {
         //abonnement au click de la ligne (toute la ligne sauf la dernière colonne)
-        $('.clickable-row td:not(:last-child)').click(function() {
-            //Récupération de la ligne contenant l'url cible
-            var url = $(this).closest('tr').data("href");
-
-            renderModal('formation', url, refreshTable, validatePassword);
+        $('.clickable-row').click(function() {
+            window.location.href = $(this).closest('tr').data("href");
         });
     });
 </script>
