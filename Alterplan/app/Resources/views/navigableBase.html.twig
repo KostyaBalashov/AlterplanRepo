@@ -27,3 +27,22 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $( document ).ready(function(){
+            $(".btn-collapse").sideNav();
+            $(".dropdown-button").dropdown({
+                constrainWidth: false,
+                belowOrigin: true,
+                gutter: 1
+            });
+            $('#mon_compte').click(function (event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                renderModal('user', url, undefined, passwordCheck);
+            });
+        })
+    </script>
+    {% block customJS %}{% endblock %}
+{% endblock %}

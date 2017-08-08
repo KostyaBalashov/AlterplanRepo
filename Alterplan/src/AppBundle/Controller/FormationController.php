@@ -81,6 +81,13 @@ class FormationController extends Controller
         ));
     }
 
-
-
+    /**
+     * @param Request $request
+     *
+     * @Route("/{codeFormation}", name="formations_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editFormation(Request $request, Formation $formation){
+        return $this->render(':ordreLogique:gestionOrdre.html.twig');
+    }
 }

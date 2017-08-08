@@ -25,18 +25,3 @@ You should have received a copy of the GNU Affero General Public License along w
         <a class="dropdown-button" href="#" data-activates="dropdown1">{{ app.user.nom }} {{ app.user.prenom }}<i class="material-icons right">perm_identity</i></a>
     </li>
 </ul>
-
-<script type="text/javascript">
-    $( document ).ready(function(){
-        $(".dropdown-button").dropdown({
-            constrainWidth: false,
-            belowOrigin: true,
-            gutter: 1
-        });
-        $('#mon_compte').click(function (event) {
-            event.preventDefault();
-            var url = $(this).attr('href');
-            renderModal('user', url, undefined, passwordCheck);
-        });
-    })
-</script>

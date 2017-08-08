@@ -114,5 +114,4 @@ function passwordCheck() {
             secondPwd.get(0).setCustomValidity('');
         }
     });
-
 }
