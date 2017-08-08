@@ -21,13 +21,13 @@ class StagiaireController extends Controller
      * Lists all stagiaireParEntreprise entities.
      *
      * @Route("/", name="stagiaires_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
 
-        $repo = $em->getRepository('AppBundle:Stagiaire');
+        $repo = $this->getDoctrine()->getRepository(Stagiaire::class);
 
         //Création de l'objet filtre
         $filtre = new  StagiaireFiltre();
@@ -42,7 +42,7 @@ class StagiaireController extends Controller
         $stagiairesEntreprise = null;
 
         // Le formulaire écoute les requêtes (pour le submit)
-        $form->handleRequest($request);
+        //$form->handleRequest($request);
 
         //Si le formulaire est sousmis
         if ($form->isSubmitted()){

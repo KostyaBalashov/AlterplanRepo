@@ -19,8 +19,9 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Filtre\StagiaireFiltre;
+use Doctrine\ORM\EntityRepository;
 
-class StagiaireRepository
+class StagiaireRepository extends EntityRepository
 {
     /**
      * @param StagiaireFiltre|null $filter

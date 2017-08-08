@@ -18,6 +18,7 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Form\Filtre;
 
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,11 +44,18 @@ class StagiaireFiltreType extends AbstractType
                 'choice_label' => 'Prenom')
         );
 
+        $builder->add('email',  EntityType::class, array(
+                'class' => 'AppBundle:Stagiaire',
+                'placeholder' => 'Email du Stagiaire',
+                'required' => false,
+                'choice_label' => 'Email')
+        );
+
         $builder->add('entreprise',  EntityType::class, array(
                 'class' => 'AppBundle:Entreprise',
                 'placeholder' => 'Raison social de l\'entreprise',
                 'required' => false,
-                'choice_label' => 'Entreprise')
+                'choice_label' => 'RaisonSociale')
         );
     }
 
