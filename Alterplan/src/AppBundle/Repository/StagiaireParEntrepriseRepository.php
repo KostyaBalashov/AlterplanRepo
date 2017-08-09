@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: a590697
+ * User: Ravet
  * Date: 06/08/2017
  * Time: 15:30
  *//*
@@ -18,16 +18,16 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Repository;
 
 
-use AppBundle\Filtre\StagiaireFiltre;
+use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use Doctrine\ORM\EntityRepository;
 
-class StagiaireRepository extends EntityRepository
+class StagiaireParEntrepriseRepository extends EntityRepository
 {
     /**
-     * @param StagiaireFiltre|null $filter
+     * @param StagiaireParEntrepriseFiltre|null $filter
      * @return mixed
      */
-    public function search(StagiaireFiltre $filter = null){
+    public function search(StagiaireParEntrepriseFiltre $filter = null){
         //Si le filtre n'est pas null
         if ($filter !== null){
             //On retourne le résultat

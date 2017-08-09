@@ -23,7 +23,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class StagiaireFiltreType extends AbstractType
+class StagiaireParEntrepriseFiltreType extends AbstractType
 {
     /**
      * @inheritdoc
@@ -65,7 +65,7 @@ class StagiaireFiltreType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Filtre\StagiaireFiltre'
+            'data_class' => 'AppBundle\Filtre\StagiaireParEntrepriseFiltre'
         ));
     }
 }

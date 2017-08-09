@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * StagiaireParEntreprise
  *
  * @ORM\Table(name="StagiaireParEntreprise")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\StagiaireParEntrepriseRepository")
  */
 class StagiaireParEntreprise
 {
@@ -121,7 +121,7 @@ class StagiaireParEntreprise
     private $codeContactEni;
 
     /**
-     * @var stagiaire
+     * @var \AppBundle\Entity\Stagiaire
      *
      * @ORM\ManyToOne(targetEntity="Stagiaire", inversedBy="stagiaireParEntreprise")
      * @ORM\JoinColumns({
@@ -131,7 +131,7 @@ class StagiaireParEntreprise
     private $stagiaire;
 
     /**
-     * @var entreprises
+     * @var \AppBundle\Entity\Entreprise
      *
      * @ORM\ManyToOne(targetEntity="Entreprise", inversedBy="stagiaireParEntreprise")
      * @ORM\JoinColumns({
@@ -139,6 +139,7 @@ class StagiaireParEntreprise
      * })
      */
     private $entreprise;
+
     /**
      * @return int
      */

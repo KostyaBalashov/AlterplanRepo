@@ -3,19 +3,20 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Stagiaire;
-use AppBundle\Filtre\StagiaireFiltre;
+use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use AppBundle\Form\Filtre\StagiaireFiltreType;
+use AppBundle\Repository\StagiaireParEntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\BrowserKit\Request;
 
 /**
- * Stagiaire controller.
+ * StagiaireParEntreprisecontroller.
  *
  * @Route("stagiaires")
  */
-class StagiaireController extends Controller
+class StagiaireParEntrepriseController extends Controller
 {
     /**
      * Lists all stagiaireParEntreprise entities.
@@ -27,13 +28,13 @@ class StagiaireController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $repo = $this->getDoctrine()->getRepository(Stagiaire::class);
+        $repo = $this->getDoctrine()->getRepository(StagiaireParEntrepriseRepository::class);
 
         //Création de l'objet filtre
-        $filtre = new  StagiaireFiltre();
+        $filtre = new  StagiaireParEntrepriseFiltre();
 
         //Création du formulaire de recherche
-        $form = $this->createForm(StagiaireFiltreType::class, $filtre, array(
+        $form = $this->createForm(StagiaireParEntrepriseFiltreType::class, $filtre, array(
             'attr' => array('id' => 'stagiaire_search'),
             'action' => $this->generateUrl('stagiaires_index'),
             'method' => 'POST'
