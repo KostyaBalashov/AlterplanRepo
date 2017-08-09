@@ -18,6 +18,7 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Form\Filtre;
 
 
+use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,33 +31,21 @@ class StagiaireParEntrepriseFiltreType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('nom',  EntityType::class, array(
-                'class' => 'AppBundle:Stagiaire',
+        $builder
+            ->add('nom',  TextType::STRING, array(
                 'placeholder' => 'Nom du Stagiaire',
                 'required' => false,
-                'choice_label' => 'Nom')
-            );
-
-        $builder->add('prenom',  EntityType::class, array(
-                'class' => 'AppBundle:Stagiaire',
+         ))
+            ->add('prenom',  TextType::STRING, array(
                 'placeholder' => 'Prénom du Stagiaire',
                 'required' => false,
-                'choice_label' => 'Prenom')
-        );
-
-        $builder->add('email',  EntityType::class, array(
-                'class' => 'AppBundle:Stagiaire',
+         ))->add('email',  TextType::STRING, array(
                 'placeholder' => 'Email du Stagiaire',
                 'required' => false,
-                'choice_label' => 'Email')
-        );
-
-        $builder->add('entreprise',  EntityType::class, array(
-                'class' => 'AppBundle:Entreprise',
+         ))->add('entreprise',  TextType::STRING, array(
                 'placeholder' => 'Raison social de l\'entreprise',
                 'required' => false,
-                'choice_label' => 'RaisonSociale')
-        );
+         ));
     }
 
     /**

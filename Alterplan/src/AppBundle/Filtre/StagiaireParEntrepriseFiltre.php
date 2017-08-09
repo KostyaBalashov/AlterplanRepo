@@ -22,25 +22,25 @@ class StagiaireParEntrepriseFiltre
 {
 
     /**
-     * @var nom
+     * @var string
      * Filtre sur le nom du stagiaire
      */
     private $nom;
 
     /**
-     * @var prenom
+     * @var string
      * Filtre sur le prénom du stagiaire
      */
     private $prenom;
 
     /**
-     * @var email
+     * @var string
      * Filtre sur l'email du stagiaire
      */
     private $email;
 
     /**
-     * @var entreprise
+     * @var \AppBundle\Entity\Entreprise
      * Filtre sur la raison social de l'entreprise
      */
     private $entreprise;

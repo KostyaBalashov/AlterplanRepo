@@ -4,12 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
-use AppBundle\Form\Filtre\StagiaireFiltreType;
+use AppBundle\Form\Filtre\StagiaireParEntrepriseFiltreType;
 use AppBundle\Repository\StagiaireParEntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\BrowserKit\Request;
 
 /**
  * StagiaireParEntreprisecontroller.
