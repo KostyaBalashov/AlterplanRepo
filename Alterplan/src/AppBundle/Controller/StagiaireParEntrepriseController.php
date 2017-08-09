@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Stagiaire;
+use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use AppBundle\Form\Filtre\StagiaireParEntrepriseFiltreType;
 use AppBundle\Repository\StagiaireParEntrepriseRepository;
@@ -27,7 +28,7 @@ class StagiaireParEntrepriseController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $repo = $this->getDoctrine()->getRepository(StagiaireParEntrepriseRepository::class);
+        $repo = $this->getDoctrine()->getRepository(StagiaireParEntreprise::class);
 
         //Création de l'objet filtre
         $filtre = new  StagiaireParEntrepriseFiltre();

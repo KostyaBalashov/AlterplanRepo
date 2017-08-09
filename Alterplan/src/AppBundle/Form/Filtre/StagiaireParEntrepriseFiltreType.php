@@ -17,8 +17,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 namespace AppBundle\Form\Filtre;
 
-
-use Doctrine\DBAL\Types\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,18 +31,14 @@ class StagiaireParEntrepriseFiltreType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom',  TextType::STRING, array(
-                'placeholder' => 'Nom du Stagiaire',
+            ->add('nom',  TextType::class, array(
                 'required' => false,
          ))
-            ->add('prenom',  TextType::STRING, array(
-                'placeholder' => 'Prénom du Stagiaire',
+            ->add('prenom',  TextType::class, array(
                 'required' => false,
-         ))->add('email',  TextType::STRING, array(
-                'placeholder' => 'Email du Stagiaire',
+         ))->add('email',  TextType::class, array(
                 'required' => false,
-         ))->add('entreprise',  TextType::STRING, array(
-                'placeholder' => 'Raison social de l\'entreprise',
+         ))->add('entreprise',  TextType::class, array(
                 'required' => false,
          ));
     }
