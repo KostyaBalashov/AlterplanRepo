@@ -12,6 +12,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% block customCSS %}
     <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/ordreLogique.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -43,111 +44,66 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% block customJS %}
     <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
             var drake = new dragula({
                 isContainer: function (el) {
                     return el.classList.contains('draggable-container');
                 },
                 moves: function (el, source, handle, sibling) {
+                    var sourceParent = source.parentElement;
                     if (source.classList.contains('droite')) {
                         return el.classList.contains('module');
                     } else if (source.classList.contains('centre')) {
                         return el.classList.contains('groupe');
-                    } else if (source.classList.contains('groupe')) {
+                    } else if (sourceParent.classList.contains('groupe')) {
                         return el.classList.contains('sous-groupe');
-                    } else if (source.classList.contains('sous-groupe')) {
-                        return el.classList.contains('module')
+                    } else if (sourceParent.classList.contains('sous-groupe')) {
+                        return el.classList.contains('module');
                     }
                 },
                 accepts: function (el, target, source, sibling) {
-                    var ok = el.classList.contains('module');
-
+                    var targetParent = target.parentElement;
+                    var ok = true;
+                    if(sibling){
+                        ok = !sibling.classList.contains('card-title');
+                    }
                     if (target.classList.contains('centre')) {
-                        ok |= el.classList.contains('groupe');
-                    } else if (target.classList.contains('groupe')) {
-                        ok |= el.classList.contains('sous-groupe');
+                        ok = ok && (el.classList.contains('groupe') || el.classList.contains('module'));
+                    } else if (targetParent.classList.contains('groupe')) {
+                        ok = ok && ((el.classList.contains('sous-groupe') || el.classList.contains('module')) && (targetParent.dataset.nbElements < 2));
+                    } else if (targetParent.classList.contains('sous-groupe')){
+                        ok = ok && (el.classList.contains('module') && (targetParent.dataset.nbElements < 4));
                     }
 
-                    return ok || sibling === null || !sibling.classList.contains('card-title');
+                    return ok;
                 },
                 revertOnSpill: false
             });
 
             drake.on('drop',function (el, target, source, sibling) {
-                if (el.classList.contains('module')
-                    && (target.classList.contains('centre')
-                        || target.classList.contains('groupe') || target.classList.contains('sous-groupe'))){
-                    appendModule(target, el);
-                }else if (el.classList.contains('sous-groupe')){
+                var targetParent = target.parentElement;
+                var sourceParent = source.parentElement;
 
+                if(el.classList.contains('module')) {
+                    if (target.classList.contains('centre')){
+                        appendModule(target, el);
+                    }else if(targetParent.classList.contains('groupe')
+                        || targetParent.classList.contains('sous-groupe')){
+                        appendModule(targetParent, el);
+                    }
+                }else if (el.classList.contains('sous-groupe')){
+                    if(targetParent.classList.contains('groupe')){
+                        appendSousGroupe(targetParent, el);
+                    }
                 }else if (el.classList.contains('groupe')){
 
                 }
+
+                handleRemove(sourceParent);
             });
         });
-
-        function appendModule(target, module) {
-            if (target.classList.contains('centre')){
-                var groupe = creatGroupe(module);
-                target.appendChild(groupe);
-            }else if (target.classList.contains('groupe')){
-                if (target.dataset.nbSousGroups < 2){
-                    appendSousGroupe(target, createSousGroupe(module));
-                }
-            }else if (target.classList.contains('sous-groupe')){
-                target.appendChild(module);
-            }
-        }
-
-        function appendSousGroupe(target, sousGroupe) {
-            if (target.classList.contains('groupe')){
-                target.appendChild(sousGroupe);
-            }
-        }
-
-        function creatGroupe(content) {
-            var groupe = document.createElement('div');
-            groupe.classList.add('col');
-            groupe.classList.add('s12');
-            groupe.classList.add('card');
-            groupe.classList.add('groupe');
-            groupe.classList.add('groupe');
-            groupe.classList.add('valign-wrapper');
-            groupe.classList.add('draggable-container');
-
-
-            var sousGroupe = content;
-
-            if (sousGroupe.classList.contains('module')){
-                sousGroupe = createSousGroupe(content);
-            }
-
-            sousGroupe.classList.add('col');
-            sousGroupe.classList.add('s12');
-            groupe.appendChild(sousGroupe);
-
-            groupe.dataset.nbSousGroups = groupe.dataset.nbSousGroups++;
-
-            var plus = document.createElement('i');
-            plus.classList.add('material-icons');
-            plus.classList.add('right');
-            plus.innerHTML = 'add_circle_outline';
-
-            groupe.appendChild(plus);
-
-            return groupe;
-        }
-
-        function createSousGroupe(module) {
-            var sousGroupe = document.createElement('div');
-            sousGroupe.classList.add('card');
-            sousGroupe.classList.add('sous-groupe');
-            sousGroupe.classList.add('draggable-container');
-
-            sousGroupe.appendChild(module);
-
-            return sousGroupe;
-        }
     </script>
 {% endblock %}

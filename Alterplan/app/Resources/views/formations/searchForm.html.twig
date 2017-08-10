@@ -24,11 +24,9 @@ You should have received a copy of the GNU Affero General Public License along w
     </div>
 </div>
 <div class="row">
-    <div class="col s6">
-        <div class="row valign-wrapper">
-            <i class="material-icons col s1">place</i>
-            {{ form_widget(formSearch.lieu, {'attr':{'placeholder':'Lieu'}}) }}
-        </div>
+    <div class="col s6 offset-s3 valign-wrapper">
+        <i class="material-icons col s1">place</i>
+        {{ form_widget(formSearch.lieu, {'attr':{'placeholder':'Lieu', 'class':'col s11'}}) }}
     </div>
 </div>
 {{ form_end(formSearch) }}

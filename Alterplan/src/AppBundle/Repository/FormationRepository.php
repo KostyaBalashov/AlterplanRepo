@@ -46,7 +46,7 @@ class FormationRepository extends EntityRepository
                 $query->andWhere('u.codeFormation LIKE :codeFormation')->setParameter('codeFormation','%'.  $filter->getCodeFormation().'%');
             }
             if ($filter->getLieu() !== null) {
-                $query->andWhere('u.lieu = :lieu')->setParameter('lieu','%'.  $filter->getLieu().'%');
+                $query->andWhere('u.lieu = :codeLieu')->setParameter('codeLieu',$filter->getLieu()->getCodeLieu());
             };
 
             //On retourne le résultat

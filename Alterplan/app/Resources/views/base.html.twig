@@ -24,6 +24,17 @@ You should have received a copy of the GNU Affero General Public License along w
                 {%  block customCSS %}{% endblock %}
             {% endstylesheets %}
         {% endblock %}
+
+        {% javascripts
+        'assets/jquery/jquery.js'
+        'assets/materialize/dist/js/materialize.js'
+        'js/commun.js'
+        'js/dragula/3.7.2/dragula.min.js'
+        output='js/compiled/app.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% block javascripts %}
+        {% endblock %}
     </head>
 
     <body>
@@ -46,18 +57,6 @@ You should have received a copy of the GNU Affero General Public License along w
                 </div>
             </div>
         </main>
-
-        {% javascripts
-        'assets/jquery/jquery.js'
-        'assets/materialize/dist/js/materialize.js'
-        'js/commun.js'
-        'js/dragula/3.7.2/dragula.min.js'
-        output='js/compiled/app.js' %}
-            <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% block javascripts %}
-        {% endblock %}
-
     </body>
 
     <footer class="page-footer">
