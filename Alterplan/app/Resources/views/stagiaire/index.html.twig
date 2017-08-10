@@ -17,27 +17,29 @@
     </div>
 {% endblock %}
 
-{#<script type="text/javascript">#}
-    {#$(document).ready(function () {#}
-        {#//Récupération du formulaire de recherche#}
-        {#var frm = $('#stagiaire_search');#}
+{% block searchJS %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Récupération du formulaire de recherche
+        var frm = $('#stagiaire_search');
 
-        {#//Abonnement à l'événement submit du formulaire#}
-        {#frm.submit(function (event) {#}
-            {#showLoader();#}
-            {#event.preventDefault();#}
+        //Abonnement à l'événement submit du formulaire
+        frm.submit(function (event) {
+            showLoader();
+            event.preventDefault();
 
-            {#var url = frm.attr('action');#}
-            {#$.post(url, frm.serialize(), function (data) {#}
-                {#//En cas de succès on mets à jour le tabeau#}
-                {#var userTableDiv = $('#stagiaire_table');#}
-                {#userTableDiv.empty();#}
-                {#userTableDiv.html(data);#}
-            {#}).fail(function () {#}
-                {#showToast('Erreur de recherche', 'error');#}
-            {#}).always(function () {#}
-                {#dismissLoader();#}
-            {#})#}
-        {#});#}
-    {#})#}
-{#</script>#}
+            var url = frm.attr('action');
+            $.post(url, frm.serialize(), function (data) {
+                //En cas de succès on mets à jour le tabeau
+                var stagiaireTableDiv = $('#stagiaire_table');
+                stagiaireTableDiv.empty();
+                stagiaireTableDiv.html(data);
+            }).fail(function () {
+                showToast('Erreur de recherche', 'error');
+            }).always(function () {
+                dismissLoader();
+            })
+        });
+    })
+</script>
+{% endblock %}

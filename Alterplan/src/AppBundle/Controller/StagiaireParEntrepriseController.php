@@ -10,6 +10,7 @@ use AppBundle\Repository\StagiaireParEntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * StagiaireParEntreprisecontroller.
@@ -24,7 +25,7 @@ class StagiaireParEntrepriseController extends Controller
      * @Route("/", name="stagiaires_index")
      * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -43,7 +44,7 @@ class StagiaireParEntrepriseController extends Controller
         $stagiairesEntreprise = null;
 
         // Le formulaire écoute les requêtes (pour le submit)
-        //$form->handleRequest($request);
+        $form->handleRequest($request);
 
         //Si le formulaire est sousmis
         if ($form->isSubmitted()){
@@ -52,7 +53,7 @@ class StagiaireParEntrepriseController extends Controller
 
             //Réponse à la recherche
             return $this->render(':stagiaire:table.html.twig', array(
-                '$stagiairesEntreprise' => $stagiairesEntreprise,
+                'stagiairesEntreprise' => $stagiairesEntreprise,
             ));
         }
 
