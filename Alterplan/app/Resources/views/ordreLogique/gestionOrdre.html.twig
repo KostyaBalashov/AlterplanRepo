@@ -10,6 +10,10 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% extends '::navigableBase.html.twig' %}
 
+{% block title %}
+    Ordre logique
+{% endblock %}
+
 {% block customCSS %}
     <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/ordreLogique.css') }}" />
@@ -20,24 +24,17 @@ You should have received a copy of the GNU Affero General Public License along w
         <div class="col s3 card">
             <div class="card-content">
                 <span class="card-title">Modules</span>
-            </div>
-        </div>
-
-        <div class="col s6 card">
-            <div class="card-content draggable-container centre">
-                <span class="card-title">Modules précédents le module <span id="selected-module-titre">[TITRE]</span></span>
-            </div>
-        </div>
-
-        <div class="col s3 card">
-            <div class="card-content draggable-container droite">
-                <span class="card-title">Modules disponibles</span>
-                {% for i in 0..10 %}
-                    <div id="module-a-placer-{{ i }}" class="flow-text valign-wrapper card-panel module">
-                        <span class="card-title">Module-{{ i }}</span>
+                {% for module in modules %}
+                    <div id="module-{{ module.idModule }}" class="flow-text valign-wrapper card-panel module clickable"
+                        data-href="{{ path('formations_ordre', {'codeFormation': codeFormation, 'idModule' : module.idModule}) }}">
+                        <span class="card-title">{{ module.libelle }}</span>
                     </div>
                 {% endfor %}
             </div>
+        </div>
+
+        <div class="col s9 ordreContent">
+            {% include ':ordreLogique:ordreModule.html.twig'%}
         </div>
     </div>
 {% endblock %}
@@ -103,6 +100,33 @@ You should have received a copy of the GNU Affero General Public License along w
                 }
 
                 handleRemove(sourceParent);
+            });
+
+            $('.module.clickable').each(function (index) {
+               $(this).click(function () {
+                   var module = $(this);
+                   var selected = $('.module.selected');
+                   if (selected){
+                       selected.each(function (index) {
+                          $(selected[index]).removeClass('selected');
+                       });
+                   }
+
+                   showLoader();
+                   var url = $(this).data('href');
+                   $.get(url, function (data) {
+                       var container = $('.ordreContent');
+                       container.empty();
+                       container.html(data);
+
+                       module.addClass('selected');
+                       $('#selected-module-titre').text(module.children('span').text());
+                   }).fail(function () {
+                       showToast('Erreur de récupération', 'error');
+                   }).always(function () {
+                       dismissLoader();
+                   });
+               });
             });
         });
     </script>

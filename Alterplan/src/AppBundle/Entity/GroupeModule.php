@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,12 +39,66 @@ class GroupeModule
     /**
      * @var \AppBundle\Entity\OrdreModule
      *
-     * @ORM\ManyToOne(targetEntity="OrdreModule")
+     * @ORM\ManyToOne(targetEntity="OrdreModule", inversedBy="groupes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeOrdreModule", referencedColumnName="CodeOrdreModule")
      * })
      */
     private $ordreModule;
+
+    /**
+     * @var SousGroupeModule
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeSousGroupe1", referencedColumnName="CodeSousGroupeModule")
+     * })
+     */
+    private $sousGroupe1;
+
+    /**
+     * @var SousGroupeModule
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeSousGroupe2", referencedColumnName="CodeSousGroupeModule")
+     * })
+     */
+    private $sousGroupe2;
+
+    /**
+     * @return SousGroupeModule
+     */
+    public function getSousGroupe1()
+    {
+        return $this->sousGroupe1;
+    }
+
+    /**
+     * @param SousGroupeModule $sousGroupe1
+     * @return GroupeModule
+     */
+    public function setSousGroupe1($sousGroupe1)
+    {
+        $this->sousGroupe1 = $sousGroupe1;
+        return $this;
+    }
+
+    /**
+     * @return SousGroupeModule
+     */
+    public function getSousGroupe2()
+    {
+        return $this->sousGroupe2;
+    }
+
+    /**
+     * @param SousGroupeModule $sousGroupe2
+     * @return GroupeModule
+     */
+    public function setSousGroupe2($sousGroupe2)
+    {
+        $this->sousGroupe2 = $sousGroupe2;
+        return $this;
+    }
 
     /**
      * @return int

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,7 +33,7 @@ class UniteParFormation
     /**
      * @var \AppBundle\Entity\Formation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation", inversedBy="unitesParFormation")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
@@ -47,6 +49,35 @@ class UniteParFormation
      * })
      */
     private $uniteFormation;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleParUnite", mappedBy="uniteParFormation")
+     */
+    private $modulesParUnite;
+
+    public function __construct()
+    {
+        $this->modulesParUnite = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getModulesParUnite()
+    {
+        return $this->modulesParUnite;
+    }
+
+    /**
+     * @param Collection $modulesParUnite
+     * @return UniteParFormation
+     */
+    public function setModulesParUnite($modulesParUnite)
+    {
+        $this->modulesParUnite = $modulesParUnite;
+        return $this;
+    }
 
     /**
      * @return int

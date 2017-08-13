@@ -2,13 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Data\Util\ArrayAccessibleResourceBundle;
 
 /**
  * OrdreModule
  *
  * @ORM\Table(name="OrdreModule")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OrdreModuleRepository")
  */
 class OrdreModule
 {
@@ -34,12 +37,41 @@ class OrdreModule
     /**
      * @var \AppBundle\Entity\Formation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation", inversedBy="ordresModule")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
      */
     private $formation;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GroupeModule", mappedBy="ordreModule")
+     */
+    private $groupes;
+
+    public function __construct()
+    {
+        $this->groupes = new  ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getGroupes()
+    {
+        return $this->groupes;
+    }
+
+    /**
+     * @param Collection $groupes
+     * @return OrdreModule
+     */
+    public function setGroupes($groupes)
+    {
+        $this->groupes = $groupes;
+        return $this;
+    }
 
     /**
      * @return int

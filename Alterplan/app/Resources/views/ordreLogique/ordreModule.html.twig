@@ -1,0 +1,31 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+<div class="col s8 card">
+    <div class="card-content draggable-container centre">
+        <span class="card-title">Modules précédents le module <span id="selected-module-titre"></span></span>
+        {% if groupes is defined %}
+            {# TODO Contruction des groupes #}
+        {% endif %}
+    </div>
+</div>
+
+<div class="col s4 card droite">
+    <div class="card-content draggable-container droite">
+        <span class="card-title">Modules disponibles</span>
+        {% if modulesDisponibles is defined %}
+            {% for module in modulesDisponibles %}
+                <div id="module-disponible-{{ module.idModule }}" class="flow-text valign-wrapper card-panel module">
+                    <span class="card-title">{{ module.libelle }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

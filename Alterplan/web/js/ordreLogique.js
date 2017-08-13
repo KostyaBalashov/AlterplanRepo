@@ -145,6 +145,7 @@ function createSousGroupe(module) {
 function materialIcon(addOrRemove) {
     var plus = document.createElement('i');
     plus.classList.add('material-icons');
+    plus.classList.add('clickable');
 
     if (addOrRemove === 'add'){
         plus.classList.add('add');
@@ -177,11 +178,12 @@ function materialIconClick(){
     }else{
         var data = groupe.getElementsByClassName('draggable-container')[0];
         var modules = data.getElementsByClassName('module');
-        var origie = document.getElementsByClassName('droite')[0];
+        var origine = document.getElementsByClassName('droite')[0];
+        var origineContainer = origine.getElementsByClassName('draggable-container')[0];
         if (modules.length > 0){
-            for (var i = 0, len = -modules.length; len < i; len--) {
+            for (var i = 0, len = -modules.length; len < i; len++) {
                 var module = modules[i];
-                origie.appendChild(module);
+                origineContainer.appendChild(module);
                 handleRemove(groupe);
             }
         }else {

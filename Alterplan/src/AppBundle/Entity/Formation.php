@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -128,9 +130,6 @@ class Formation
      */
     private $typeFormation;
 
-
-    // ...
-
     /**
      * @var Lieu
      *
@@ -140,6 +139,60 @@ class Formation
      * })
      */
     private $lieu;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UniteParFormation", mappedBy="formation")
+     */
+    private $unitesParFormation;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrdreModule" , mappedBy="formation")
+     */
+    private $ordresModule;
+
+    public function __construct()
+    {
+        $this->unitesParFormation = new ArrayCollection();
+        $this->ordresModule = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOrdresModule()
+    {
+        return $this->ordresModule;
+    }
+
+    /**
+     * @param Collection $ordresModule
+     * @return Formation
+     */
+    public function setOrdresModule($ordresModule)
+    {
+        $this->ordresModule = $ordresModule;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getUnitesParFormation()
+    {
+        return $this->unitesParFormation;
+    }
+
+    /**
+     * @param Collection $unitesParFormation
+     * @return Formation
+     */
+    public function setUnitesParFormation($unitesParFormation)
+    {
+        $this->unitesParFormation = $unitesParFormation;
+        return $this;
+    }
 
     /**
      * @return string

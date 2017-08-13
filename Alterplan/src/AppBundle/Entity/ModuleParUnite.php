@@ -41,7 +41,7 @@ class ModuleParUnite
     /**
      * @var \AppBundle\Entity\UniteParFormation
      *
-     * @ORM\ManyToOne(targetEntity="UniteParFormation")
+     * @ORM\ManyToOne(targetEntity="UniteParFormation", inversedBy="modulesParUnite")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="IdUnite", referencedColumnName="Id")
      * })
