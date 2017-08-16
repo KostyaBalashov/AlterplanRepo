@@ -2,15 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use AppBundle\Form\Filtre\StagiaireParEntrepriseFiltreType;
+use AppBundle\Repository\CalendrierRepository;
 use AppBundle\Repository\StagiaireParEntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * StagiaireParEntreprisecontroller.
@@ -47,7 +50,7 @@ class StagiaireParEntrepriseController extends Controller
         $form->handleRequest($request);
 
         //Si le formulaire est sousmis
-        if ($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             //On recherche les formations avec les critères de filtre
             $stagiairesEntreprise = $repo->search($filtre);
 
@@ -70,14 +73,45 @@ class StagiaireParEntrepriseController extends Controller
     /**
      * Finds and displays a stagiaire entity.
      *
-     * @Route("/{codeStagiaire}", name="stagiaires_show")
+     * @Route("/{numLien}", name="stagiaires_show")
      * @Method("GET")
      */
-    public function showAction(Stagiaire $stagiaire)
+    public function showAction(StagiaireParEntreprise $stagiaireParEntreprise)
     {
 
+        // Affichage de la fiche du stagiaire avec la liste de ses calendrier
+        $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+        $calendriers = $repo->findBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire()));
+
+        $calendrierInscrit = null;
+        foreach ($calendriers as $calendrier) {
+            if ($calendrier->isInscrit() == 1) {
+                $calendrierInscrit = $calendrier;
+            }
+        }
         return $this->render('stagiaire/show.html.twig', array(
-            'stagiaire' => $stagiaire,
+            'stagiaireParEntreprise' => $stagiaireParEntreprise,
+            'calendars' => $calendriers,
+            'calendarRegistered' => $calendrierInscrit,
         ));
+    }
+
+    /**
+     * Deletes a calendar entity.
+     *
+     * @Route("/{codeCalendrier}", name="calendar_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Request $request, Calendrier $calendar)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($calendar);
+            $em->flush();
+
+            return new Response('Le calendrier' . $calendar->getTitre() . ' a bien été supprimé.');
+        } else {
+            return new Response('Ajax s\'il vous plait.');
+        }
     }
 }

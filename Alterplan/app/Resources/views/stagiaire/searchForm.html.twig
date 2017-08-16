@@ -9,16 +9,21 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 {{ form_start(formSearch, {'attr': {'id':'stagiaire_search', 'method': 'POST'}}) }}
 <div class="row center-align">
-    <div class="valign-wrapper col s6 offset-s3">
+
+    <div class="valign-wrapper col s6">
+        <i class="material-icons col s1">person</i>
         {{ form_widget(formSearch.nom, {'attr':{'placeholder':'Nom'}}) }}
     </div>
-    <div class="valign-wrapper col s6 offset-s3">
+    <div class="valign-wrapper col s6">
+        <i class="material-icons col s1">person</i>
         {{ form_widget(formSearch.prenom, {'attr':{'placeholder':'Prénom'}}) }}
     </div>
-    <div class="valign-wrapper col s6 offset-s3">
+    <div class="valign-wrapper col s6 ">
+        <i class="material-icons col s1">email</i>
         {{ form_widget(formSearch.email, {'attr':{'placeholder':'Email'}}) }}
     </div>
-    <div class="valign-wrapper col s6 offset-s3">
+    <div class="valign-wrapper col s6   ">
+        <i class="material-icons col s1">domain</i>
         {{ form_widget(formSearch.entreprise, {'attr':{'placeholder':'Entreprise'}}) }}
     </div>
 </div>

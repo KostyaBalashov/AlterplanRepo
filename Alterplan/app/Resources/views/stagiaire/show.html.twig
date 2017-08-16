@@ -1,108 +1,166 @@
-{% extends 'base.html.twig' %}
+{% extends 'consultationBase.html.twig' %}
+
+{% block title %} Fiche du stagiaire {% endblock %}
 
 {% block body %}
-    <h1>Stagiaire</h1>
+<div class="row">
+    <div class="card">
+        <div class="card-content">
+            <h5 class="card-title">Informations</h5>
+            <div class="col s4">
+                <div class="col s12">
+                    <h5>{{ stagiaireParEntreprise.stagiaire.nom }} {{ stagiaireParEntreprise.stagiaire.prenom }}</h5>
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.stagiaire.adresse1 }}
+                </div>
+                <div class="col s2">
+                    {{ stagiaireParEntreprise.stagiaire.codePostal }}
+                </div>
+                <div class="col s10">
+                    {{ stagiaireParEntreprise.stagiaire.ville }}
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.stagiaire.telephoneFixe }}
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.stagiaire.email }}
+                </div>
+            </div>
+            <div class="col s4">
+                <div class="col s12">
+                    <h5>Formation</h5>
+                </div>
+                <div class="col s12">
+                    Du (Date de début)
+                </div>
+                <div class="col s12">
+                    Au (Date de fin)
+                </div>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Codestagiaire</th>
-                <td>{{ stagiaire.codeStagiaire }}</td>
-            </tr>
-            <tr>
-                <th>Civilite</th>
-                <td>{{ stagiaire.civilite }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ stagiaire.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ stagiaire.prenom }}</td>
-            </tr>
-            <tr>
-                <th>Adresse1</th>
-                <td>{{ stagiaire.adresse1 }}</td>
-            </tr>
-            <tr>
-                <th>Adresse2</th>
-                <td>{{ stagiaire.adresse2 }}</td>
-            </tr>
-            <tr>
-                <th>Adresse3</th>
-                <td>{{ stagiaire.adresse3 }}</td>
-            </tr>
-            <tr>
-                <th>Codepostal</th>
-                <td>{{ stagiaire.codePostal }}</td>
-            </tr>
-            <tr>
-                <th>Ville</th>
-                <td>{{ stagiaire.ville }}</td>
-            </tr>
-            <tr>
-                <th>Telephonefixe</th>
-                <td>{{ stagiaire.telephoneFixe }}</td>
-            </tr>
-            <tr>
-                <th>Telephoneportable</th>
-                <td>{{ stagiaire.telephonePortable }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ stagiaire.email }}</td>
-            </tr>
-            <tr>
-                <th>Datenaissance</th>
-                <td>{% if stagiaire.dateNaissance %}{{ stagiaire.dateNaissance|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Coderegion</th>
-                <td>{{ stagiaire.codeRegion }}</td>
-            </tr>
-            <tr>
-                <th>Codenationalite</th>
-                <td>{{ stagiaire.codeNationalite }}</td>
-            </tr>
-            <tr>
-                <th>Codeoriginemedia</th>
-                <td>{{ stagiaire.codeOrigineMedia }}</td>
-            </tr>
-            <tr>
-                <th>Datedernierenvoidoc</th>
-                <td>{% if stagiaire.dateDernierEnvoiDoc %}{{ stagiaire.dateDernierEnvoiDoc|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Datecreation</th>
-                <td>{% if stagiaire.dateCreation %}{{ stagiaire.dateCreation|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Repertoire</th>
-                <td>{{ stagiaire.repertoire }}</td>
-            </tr>
-            <tr>
-                <th>Permis</th>
-                <td>{% if stagiaire.permis %}Yes{% else %}No{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Photo</th>
-                <td>{{ stagiaire.photo }}</td>
-            </tr>
-            <tr>
-                <th>Envoidocencours</th>
-                <td>{% if stagiaire.envoiDocEnCours %}Yes{% else %}No{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Historique</th>
-                <td>{{ stagiaire.historique }}</td>
-            </tr>
-        </tbody>
-    </table>
+            </div>
+            <div class="col s4">
+                <div class="col s12">
+                    <h5>{{ stagiaireParEntreprise.entreprise.raisonsociale }} </h5>
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.entreprise.adresse1 }}
+                </div>
+                <div class="col s2">
+                    {{ stagiaireParEntreprise.entreprise.ville }}
+                </div>
+                <div class="col s10">
+                    {{ stagiaireParEntreprise.entreprise.codePostal }}
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.entreprise.telephone }}
+                </div>
+                <div class="col s12">
+                    {{ stagiaireParEntreprise.entreprise.email }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <ul>
-        <li>
-            <a href="{{ path('stagiaires_index') }}">Back to the list</a>
-        </li>
-    </ul>
+<div class="row" id="calendar_table">
+    <div class="card">
+        <div class="row">
+            <div class="col s6">
+                <h5> Calendrier Inscrit </h5>
+            </div>
+            <div class="col s12">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>{{ calendarRegistered.titre }}</th>
+                        <th>{{ calendarRegistered.formation.codeFormation }}</th>
+                        <th>{{ calendarRegistered.dateDebut.format('d/m/Y') }}</th>
+                        <th>{{ calendarRegistered.dateFin.format('d/m/Y') }}</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s6">
+                <h5>Liste des calendriers </h5>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Formation</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Suppression</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for calendar in calendars %}
+                    <tr>
+                        <td>
+                            {{ calendar.titre }}
+                        </td>
+
+                        <td>
+                            {{ calendar.formation.codeFormation }}
+                        </td>
+
+                        <td>
+                            {{ calendar.dateDebut.format('d/m/Y') }}
+                        </td>
+
+                        <td>
+                            {{ calendar.dateFin.format('d/m/Y') }}
+                        </td>
+
+                        <td>
+                            <a href="#">
+                                <i class="material-icons" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier})}}">delete</i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $('.material-icons').click(function () {
+            var url = $(this).data("href");
+            deleteCalendar(url);
+        })
+    });
+
+    function refreshTable() {
+        $.get('/stagiaires', function (data) {
+            var calendarTableDiv = $('#calendar_table');
+            calendarTableDiv.empty();
+            calendarTableDiv.html(data);
+        });
+    }
+
+    function deleteCalendar(urlAction) {
+        showLoader();
+        $.ajax({
+            url: urlAction,
+            type: 'DELETE',
+            success: function (data) {
+                dismissLoader();
+                showToast(data);
+                refreshTable();
+            },
+            error: function () {
+                dismissLoader();
+                showToast('Erreur de la suppression', 'error');
+            }
+        });
+    }
+</script>
 {% endblock %}
