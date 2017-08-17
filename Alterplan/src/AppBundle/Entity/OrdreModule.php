@@ -13,7 +13,7 @@ use Symfony\Component\Intl\Data\Util\ArrayAccessibleResourceBundle;
  * @ORM\Table(name="OrdreModule")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\OrdreModuleRepository")
  */
-class OrdreModule
+class OrdreModule implements \JsonSerializable
 {
     /**
      * @var integer
@@ -53,6 +53,19 @@ class OrdreModule
     public function __construct()
     {
         $this->groupes = new  ArrayCollection();
+    }
+
+    function jsonSerialize()
+    {
+        $result = array();
+        $result['codeOrdreModule'] = $this->codeOrdreModule;
+        $result['idModule'] = $this->module->getIdModule();
+        $groupes = array();
+        foreach ($this->groupes as $groupe){
+            $groupes[] = $groupe->jsonSerialize();
+        }
+        $result['groupes'] = $groupes;
+        return $result;
     }
 
     /**

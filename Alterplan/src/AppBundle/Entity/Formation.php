@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\ArrayCollectionUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
  * @ORM\Table(name="Formation")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\FormationRepository")
  */
-class Formation
+class Formation implements \JsonSerializable
 {
     /**
      * @var string
@@ -156,6 +157,44 @@ class Formation
     {
         $this->unitesParFormation = new ArrayCollection();
         $this->ordresModule = new ArrayCollection();
+    }
+
+    function jsonSerialize()
+    {
+        $result = array();
+        $result['codeFormation'] = $this->codeFormation;
+        $allModules = $this->getAllModules();
+        $moduleOrdre = array();
+        foreach ($allModules as $module){
+            $moduleOrdre[$module->getIdModule()] = array();
+            $modulesDisponibles = $this->getModulesDisponibles($module);
+            $moduleOrdre[$module->getIdModule()]['modulesDisponibles'] = array();
+            foreach ($modulesDisponibles as $moduleDispo){
+                $moduleOrdre[$module->getIdModule()]['modulesDisponibles'][] = $moduleDispo->jsonSerialize();
+            }
+            $ordre = $this->getOrdreModuleFromModule($module);
+            if (!$ordre) {
+                $ordre = new OrdreModule();
+                $ordre->setModule($module);
+            }
+            $moduleOrdre[$module->getIdModule()]['ordreModule'] = $ordre->jsonSerialize();
+        }
+        $result['ordresModules'] = $moduleOrdre;
+        return $result;
+    }
+
+    public function getAllModules(){
+        $modules = new  ArrayCollection();
+
+        foreach ($this->getUnitesParFormation() as $uniteParFormation){
+            foreach ($uniteParFormation->getModulesParUnite() as $moduleParUnite){
+                if ($moduleParUnite && ($moduleParUnite->getModule())){
+                    $modules->add($moduleParUnite->getModule());
+                }
+            }
+        }
+
+        return $modules;
     }
 
     /**
@@ -498,6 +537,62 @@ class Formation
     {
         $this->lieu = $lieu;
         return $this;
+    }
+
+    private function getModulesDisponibles(Module $module){
+        $modulesDisponibles = new ArrayCollection();
+        $modulesFromOrdre = new ArrayCollection();
+        $allModules = $this->getAllModules();
+        $ordreModule = $this->getOrdreModuleFromModule($module);
+
+        if ($ordreModule){
+            $modulesFromOrdre->add($this->getModules($ordreModule));
+        }
+        $modulesFromOrdre->add($module);
+        $modulesDisponibles = ArrayCollectionUtils::outerJoin($allModules, $modulesFromOrdre);
+        return $modulesDisponibles;
+    }
+
+    private function getOrdreModuleFromModule(Module $module){
+        if ($this->ordresModule){
+            foreach ($this->ordresModule as $item){
+                if ($item->getModule()->getIdModule() === $module->getIdModule()){
+                    return $item;
+                }
+            }
+        }
+        return null;
+    }
+
+    private function getModules(OrdreModule $ordreModule){
+        $modules = new  ArrayCollection();
+
+        if ($ordreModule){
+            foreach ($ordreModule->getGroupes() as $groupe){
+                if ($groupe->getSousGroupe1())
+                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe1()));
+
+                if ($groupe->getSousGroupe2())
+                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe2()));
+            }
+        }
+
+        return $modules;
+    }
+
+    private function getModulesFromSousGroupe(SousGroupeModule $sousGroupe){
+        $modules = new ArrayCollection();
+        if ($sousGroupe){
+            if ($sousGroupe->getModule1())
+                $modules->add($sousGroupe->getModule1());
+            if ($sousGroupe->getModule2())
+                $modules->add($sousGroupe->getModule2());
+            if ($sousGroupe->getModule3())
+                $modules->add($sousGroupe->getModule3());
+            if ($sousGroupe->getModule4())
+                $modules->add($sousGroupe->getModule4());
+        }
+        return $modules;
     }
 }
 

@@ -89,52 +89,9 @@ class FormationController extends Controller
      * @Method({"GET", "POST"})
      */
     public function editFormation(Request $request, Formation $formation){
-        $moduleRepository = $this->getDoctrine()->getRepository('AppBundle:Module');
-        $modules = $moduleRepository->getFormationModules($formation);
         return $this->render(':ordreLogique:gestionOrdre.html.twig', array(
-            'codeFormation' => $formation->getCodeFormation(),
-            'modules' => $modules
+            'formation' => $formation,
+            'modules' => $formation->getAllModules()
         ));
-    }
-
-    /**
-     * @param Module $module
-     * @Route("/{codeFormation}/ordre/{idModule}", name="formations_ordre")
-     * @Method("GET");
-     */
-    public function getOrdreModule(Formation $formation, Module $module){
-        $groupes = new ArrayCollection();
-        $modulesDisponibles = new ArrayCollection();
-
-        $moduleRepository = $this->getDoctrine()->getRepository('AppBundle:Module');
-        $ordreModuleRepository = $this->getDoctrine()->getRepository('AppBundle:OrdreModule');
-        $ordreModule = $ordreModuleRepository->getOrdreModuleByModule($module);
-
-        if ($ordreModule){
-            $groupes = $ordreModule->getGroupes();
-            $usedModules = new ArrayCollection($moduleRepository->getOrdreModules($ordreModule));
-            $usedModules->add($module);
-            $modulesDisponibles = $this->outerJoin($moduleRepository->getFormationModules($formation), $usedModules);
-        }else{
-            $modulesDisponibles = $this->outerJoin($moduleRepository->getFormationModules($formation),
-                new ArrayCollection([$module]));
-        }
-
-        return $this->render(':ordreLogique:ordreModule.html.twig', array(
-            'groupes' => $groupes,
-            'modulesDisponibles' => $modulesDisponibles
-        ));
-    }
-
-    private function outerJoin(ArrayCollection $left, ArrayCollection $right){
-        $outer = new ArrayCollection();
-        if ($left && $right){
-            foreach ($left as $l){
-                if (!$right->contains($l)){
-                    $outer->add($l);
-                }
-            }
-        }
-        return $outer;
     }
 }

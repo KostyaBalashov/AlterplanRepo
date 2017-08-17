@@ -14,13 +14,13 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 namespace AppBundle\Filtre;
+
 
 use AppBundle\Entity\Lieu;
 
 /**
- * Class UtilisateurFiltre représente les critères de filtre sur les utilisateurs.
+ * Class FormationFiltre représente les critères de filtre sur les utilisateurs.
  * @package AppBundle\Filtre
  */
 class FormationFiltre
@@ -76,7 +76,7 @@ class FormationFiltre
     }
 
     /**
-     * @return lieu
+     * @return Lieu
      */
     public function getLieu()
     {
@@ -84,7 +84,7 @@ class FormationFiltre
     }
 
     /**
-     * @param lieu $lieu
+     * @param Lieu $lieu
      */
     public function setLieu($lieu)
     {

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="SousGroupeModule")
  * @ORM\Entity
  */
-class SousGroupeModule
+class SousGroupeModule implements \JsonSerializable
 {
     /**
      * @var integer
@@ -56,6 +56,27 @@ class SousGroupeModule
      * })
      */
     private $module4;
+
+    public function jsonSerialize()
+    {
+        $result = array();
+        $result['codeSousGroupe'] = $this->codeSousGroupeModule;
+        $modules = array();
+        if ($this->module1){
+            $modules[] = $this->module1->jsonSerialize();
+        }
+        if ($this->module2){
+            $modules[] = $this->module2->jsonSerialize();
+        }
+        if ($this->module3){
+            $modules[] = $this->module3->jsonSerialize();
+        }
+        if ($this->module4){
+            $modules[] = $this->module4->jsonSerialize();
+        }
+        $result['modules'] = $modules;
+        return $result;
+    }
 
     /**
      * @return Module

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="GroupeModule")
  * @ORM\Entity
  */
-class GroupeModule
+class GroupeModule implements \JsonSerializable
 {
     /**
      * @var integer
@@ -63,6 +63,21 @@ class GroupeModule
      * })
      */
     private $sousGroupe2;
+
+    function jsonSerialize()
+    {
+        $result = array();
+        $result['codeGroupe'] = $this->codeGroupeModule;
+        $sousGroupes = array();
+        if ($this->sousGroupe1){
+            $sousGroupes[] = $this->sousGroupe1->jsonSerialize();
+        }
+        if ($this->sousGroupe2){
+            $sousGroupes[] = $this->sousGroupe2->jsonSerialize();
+        }
+        $result['sousGroupes'] = $sousGroupes;
+        return $result;
+    }
 
     /**
      * @return SousGroupeModule

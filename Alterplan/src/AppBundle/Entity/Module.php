@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Module")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ModuleRepository")
  */
-class Module
+class Module implements \JsonSerializable
 {
     /**
      * @var integer
@@ -76,6 +76,14 @@ class Module
      * @ORM\Column(name="TypeModule", type="integer", nullable=true)
      */
     private $typeModule;
+
+    public function jsonSerialize()
+    {
+        $result = array();
+        $result['idModule'] = $this->idModule;
+        $result['libelle'] = $this->libelle;
+        return $result;
+    }
 
     /**
      * @return int

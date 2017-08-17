@@ -25,8 +25,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <div class="card-content">
                 <span class="card-title">Modules</span>
                 {% for module in modules %}
-                    <div id="module-{{ module.idModule }}" class="flow-text valign-wrapper card-panel module clickable"
-                        data-href="{{ path('formations_ordre', {'codeFormation': codeFormation, 'idModule' : module.idModule}) }}">
+                    <div id="{{ module.idModule }}" class="flow-text valign-wrapper card-panel module clickable">
                         <span class="card-title">{{ module.libelle }}</span>
                     </div>
                 {% endfor %}
@@ -41,38 +40,50 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% block customJS %}
     <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/webReflection/document-register-element.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique/module.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique/buttonIcon.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique/draggableContainer.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique/sousGroupe.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ordreLogique/groupe.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var formation = {{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }};
 
             var drake = new dragula({
                 isContainer: function (el) {
-                    return el.classList.contains('draggable-container');
+                    return $(el).hasClass('draggable-container') || el instanceof DraggableContainer;
                 },
                 moves: function (el, source, handle, sibling) {
-                    var sourceParent = source.parentElement;
                     if (source.classList.contains('droite')) {
-                        return el.classList.contains('module');
+                        return el instanceof Module;
                     } else if (source.classList.contains('centre')) {
-                        return el.classList.contains('groupe');
-                    } else if (sourceParent.classList.contains('groupe')) {
-                        return el.classList.contains('sous-groupe');
-                    } else if (sourceParent.classList.contains('sous-groupe')) {
-                        return el.classList.contains('module');
+                        return el instanceof GroupeModule;
+                    } else if (source.parentElement instanceof GroupeModule) {
+                        return el instanceof SousGroupe;
+                    } else if (source.parentElement instanceof SousGroupe) {
+                        return el instanceof Module;
                     }
                 },
                 accepts: function (el, target, source, sibling) {
-                    var targetParent = target.parentElement;
+                    var jTarget = $(target);
+                    var jSibling = $(sibling);
                     var ok = true;
-                    if(sibling){
-                        ok = !sibling.classList.contains('card-title');
+
+                    if(jSibling){
+                        ok = !jSibling.hasClass('card-title');
                     }
-                    if (target.classList.contains('centre')) {
-                        ok = ok && (el.classList.contains('groupe') || el.classList.contains('module'));
-                    } else if (targetParent.classList.contains('groupe')) {
-                        ok = ok && ((el.classList.contains('sous-groupe') || el.classList.contains('module')) && (targetParent.dataset.nbElements < 2));
-                    } else if (targetParent.classList.contains('sous-groupe')){
-                        ok = ok && (el.classList.contains('module') && (targetParent.dataset.nbElements < 4));
+
+                    if(jTarget.hasClass('droite')){
+                        ok = ok && el instanceof Module;
+                    }else if (jTarget.hasClass('centre')) {
+                        ok = ok && (el instanceof GroupeModule || el instanceof Module);
+                    } else if (target.parentElement instanceof GroupeModule) {
+                        ok = ok && ((el instanceof SousGroupe || el instanceof Module)
+                            && (target.parentElement.nbElements < 2));
+                    } else if (target.parentElement instanceof SousGroupe){
+                        ok = ok && (el instanceof Module && (target.parentElement.nbElements < 4));
                     }
 
                     return ok;
@@ -81,53 +92,62 @@ You should have received a copy of the GNU Affero General Public License along w
             });
 
             drake.on('drop',function (el, target, source, sibling) {
-                var targetParent = target.parentElement;
-                var sourceParent = source.parentElement;
+                var jTarget = $(target);
 
-                if(el.classList.contains('module')) {
+                if(el instanceof Module) {
                     if (target.classList.contains('centre')){
                         appendModule(target, el);
-                    }else if(targetParent.classList.contains('groupe')
-                        || targetParent.classList.contains('sous-groupe')){
-                        appendModule(targetParent, el);
+                    }else if(target.parentElement instanceof GroupeModule
+                        || target.parentElement instanceof SousGroupe){
+                        appendModule(target.parentElement, el);
+                    }else if (jTarget.hasClass('droite')){
+                        //TODO ajout module disponible
                     }
-                }else if (el.classList.contains('sous-groupe')){
-                    if(targetParent.classList.contains('groupe')){
-                        appendSousGroupe(targetParent, el);
+                }else if (el instanceof SousGroupe){
+                    if(target.parentElement instanceof GroupeModule){
+                        target.parentElement.addSousGroupe(el);
+                        //appendSousGroupe(targetParent, element);
+                    }else if (jTarget.hasClass('centre')){
+                        //TODO Gestion du drop du sous-groupe dans le centred
+                    }else if (jTarget.hasClass('droite')){
+                        //TODO Gestion du drop du sous-groupe dans la liste de droite
                     }
-                }else if (el.classList.contains('groupe')){
-
+                }else if (el instanceof GroupeModule){
+                    //TODO gestion du drop du groupe dans la liste de droite
                 }
 
-                handleRemove(sourceParent);
+                handleRemove(source.parentElement);
             });
 
             $('.module.clickable').each(function (index) {
                $(this).click(function () {
                    var module = $(this);
-                   var selected = $('.module.selected');
-                   if (selected){
-                       selected.each(function (index) {
-                          $(selected[index]).removeClass('selected');
+                   var selectedModule = formation['ordresModules'][module.attr('id')];
+                   var otherSelected = $('.module.selected');
+                   if (otherSelected){
+                       otherSelected.each(function (index) {
+                          $(otherSelected[index]).removeClass('selected');
                        });
                    }
+                   module.addClass('selected');
+                   $('#selected-module-titre').text(module.text());
 
-                   showLoader();
-                   var url = $(this).data('href');
-                   $.get(url, function (data) {
-                       var container = $('.ordreContent');
-                       container.empty();
-                       container.html(data);
-
-                       module.addClass('selected');
-                       $('#selected-module-titre').text(module.children('span').text());
-                   }).fail(function () {
-                       showToast('Erreur de récupération', 'error');
-                   }).always(function () {
-                       dismissLoader();
-                   });
+                   createModulesDisponibles(selectedModule['modulesDisponibles']);
                });
             });
         });
+
+        function createModulesDisponibles(modules) {
+            var container = document.getElementsByClassName('droite')[0];
+            $('.droite > module-disponible').each(function () {
+                $(this).remove();
+            });
+            for (var i = 0, len = modules.length; i < len; i++){
+                var module = new Module();
+                module.identifiant = modules[i]['idModule'];
+                module.libelle = modules[i]['libelle'];
+                container.appendChild(module);
+            }
+        }
     </script>
 {% endblock %}
