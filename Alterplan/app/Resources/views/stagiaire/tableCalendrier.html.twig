@@ -1,0 +1,131 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+<div class="card">
+    <div class="row">
+        <div class="col s6">
+            <h5> Calendrier Inscrit </h5>
+        </div>
+        <div class="col s12">
+            {% if ( calendarRegistered != null ) %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>{{ calendarRegistered.titre }}</th>
+                        <th>{{ calendarRegistered.formation.codeFormation }}</th>
+                        <th>{{ calendarRegistered.dateDebut.format('d/m/Y') }}</th>
+                        <th>{{ calendarRegistered.dateFin.format('d/m/Y') }}</th>
+                    </tr>
+                    </thead>
+                </table>
+            {% else %}
+                {#Message informatif (Aucune donnée)#}
+                Aucun calendrier inscrit
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s6">
+            <h5>Liste des calendriers </h5>
+        </div>
+        <div class="col s2 offset-s4">
+            <a class='dropdown-button btn' href='#' data-activates='creerDopDown'>Créer</a>
+
+            {#Dropdown Créer un nouveau calendrier#}
+            <ul id='creerDopDown' class='dropdown-content'>
+                <li><a href="#!">Nouveau</a></li>
+                <li><a href="#!">Dupliquer</a></li>
+                <li><a href="#!">Appliquer un thème</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row col s2 offset-s10">
+        <a class='dropdown-button btn' href='#' data-activates='creerDopDown'>Créer</a>
+
+        {#Dropdown Créer un nouveau calendrier#}
+        <ul id='creerDopDown' class='dropdown-content'>
+            <li><a href="#!">Nouveau</a></li>
+            <li><a href="#!">Dupliquer</a></li>
+            <li><a href="#!">Appliquer un thème</a></li>
+        </ul>
+    </div>
+
+    <table  id="calendar_table">
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Formation</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Suppression</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for calendar in calendars %}
+            <tr>
+                <td>
+                    {{ calendar.titre }}
+                </td>
+
+                <td>
+                    {{ calendar.formation.codeFormation }}
+                </td>
+
+                <td>
+                    {{ calendar.dateDebut.format('d/m/Y') }}
+                </td>
+
+                <td>
+                    {{ calendar.dateFin.format('d/m/Y') }}
+                </td>
+
+                <td>
+                    <a href="#">
+                        <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier})}}">delete</i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $('.deleteIcon').click(function () {
+            var url = $(this).data("href");
+            deleteCalendar(url);
+        })
+    });
+
+    function deleteCalendar(urlAction) {
+        showLoader();
+        $.ajax({
+            url: urlAction,
+            type: 'DELETE',
+            success: function (data) {
+                dismissLoader();
+                showToast(data);
+                var calendarTableDiv = $('#calendar_table');
+                calendarTableDiv.empty();
+                calendarTableDiv.html(data);
+
+            },
+            error: function (data) {
+                dismissLoader();
+                showToast('Erreur de la suppression', 'error');
+            }
+        });
+    }
+</script>

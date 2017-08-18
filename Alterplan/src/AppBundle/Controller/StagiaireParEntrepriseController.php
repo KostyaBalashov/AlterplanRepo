@@ -55,7 +55,7 @@ class StagiaireParEntrepriseController extends Controller
             $stagiairesEntreprise = $repo->search($filtre);
 
             //Réponse à la recherche
-            return $this->render(':stagiaire:table.html.twig', array(
+            return $this->render(':stagiaire:tableStagiaire.html.twig', array(
                 'stagiairesEntreprise' => $stagiairesEntreprise,
             ));
         }
@@ -94,24 +94,5 @@ class StagiaireParEntrepriseController extends Controller
             'calendars' => $calendriers,
             'calendarRegistered' => $calendrierInscrit,
         ));
-    }
-
-    /**
-     * Deletes a calendar entity.
-     *
-     * @Route("/{codeCalendrier}", name="calendar_delete")
-     * @Method("DELETE")
-     */
-    public function deleteAction(Request $request, Calendrier $calendar)
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($calendar);
-            $em->flush();
-
-            return new Response('Le calendrier' . $calendar->getTitre() . ' a bien été supprimé.');
-        } else {
-            return new Response('Ajax s\'il vous plait.');
-        }
     }
 }
