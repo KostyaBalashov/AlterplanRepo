@@ -35,10 +35,10 @@ class CalendrierController extends Controller
     /**
      * Deletes a calendar entity.
      *
-     * @Route("/{codeCalendrier}", name="calendar_delete")
+     * @Route("/{codeCalendrier}/{numLien}", name="calendar_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Calendrier $calendar)
+    public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise)
     {
 
         $em = $this->getDoctrine()->getManager();
@@ -50,8 +50,16 @@ class CalendrierController extends Controller
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
         $calendriers = $repo->findBy(array('stagiaire' => $calendar->getStagiaire()));
 
+        $calendrierInscrit = null;
+        foreach ($calendriers as $calendrier) {
+            if ($calendrier->isInscrit() == 1) {
+                $calendrierInscrit = $calendrier;
+            }
+        }
         return $this->render('stagiaire/show.html.twig', array(
+            'stagiaireParEntreprise' => $stagiaireParEntreprise,
             'calendars' => $calendriers,
+            'calendarRegistered' => $calendrierInscrit,
         ));
 
         //return $this->redirectToRoute('stagiaires_show',array('numLien' => 7));

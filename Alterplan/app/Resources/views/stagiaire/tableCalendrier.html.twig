@@ -48,17 +48,6 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 
-    <div class="row col s2 offset-s10">
-        <a class='dropdown-button btn' href='#' data-activates='creerDopDown'>Créer</a>
-
-        {#Dropdown Créer un nouveau calendrier#}
-        <ul id='creerDopDown' class='dropdown-content'>
-            <li><a href="#!">Nouveau</a></li>
-            <li><a href="#!">Dupliquer</a></li>
-            <li><a href="#!">Appliquer un thème</a></li>
-        </ul>
-    </div>
-
     <table  id="calendar_table">
         <thead>
         <tr>
@@ -90,7 +79,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
                 <td>
                     <a href="#">
-                        <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier})}}">delete</i>
+                        <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier, "numLien": stagiaireParEntreprise.numLien})}}">delete</i>
                     </a>
                 </td>
             </tr>

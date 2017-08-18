@@ -51,7 +51,6 @@ class StagiaireParEntrepriseController extends Controller
 
         //Si le formulaire est sousmis
         if ($form->isSubmitted()) {
-            //On recherche les formations avec les critères de filtre
             $stagiairesEntreprise = $repo->search($filtre);
 
             //Réponse à la recherche
@@ -60,8 +59,6 @@ class StagiaireParEntrepriseController extends Controller
             ));
         }
 
-        //Dans tous les autres cas
-        //On charge toutes les formations
         $stagiairesEntreprise = $repo->search();
 
         return $this->render('stagiaire/index.html.twig', array(
@@ -84,11 +81,14 @@ class StagiaireParEntrepriseController extends Controller
         $calendriers = $repo->findBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire()));
 
         $calendrierInscrit = null;
+        // On recherche un calendrier inscrit
         foreach ($calendriers as $calendrier) {
             if ($calendrier->isInscrit() == 1) {
                 $calendrierInscrit = $calendrier;
             }
         }
+
+        // On retourne les données de l'objet stagiaireParEntreprise et des calendriers du stagiaire
         return $this->render('stagiaire/show.html.twig', array(
             'stagiaireParEntreprise' => $stagiaireParEntreprise,
             'calendars' => $calendriers,
