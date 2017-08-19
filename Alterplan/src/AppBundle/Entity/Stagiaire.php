@@ -176,6 +176,16 @@ class Stagiaire
     private $historique;
 
     /**
+     * @var calendrier
+     *
+     * @ORM\OneToMany(targetEntity="Calendrier", mappedBy="stagiaire")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
+     * })
+     */
+    private $calendrier;
+
+    /**
      * @var stagiaireParEntreprise
      *
      * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="stagiaire")
@@ -615,5 +625,20 @@ class Stagiaire
         $this->stagiaireParEntreprise = $stagiaireParEntreprise;
     }
 
+    /**
+     * @return calendriers
+     */
+    public function getCalendrier()
+    {
+        return $this->calendrier;
+    }
+
+    /**
+     * @param calendriers $calendrier
+     */
+    public function setCalendrier($calendrier)
+    {
+        $this->calendrier = $calendrier;
+    }
 }
 

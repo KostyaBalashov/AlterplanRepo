@@ -49,22 +49,23 @@ class StagiaireParEntrepriseController extends Controller
         // Le formulaire écoute les requêtes (pour le submit)
         $form->handleRequest($request);
 
+
         //Si le formulaire est sousmis
         if ($form->isSubmitted()) {
+            //Réponse à la recherche
             $stagiairesEntreprise = $repo->search($filtre);
 
-            //Réponse à la recherche
             return $this->render(':stagiaire:tableStagiaire.html.twig', array(
                 'stagiairesEntreprise' => $stagiairesEntreprise,
             ));
+        } else {
+            $stagiairesEntreprise = $repo->search();
+
+             return $this->render('stagiaire/index.html.twig', array(
+                'stagiairesEntreprise' => $stagiairesEntreprise,
+                'formSearch' => $form->createView()
+            ));
         }
-
-        $stagiairesEntreprise = $repo->search();
-
-        return $this->render('stagiaire/index.html.twig', array(
-            'stagiairesEntreprise' => $stagiairesEntreprise,
-            'formSearch' => $form->createView()
-        ));
     }
 
     /**
@@ -78,20 +79,13 @@ class StagiaireParEntrepriseController extends Controller
 
         // Affichage de la fiche du stagiaire avec la liste de ses calendrier
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
-        $calendriers = $repo->findBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire()));
-
-        $calendrierInscrit = null;
-        // On recherche un calendrier inscrit
-        foreach ($calendriers as $calendrier) {
-            if ($calendrier->isInscrit() == 1) {
-                $calendrierInscrit = $calendrier;
-            }
-        }
+        $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire(), 'isInscrit' => 0));
+        $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire(), 'isInscrit' => 1));
 
         // On retourne les données de l'objet stagiaireParEntreprise et des calendriers du stagiaire
         return $this->render('stagiaire/show.html.twig', array(
             'stagiaireParEntreprise' => $stagiaireParEntreprise,
-            'calendars' => $calendriers,
+            'calendars' => $calendrierNonInscrit,
             'calendarRegistered' => $calendrierInscrit,
         ));
     }

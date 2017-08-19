@@ -59,7 +59,8 @@ You should have received a copy of the GNU Affero General Public License along w
         </tr>
         </thead>
         <tbody>
-        {% for calendar in calendars %}
+        {% if ( calendars != null ) %}
+            {% for calendar in calendars %}
             <tr>
                 <td>
                     {{ calendar.titre }}
@@ -84,6 +85,13 @@ You should have received a copy of the GNU Affero General Public License along w
                 </td>
             </tr>
         {% endfor %}
+        {% else %}
+            <tr>
+                <td>
+                    Aucun calendrier pour ce stagiaire
+                </td>
+            </tr>
+        {% endif %}
         </tbody>
     </table>
 </div>
@@ -105,13 +113,13 @@ You should have received a copy of the GNU Affero General Public License along w
             type: 'DELETE',
             success: function (data) {
                 dismissLoader();
-                showToast(data);
+                showToast('Le calendrier a bien été supprimé');
                 var calendarTableDiv = $('#calendar_table');
                 calendarTableDiv.empty();
                 calendarTableDiv.html(data);
 
             },
-            error: function (data) {
+            error: function () {
                 dismissLoader();
                 showToast('Erreur de la suppression', 'error');
             }

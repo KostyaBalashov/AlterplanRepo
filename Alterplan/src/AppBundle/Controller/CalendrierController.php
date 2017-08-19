@@ -41,28 +41,24 @@ class CalendrierController extends Controller
     public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise)
     {
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($calendar);
-        $em->flush();
-        // Retourner le tableau
+        if($calendar->isInscrit()) {
+            return Response('Le calendrier ' . $calendar->getTitre() . ' ne peut pas être supprimé car il est inscrit');
+        } else {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($calendar);
+            $em->flush();
+            // Retourner le tableau
 
-        // Affichage de la fiche du stagiaire avec la liste de ses calendrier
-        $repo = $this->getDoctrine()->getRepository(Calendrier::class);
-        $calendriers = $repo->findBy(array('stagiaire' => $calendar->getStagiaire()));
+            // Affichage de la fiche du stagiaire avec la liste de ses calendrier
+            $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+            $calendrierNonInscrit = $repo->findBy(array('stagiaire' =>  $calendar->getStagiaire(), 'isInscrit' => 0));
+            $calendrierInscrit = $repo->findOneBy(array('stagiaire' =>  $calendar->getStagiaire(), 'isInscrit' => 1));
 
-        $calendrierInscrit = null;
-        foreach ($calendriers as $calendrier) {
-            if ($calendrier->isInscrit() == 1) {
-                $calendrierInscrit = $calendrier;
-            }
+            return $this->render('stagiaire/tableCalendrier.html.twig', array(
+                'stagiaireParEntreprise' => $stagiaireParEntreprise,
+                'calendars' => $calendrierNonInscrit,
+                'calendarRegistered' => $calendrierInscrit,
+            ));
         }
-        return $this->render('stagiaire/show.html.twig', array(
-            'stagiaireParEntreprise' => $stagiaireParEntreprise,
-            'calendars' => $calendriers,
-            'calendarRegistered' => $calendrierInscrit,
-        ));
-
-        //return $this->redirectToRoute('stagiaires_show',array('numLien' => 7));
-        //return new Response('Utlisateur ' . $calendar->getTitre() . ' a bien été supprimé.');
     }
 }

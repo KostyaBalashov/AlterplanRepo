@@ -60,8 +60,14 @@ class StagiaireParEntrepriseRepository extends EntityRepository
             //On retourne le résultat
             return $query->getQuery()->getResult();
         }else{
-            //S'il n'y a pas de filtre on retourne tous les enregistrements
-            return $this->findAll();
+            //S'il n'y a pas de filtre on retourne 50 stagiaires
+            $query = $this->createQueryBuilder('ste')
+                ->innerJoin('ste.stagiaire','st')
+                ->innerJoin('ste.entreprise','e')
+                ->addOrderBy('st.nom','ASC')
+                ->addOrderBy('st.prenom','ASC')
+                ->setMaxResults(50);
+            return $query->getQuery()->getResult();
         }
     }
 }
