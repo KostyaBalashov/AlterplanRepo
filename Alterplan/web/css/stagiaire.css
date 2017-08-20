@@ -19,5 +19,16 @@ You should have received a copy of the GNU Affero General Public License along w
 
 .stagiaireInformation {
     margin: auto;
-    width: 70%;
+    width: 90%;
+}
+
+.stagiaireInformation > .formationInformation{
+    text-align: center;
+}
+
+.stagiaireInformation > .entrepriseInformation{
+    text-align: right;
+}
+.stagiaireInformation span{
+    font-weight: bold;
 }
