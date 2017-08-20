@@ -9,22 +9,26 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 
 <div class="card">
-    <div class="row">
+    <div class="row calendrierInscrit">
         <div class="col s6">
             <h5> Calendrier Inscrit </h5>
         </div>
         <div class="col s12">
             {% if ( calendarRegistered != null ) %}
-                <table>
-                    <thead>
-                    <tr>
-                        <th>{{ calendarRegistered.titre }}</th>
-                        <th>{{ calendarRegistered.formation.codeFormation }}</th>
-                        <th>{{ calendarRegistered.dateDebut.format('d/m/Y') }}</th>
-                        <th>{{ calendarRegistered.dateFin.format('d/m/Y') }}</th>
-                    </tr>
-                    </thead>
-                </table>
+                <div class="row ligneInscrit">
+                    <div class="col s3">
+                        {{ calendarRegistered.titre }}
+                    </div>
+                    <div class="col s3">
+                        {{ calendarRegistered.formation.codeFormation }}
+                    </div>
+                    <div class="col s3">
+                        {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                    </div>
+                    <div class="col s3">
+                        {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                    </div>
+                </div>
             {% else %}
                 {#Message informatif (Aucune donnée)#}
                 Aucun calendrier inscrit
@@ -34,10 +38,10 @@ You should have received a copy of the GNU Affero General Public License along w
 
     <div class="row">
         <div class="col s6">
-            <h5>Liste des calendriers </h5>
+            <h5>Liste des calendriers ({{ calendars|length }})</h5>
         </div>
         <div class="col s2 offset-s4">
-            <a class='dropdown-button btn' href='#' data-activates='creerDopDown'>Créer</a>
+            <a class='dropdown-button modal-action waves-effect waves-green btn' href='#' data-activates='creerDopDown'>Créer</a>
 
             {#Dropdown Créer un nouveau calendrier#}
             <ul id='creerDopDown' class='dropdown-content'>

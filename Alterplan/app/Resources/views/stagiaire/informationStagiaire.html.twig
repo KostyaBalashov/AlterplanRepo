@@ -9,57 +9,73 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 
 <div class="card">
-    <h5 class="card-title">Informations</h5>
-    <div class="col s4">
-        <div class="col s12">
-            <h5>{{ stagiaireParEntreprise.stagiaire.nom }} {{ stagiaireParEntreprise.stagiaire.prenom }}</h5>
-        </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.stagiaire.adresse1 }}
-        </div>
-        <div class="col s2">
-            {{ stagiaireParEntreprise.stagiaire.codePostal }}
-        </div>
-        <div class="col s10">
-            {{ stagiaireParEntreprise.stagiaire.ville }}
-        </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.stagiaire.telephoneFixe }}
-        </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.stagiaire.email }}
-        </div>
+    <div class="row">
+        <h5 class="">Stagiaire</h5>
     </div>
-    <div class="col s4">
-        <div class="col s12">
-            <h5>Formation</h5>
+    <div class="row stagiaireInformation">
+        <div class="col s4">
+            <div class="col s12">
+                <h5>{{ stagiaireParEntreprise.stagiaire.nom }} {{ stagiaireParEntreprise.stagiaire.prenom }}</h5>
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.stagiaire.adresse1 }}
+            </div>
+            <div class="col s2">
+                {{ stagiaireParEntreprise.stagiaire.codePostal }}
+            </div>
+            <div class="col s10">
+                {{ stagiaireParEntreprise.stagiaire.ville }}
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.stagiaire.telephoneFixe }}
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.stagiaire.email }}
+            </div>
         </div>
-        <div class="col s12">
-            Du (Date de début)
-        </div>
-        <div class="col s12">
-            Au (Date de fin)
-        </div>
+        <div class="col s4">
+            {% if ( calendarRegistered != null ) %}
+                <div class="col s12">
+                    <h5>{{ calendarRegistered.formation.codeTitre }}</h5>
+                </div>
+                <div class="col s12">
+                    Du {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                </div>
+                <div class="col s12">
+                    Au {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                </div>
+            {% else %}
+                <div class="col s12">
+                    <h5>Formation</h5>
+                </div>
+                <div class="col s12">
+                    Du
+                </div>
+                <div class="col s12">
+                    Au
+                </div>
+            {% endif %}
 
-    </div>
-    <div class="col s4">
-        <div class="col s12">
-            <h5>{{ stagiaireParEntreprise.entreprise.raisonsociale }} </h5>
         </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.entreprise.adresse1 }}
-        </div>
-        <div class="col s2">
-            {{ stagiaireParEntreprise.entreprise.ville }}
-        </div>
-        <div class="col s10">
-            {{ stagiaireParEntreprise.entreprise.codePostal }}
-        </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.entreprise.telephone }}
-        </div>
-        <div class="col s12">
-            {{ stagiaireParEntreprise.entreprise.email }}
+        <div class="col s4">
+            <div class="col s12">
+                <h5>{{ stagiaireParEntreprise.entreprise.raisonsociale }} </h5>
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.entreprise.adresse1 }}
+            </div>
+            <div class="col s2">
+                {{ stagiaireParEntreprise.entreprise.ville }}
+            </div>
+            <div class="col s10">
+                {{ stagiaireParEntreprise.entreprise.codePostal }}
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.entreprise.telephone }}
+            </div>
+            <div class="col s12">
+                {{ stagiaireParEntreprise.entreprise.email }}
+            </div>
         </div>
     </div>
 </div>
