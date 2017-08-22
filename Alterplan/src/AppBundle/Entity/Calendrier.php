@@ -91,6 +91,15 @@ class Calendrier
     private $isModele;
 
     /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Contrainte" , mappedBy="calendrier")
+     */
+    private $formations;
+
+
+
+
+    /**
      * @return \DateTime
      */
     public function getDateDebut()
@@ -269,6 +278,23 @@ class Calendrier
         $this->isModele = $isModele;
         return $this;
     }
+
+    /**
+     * @return Collection
+     */
+    public function getFormations()
+    {
+        return $this->formations;
+    }
+
+    /**
+     * @param Collection $formations
+     */
+    public function setFormations($formations)
+    {
+        $this->formations = $formations;
+    }
+
 
 }
 

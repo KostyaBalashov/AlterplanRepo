@@ -19,6 +19,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Calendrier;
+use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,44 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CalendrierController extends Controller
 {
+
+    /**
+     * Créé un nouveau calendrier.
+     *
+     * @Route("/new/{codeStagiaire}", name="calendrier_new")
+     * @Method({"GET", "POST"})
+     */
+    public function newAction(Request $request, Stagiaire  $stagiaire)
+        {
+            $calendrier = new Calendrier();
+            $calendrier->setStagiaire($stagiaire);
+
+        //Création du formulaire de création du calendrier
+        $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
+            array('attr' => array('id' => 'calendrier'),
+                'action' => $this->generateUrl('calendrier_new',array('codeStagiaire'=>$stagiaire->getCodeStagiaire())),
+                'method' => 'POST'));
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($calendrier);
+            $em->flush();
+
+
+            return new Response('Le calendrier ' . $calendrier->getTitre() . ' a bien été enregistré.');
+        }
+
+        return $this->render(':calendrier:newCalendrierForm.html.twig', array(
+            'calendrier' => $calendrier,
+            'form' => $form->createView(),
+            'titre' => 'Création d\'un calendrier',
+        ));
+    }
+
+
+
     /**
      * Deletes a calendar entity.
      *

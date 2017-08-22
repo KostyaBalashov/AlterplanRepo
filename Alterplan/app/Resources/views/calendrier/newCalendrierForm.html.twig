@@ -1,0 +1,48 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+        {% javascripts
+        'assets/jquery/jquery.js'
+        'assets/materialize/dist/js/materialize.js'
+        'js/commun.js'
+        'js/dragula/3.7.2/dragula.min.js'
+        output='js/compiled/app.js' %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+        {% block javascripts %}
+        {% endblock %}
+
+<div class="row">
+    <h5 class="center">{{ titre }}</h5>
+</div>
+
+{{ form_start(form) }}
+<div class="row valign-wrapper">
+    {{ form_label(form.titre) }}
+    {{ form_widget(form.titre) }}
+</div>
+<div class="row valign-wrapper">
+    {{ form_label(form.formation) }}
+    {{ form_widget(form.formation,{'attr': {'class':'col s11'}}) }}
+</div>
+<div class="row valign-wrapper">
+    {{ form_label(form.dateDebut) }}
+    {{ form_widget(form.dateDebut) }}
+</div>
+<div class="row valign-wrapper">
+    {{ form_label(form.dateFin) }}
+    {{ form_widget(form.dateFin) }}
+</div>
+
+{{ form_end(form) }}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+</script>

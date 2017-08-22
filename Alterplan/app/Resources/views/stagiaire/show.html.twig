@@ -16,3 +16,10 @@
 </div>
 
 {% endblock %}
+
+{# paramétrage de la modale #}
+{% block modal_id %}calendrier{% endblock %}
+{% block modal_action_buttons %}
+    <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+    <button type="submit" form="calendrier" class="modal-action waves-effect waves-green btn">Valider</button>
+{% endblock %}
