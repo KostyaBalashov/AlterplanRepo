@@ -134,7 +134,7 @@ class Formation implements \JsonSerializable
     /**
      * @var Lieu
      *
-     * @ManyToOne(targetEntity="Lieu", inversedBy="Formation")
+     * @ManyToOne(targetEntity="Lieu")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeLieu", referencedColumnName="CodeLieu", nullable=true)
      * })
@@ -162,24 +162,27 @@ class Formation implements \JsonSerializable
     function jsonSerialize()
     {
         $result = array();
+
         $result['codeFormation'] = $this->codeFormation;
         $allModules = $this->getAllModules();
-        $moduleOrdre = array();
+
+        $ordreModule = array();
         foreach ($allModules as $module){
-            $moduleOrdre[$module->getIdModule()] = array();
+            $ordreModule[$module->getIdModule()] = array();
             $modulesDisponibles = $this->getModulesDisponibles($module);
-            $moduleOrdre[$module->getIdModule()]['modulesDisponibles'] = array();
+            $ordreModule[$module->getIdModule()]['modulesDisponibles'] = array();
             foreach ($modulesDisponibles as $moduleDispo){
-                $moduleOrdre[$module->getIdModule()]['modulesDisponibles'][] = $moduleDispo->jsonSerialize();
+                //$moduleDispo->getIdModule()
+                $ordreModule[$module->getIdModule()]['modulesDisponibles'][] = $moduleDispo->jsonSerialize();
             }
             $ordre = $this->getOrdreModuleFromModule($module);
             if (!$ordre) {
                 $ordre = new OrdreModule();
                 $ordre->setModule($module);
             }
-            $moduleOrdre[$module->getIdModule()]['ordreModule'] = $ordre->jsonSerialize();
+            $ordreModule[$module->getIdModule()]['ordreModule'] = $ordre->jsonSerialize();
         }
-        $result['ordresModules'] = $moduleOrdre;
+        $result['modules'] = $ordreModule;
         return $result;
     }
 

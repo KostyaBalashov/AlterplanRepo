@@ -47,9 +47,30 @@ You should have received a copy of the GNU Affero General Public License along w
     <script type="text/javascript" src="{{ asset('js/ordreLogique/sousGroupe.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique/groupe.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/formation.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            var formation = {{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }};
+            var ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+
+            $('.module.clickable').each(function (index) {
+                $(this).click(function () {
+                    var module = $(this);
+                    ordreLogique.formation.selectModule(module.attr('id'));
+
+                    var otherSelected = $('.module.selected');
+                    if (otherSelected){
+                        otherSelected.each(function (index) {
+                            $(otherSelected[index]).removeClass('selected');
+                        });
+                    }
+
+                    module.addClass('selected');
+                    $('#selected-module-titre').text(module.text());
+
+                    ordreLogique.createModulesDisponibles();
+                    ordreLogique.createGroupesModules();
+                });
+            });
 
             var drake = new dragula({
                 isContainer: function (el) {
@@ -92,62 +113,65 @@ You should have received a copy of the GNU Affero General Public License along w
             });
 
             drake.on('drop',function (el, target, source, sibling) {
-                var jTarget = $(target);
-
                 if(el instanceof Module) {
+                    if (source.classList.contains('droite')){
+                        ordreLogique.formation.removeModuleDisponible(el);
+                    }
+
                     if (target.classList.contains('centre')){
-                        appendModule(target, el);
-                    }else if(target.parentElement instanceof GroupeModule
-                        || target.parentElement instanceof SousGroupe){
-                        appendModule(target.parentElement, el);
-                    }else if (jTarget.hasClass('droite')){
-                        //TODO ajout module disponible
+                        var idGroupe = -1;
+                        var groupes = target.getElementsByTagName('groupe-module');
+
+                        for (var i = 0, len = groupes.length; i < len; i++){
+                            var id = parseInt(groupes[i].identifiant);
+                            if (id > idGroupe){
+                                idGroupe = id;
+                            }
+                        }
+
+                        var sousGroupe = ordreLogique.createSousGroupe();
+                        var groupe = ordreLogique.createGroupe();
+                        groupe.identifiant = ++idGroupe;
+
+                        ordreLogique.formation.addGroupe(groupe);
+                        groupe.addSousGroupe(sousGroupe);
+                        sousGroupe.addModule(el);
+
+                        if(sibling){
+                            target.insertBefore(groupe, sibling);
+                        }else {
+                            target.appendChild(groupe);
+                        }
+
+                    }else if(target.parentElement instanceof GroupeModule){
+                        var sousGroupe = ordreLogique.createSousGroupe();
+                        sousGroupe.addModule(el);
+
+                        target.parentElement.addSousGroupe(sousGroupe);
+
+                        if (sibling){
+                            target.insertBefore(sousGroupe, sibling);
+                        }else {
+                            target.appendChild(sousGroupe);
+                        }
+
+                    }else if(target.parentElement instanceof SousGroupe){
+                        target.parentElement.addModule(el);
+                        if (sibling){
+                            target.insertBefore(el, sibling);
+                        }else {
+                            target.appendChild(el);
+                        }
+                    } else if (target.classList.contains('droite')){
+                       ordreLogique.formation.addModuleDisponible(el);
                     }
+
                 }else if (el instanceof SousGroupe){
-                    if(target.parentElement instanceof GroupeModule){
-                        target.parentElement.addSousGroupe(el);
-                        //appendSousGroupe(targetParent, element);
-                    }else if (jTarget.hasClass('centre')){
-                        //TODO Gestion du drop du sous-groupe dans le centred
-                    }else if (jTarget.hasClass('droite')){
-                        //TODO Gestion du drop du sous-groupe dans la liste de droite
-                    }
-                }else if (el instanceof GroupeModule){
-                    //TODO gestion du drop du groupe dans la liste de droite
+                    target.parentElement.addSousGroupe(el);
                 }
 
-                handleRemove(source.parentElement);
-            });
-
-            $('.module.clickable').each(function (index) {
-               $(this).click(function () {
-                   var module = $(this);
-                   var selectedModule = formation['ordresModules'][module.attr('id')];
-                   var otherSelected = $('.module.selected');
-                   if (otherSelected){
-                       otherSelected.each(function (index) {
-                          $(otherSelected[index]).removeClass('selected');
-                       });
-                   }
-                   module.addClass('selected');
-                   $('#selected-module-titre').text(module.text());
-
-                   createModulesDisponibles(selectedModule['modulesDisponibles']);
-               });
+                ordreLogique.handleRemove(source.parentElement, el);
             });
         });
-
-        function createModulesDisponibles(modules) {
-            var container = document.getElementsByClassName('droite')[0];
-            $('.droite > module-disponible').each(function () {
-                $(this).remove();
-            });
-            for (var i = 0, len = modules.length; i < len; i++){
-                var module = new Module();
-                module.identifiant = modules[i]['idModule'];
-                module.libelle = modules[i]['libelle'];
-                container.appendChild(module);
-            }
-        }
     </script>
 {% endblock %}

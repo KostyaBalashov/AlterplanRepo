@@ -9,46 +9,105 @@
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function handleRemove(container) {
-    if(container instanceof GroupeModule){
-        var dataContainer = container.getDraggableContainer();
-        container.nbElements = dataContainer.getElementsByTagName('sous-groupe').length;
-        var last = dataContainer.getElementsByClassName('last')[0];
-        if (last){
-            last.classList.remove('last');
-        }
+function OrdreLogique(formationJson) {
+    this.formation = new Formation(formationJson);
 
-        if (container.nbElements > 0){
-            var sousGroupe = dataContainer.getElementsByTagName('sous-groupe')[0];
-            if (sousGroupe){
-                sousGroupe.classList.remove('s6');
-                sousGroupe.classList.add('s12');
+    this.handleRemove = function (container, element) {
+        if(container instanceof GroupeModule){
+            container.removeSousGroupe(element);
+        }else if (container instanceof SousGroupe){
+            container.removeModule(element);
+        }
+    };
+
+    this.createModulesDisponibles = function () {
+        var modulesJson = this.formation.getModulesDisponibles();
+        var container = document.getElementsByClassName('droite')[0];
+        $('.droite > module-disponible').each(function () {
+            $(this).remove();
+        });
+        for (var i = 0, len = modulesJson.length; i < len; i++){
+            var module = new Module();
+            module.identifiant = modulesJson[i]['idModule'];
+            module.libelle = modulesJson[i]['libelle'];
+            container.appendChild(module);
+        }
+    };
+
+    this.createGroupesModules = function () {
+        var groupesJson = this.formation.getGroupesModules();
+        var container = document.getElementsByClassName('centre')[0];
+        $('.centre > groupe-module').each(function () {
+            $(this).remove();
+        });
+
+        for (var i = 0, len = groupesJson.length; i < len; i++){
+            var groupe = this.createGroupe();
+            groupe.identifiant = groupesJson[i].codeGroupeModule;
+
+            var sousGroupes = this.createSousGroupes(groupesJson[i].sousGroupes);
+            for (var j = 0, jLen = sousGroupes.length; j < jLen; j++){
+                groupe.getDraggableContainer().appendChild(sousGroupes[j]);
             }
-        }else{
-            container.remove();
+            groupe.nbElements = groupe.getSousGroupes().length;
+            container.appendChild(groupe);
         }
-    }else if (container instanceof SousGroupe){
-        var dataContainer = container.getDraggableContainer();
-        var parent = container.groupeParent;
-        container.nbElements = dataContainer.getElementsByTagName('module-disponible').length;
-        if (container.nbElements === 0){
-            container.remove();
-            handleRemove(parent);
+    };
+
+    this.createSousGroupes = function (sousGroupesJson) {
+        var sousGroupes = [];
+        for (var i = 0 , len = sousGroupesJson.length; i < len; i++){
+            var sousGroupe = this.createSousGroupe();
+            sousGroupe.identifiant = sousGroupesJson[i].codeSousGroupe;
+
+            var modulesJson = sousGroupesJson[i].modules;
+            for (var j = 0, mLen = modulesJson.length; j < mLen; j++){
+                var module = new Module();
+                module.identifiant = modulesJson[j].idModule;
+                module.libelle = modulesJson[j].libelle;
+                sousGroupe.getDraggableContainer().appendChild(module);
+            }
+            sousGroupe.nbElements = sousGroupe.getModules().length;
+            sousGroupes.push(sousGroupe);
         }
+        return sousGroupes;
+    };
 
-    }
-}
+    this.createSousGroupe = function () {
+        var ordre = this;
+        var sousGroupe = new SousGroupe();
 
-function appendModule(target, module) {
-    if (target.classList.contains('centre')){
-        var idGroupe = target.getElementsByTagName('groupe-module').length;
+        sousGroupe.addEventListener('sousGroupeRemoved', function (e) {
+            ordre.formation.removeSousGroupe(e.data['sousGroupe']);
+        }, false);
+        sousGroupe.addEventListener('moduleAdded', function (e) {
+            ordre.formation.addModuleToSousGroupe(e.data['sousGroupe'], e.data['module']);
+        }, false);
+        sousGroupe.addEventListener('moduleRemoved', function (e) {
+            ordre.formation.removeModuleFromSousGroupe(e.data['sousGroupe'], e.data['module']);
+        }, false);
+
+        return sousGroupe;
+    };
+
+    this.createGroupe = function () {
+        var ordre = this;
         var groupe = new GroupeModule();
-        groupe.identifiant = idGroupe;
-        groupe.addModule(module);
-        target.appendChild(groupe);
-    }else {
-        target.addModule(module);
-    }
+
+        groupe.addEventListener('groupeRemoved', function (e) {
+            ordre.formation.removeGroupe(e.data['groupe']);
+        }, false);
+
+        groupe.addEventListener('sousGroupeAdded', function (e) {
+            ordre.formation.addSousGroupeToGroupe(e.data['groupe'], e.data['sousGroupe']);
+        }, false);
+
+        groupe.addEventListener('sousGroupeRemoved', function (e) {
+            ordre.formation.removeSousGroupe(e.data['sousGroupe'], e.data['groupe']);
+        }, false);
+
+        return groupe;
+    };
 }
 
 //TODO gérer le click sur le bouton

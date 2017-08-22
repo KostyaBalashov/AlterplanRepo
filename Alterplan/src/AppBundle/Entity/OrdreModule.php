@@ -53,6 +53,7 @@ class OrdreModule implements \JsonSerializable
     public function __construct()
     {
         $this->groupes = new  ArrayCollection();
+        $this->codeOrdreModule = 0;
     }
 
     function jsonSerialize()

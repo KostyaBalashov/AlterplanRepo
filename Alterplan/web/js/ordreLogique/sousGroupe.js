@@ -11,14 +11,24 @@
 
 var SousGroupeProto = Object.create(HTMLDivElement.prototype);
 SousGroupeProto.createdCallback = function () {
-    this.className = 'card sous-groupe orange lighten-5 valign-wrapper col';
+
+    this.removedEvent = document.createEvent('Event');
+    this.moduleRemovedEvent = document.createEvent('Event');
+    this.moduleAddedEvent = document.createEvent('Event');
+
+    this.removedEvent.initEvent('sousGroupeRemoved', true, true);
+    this.moduleAddedEvent.initEvent('moduleAdded', true, true);
+    this.moduleRemovedEvent.initEvent('moduleRemoved', true, true);
+
+    this.removedEvent.data = [];
+    this.removedEvent.data['sousGroupe'] = this;
+
+    this.moduleAddedEvent.data = [];
+    this.moduleRemovedEvent.data = [];
+
+    this.className = 'card sous-groupe orange lighten-5 valign-wrapper col s12';
     this.appendChild(new DraggableContainer());
     this.appendChild(new ButtonRemoveSousGroupe());
-};
-
-SousGroupeProto.detachedCallback = function () {
-    //TODO mettre à jour l'objet JSON formation
-    this.groupeParent.removeSousGroupe(this);
 };
 
 SousGroupeProto.nbModules = 0;
@@ -59,19 +69,31 @@ Object.defineProperty(SousGroupeProto, 'groupeParent',{
 });
 
 SousGroupeProto.addModule = function (module) {
+    this.moduleAddedEvent.data['sousGroupe'] = this;
+    this.moduleAddedEvent.data['module'] = module;
+
     var container = this.getDraggableContainer();
     container.appendChild(module);
     this.nbElements = container.getElementsByTagName('module-disponible').length;
-    //TODO mettre à jour l'objet JSON formation
+
+    this.dispatchEvent(this.moduleAddedEvent);
 };
 
 SousGroupeProto.removeModule = function (module) {
+    this.moduleRemovedEvent.data['sousGroupe'] = this;
+    this.moduleRemovedEvent.data['module'] = module;
+
     var modulesContainer = document.getElementById('modules-disponibles-container');
     var container = this.getDraggableContainer();
     modulesContainer.appendChild(container.removeChild(module));
     this.nbElements = container.getElementsByTagName('module-disponible').length;
-    if (this.nbElements === 0)
+
+    this.dispatchEvent(this.moduleRemovedEvent);
+
+    if (this.nbElements === 0) {
         this.parentNode.removeChild(this);
+        this.dispatchEvent(this.removedEvent);
+    }
 };
 
 SousGroupeProto.getModules = function () {
@@ -80,6 +102,17 @@ SousGroupeProto.getModules = function () {
 
 SousGroupeProto.getDraggableContainer = function () {
     return this.querySelector('#draggable-container');
+};
+
+SousGroupeProto.toJson = function () {
+    var result = {codeSousGroupe: this.identifiant, modules: []};
+
+    var modules = this.getModules();
+    for (var i = 0, len = modules.length; i < len; i++){
+        result.modules.push(modules[i].toJson());
+    }
+
+    return result;
 };
 
 var SousGroupe = document.registerElement('sous-groupe', {prototype: SousGroupeProto});

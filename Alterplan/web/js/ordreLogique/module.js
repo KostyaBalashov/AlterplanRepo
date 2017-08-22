@@ -15,6 +15,10 @@ ModuleProto.createdCallback = function () {
     this.className = 'flow-text valign-wrapper card-panel module';
 };
 
+ModuleProto.toJson = function () {
+    return {idModule: this.identifiant, libelle: this.libelle};
+};
+
 Object.defineProperty(ModuleProto, 'identifiant', {
     configurable: true,
     enumerable: true,

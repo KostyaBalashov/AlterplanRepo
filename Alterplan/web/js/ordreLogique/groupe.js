@@ -11,15 +11,25 @@
 var GroupeModuleProto = Object.create(HTMLDivElement.prototype);
 
 GroupeModuleProto.createdCallback = function () {
+    this.eventRemoved = document.createEvent('Event');
+    this.sousGroupeAdded = document.createEvent('Event');
+    this.sousGroupeRemoved = document.createEvent('Event');
+
+    this.eventRemoved.initEvent('groupeRemoved', true, true);
+    this.sousGroupeAdded.initEvent('sousGroupeAdded', true, true);
+    this.sousGroupeRemoved.initEvent('sousGroupeRemoved', true, true);
+
+    this.eventRemoved.data = [];
+    this.eventRemoved.data['groupe'] = this;
+
+    this.sousGroupeAdded.data = [];
+    this.sousGroupeRemoved.data = [];
+
     this.className = 'card groupe blue lighten-5 valign-wrapper col s12';
     var container = new DraggableContainer();
     container.classList.add('valign-wrapper');
     this.appendChild(container);
     this.appendChild(new ButtonRemoveSousGroupe());
-};
-
-GroupeModuleProto.detachedCallback = function () {
-    //TODO mettre à jour l'objet JSON formation
 };
 
 GroupeModuleProto.nbSousGroupes = 0;
@@ -47,48 +57,55 @@ Object.defineProperty(GroupeModuleProto, 'nbElements',{
 });
 
 GroupeModuleProto.addSousGroupe = function (sousGroupe) {
-    var container = this.getDraggableContainer();
-    if (this.nbElements === 0)
-        sousGroupe.classList.add('s12');
-    else {
-        var first = container.getElementsByTagName('sous-groupe')[0];
-        first.classList.remove('s12');
-        first.classList.add('s6');
-
-        sousGroupe.classList.add('s6');
-        sousGroupe.classList.add('last');
+    var sousGroupes = this.getSousGroupes();
+    var idSousGroupe = -1;
+    for (var i = 0, len = sousGroupes.length; i < len; i++){
+        var id = parseInt(sousGroupes[i].identifiant);
+        if (id > idSousGroupe){
+            idSousGroupe = id;
+        }
     }
-    container.appendChild(sousGroupe);
-    this.nbElements = container.getElementsByTagName('sous-groupe').length;
-    //TODO mettre à jour JSON
+
+    sousGroupe.identifiant = ++idSousGroupe;
+    sousGroupe.groupeParent = this;
+
+    this.sousGroupeAdded.data['groupe'] = this;
+    this.sousGroupeAdded.data['sousGroupe'] = sousGroupe;
+
+    this.getDraggableContainer().appendChild(sousGroupe);
+    this.nbElements = this.getSousGroupes().length;
+
+    this.dispatchEvent(this.sousGroupeAdded);
 };
 
 GroupeModuleProto.removeSousGroupe = function (sousGroupe) {
-    var modulesContainer = document.getElementById('modules-disponibles-container');
-    var container = this.getDraggableContainer();
-    var modules = sousGroupe.getModules();
-    for (var i = 0, len = modules.length; i < len; i++){
-        modulesContainer.appendChild(sousGroupe.removeModule(modules[i]));
+    this.sousGroupeRemoved.data['groupe'] = this;
+    this.sousGroupeRemoved.data['sousGroupe'] = sousGroupe;
+
+    this.nbElements = this.getSousGroupes().length;
+    this.dispatchEvent(this.sousGroupeRemoved);
+
+    if (this.nbElements === 0){
+        this.dispatchEvent(this.parentNode.removeChild(this).eventRemoved);
     }
-    this.nbElements = container.getElementsByTagName('sous-groupe').length;
-
-    if (this.nbElements === 0)
-        this.parentNode.removeChild(this);
-
-    //TODO peut être mettre à jour JSON
 };
 
-GroupeModuleProto.addModule = function (module) {
-    var sousGroupe = new SousGroupe();
-    //TODO  trouver un meilleur id
-    sousGroupe.identifiant = this.nbElements;
-    sousGroupe.groupeParent = this;
-    sousGroupe.addModule(module);
-    this.addSousGroupe(sousGroupe);
+GroupeModuleProto.getSousGroupes = function () {
+    return this.getDraggableContainer().getElementsByTagName('sous-groupe');
 };
 
 GroupeModuleProto.getDraggableContainer = function () {
     return this.querySelector('#draggable-container');
+};
+
+GroupeModuleProto.toJson = function () {
+    var result = {codeGroupeModule: this.identifiant, sousGroupes: []};
+
+    var sousGroupes = this.getSousGroupes();
+    for (var i = 0, len = sousGroupes.length; i < len; i++){
+        result.sousGroupes.push(sousGroupes[i].toJson());
+    }
+    return result;
 };
 
 var GroupeModule = document.registerElement('groupe-module', {prototype: GroupeModuleProto});
