@@ -9,9 +9,19 @@
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Regroupe les méthodes pour manipuler les groupes, sous groupes et les modules. Fait le suivit dans le Json.
+ * @param formationJson La formation au format Json
+ * @constructor
+ */
 function OrdreLogique(formationJson) {
     this.formation = new Formation(formationJson);
 
+    /**
+     * Invoque la suppression de l'élément de son conteneur
+     * @param container le conteneur
+     * @param element l'élément supprimé
+     */
     this.handleRemove = function (container, element) {
         if(container instanceof GroupeModule){
             container.removeSousGroupe(element);
@@ -20,6 +30,9 @@ function OrdreLogique(formationJson) {
         }
     };
 
+    /**
+     * Crée les modules disponibles
+     */
     this.createModulesDisponibles = function () {
         var modulesJson = this.formation.getModulesDisponibles();
         var container = document.getElementsByClassName('droite')[0];
@@ -34,6 +47,9 @@ function OrdreLogique(formationJson) {
         }
     };
 
+    /**
+     * Crée les groupes avec les sous groupes
+     */
     this.createGroupesModules = function () {
         var groupesJson = this.formation.getGroupesModules();
         var container = document.getElementsByClassName('centre')[0];
@@ -47,6 +63,7 @@ function OrdreLogique(formationJson) {
 
             var sousGroupes = this.createSousGroupes(groupesJson[i].sousGroupes);
             for (var j = 0, jLen = sousGroupes.length; j < jLen; j++){
+                sousGroupes[j].groupeParent = groupe.identifiant;
                 groupe.getDraggableContainer().appendChild(sousGroupes[j]);
             }
             groupe.nbElements = groupe.getSousGroupes().length;
@@ -54,6 +71,11 @@ function OrdreLogique(formationJson) {
         }
     };
 
+    /**
+     * Crée les sous groupes à partir d'une liste de sous groupes Json
+     * @param sousGroupesJson liste de sous groupes au format Json
+     * @returns {Array} tableau de SousGroupe
+     */
     this.createSousGroupes = function (sousGroupesJson) {
         var sousGroupes = [];
         for (var i = 0 , len = sousGroupesJson.length; i < len; i++){
@@ -73,12 +95,15 @@ function OrdreLogique(formationJson) {
         return sousGroupes;
     };
 
+    /**
+     * Crée un SousGroupe
+     */
     this.createSousGroupe = function () {
         var ordre = this;
         var sousGroupe = new SousGroupe();
 
         sousGroupe.addEventListener('sousGroupeRemoved', function (e) {
-            ordre.formation.removeSousGroupe(e.data['sousGroupe']);
+            ordre.formation.removeSousGroupe(e.data['sousGroupe'], e.data['groupe']);
         }, false);
         sousGroupe.addEventListener('moduleAdded', function (e) {
             ordre.formation.addModuleToSousGroupe(e.data['sousGroupe'], e.data['module']);
@@ -90,6 +115,9 @@ function OrdreLogique(formationJson) {
         return sousGroupe;
     };
 
+    /**
+     * Crée un GroupeModule
+     */
     this.createGroupe = function () {
         var ordre = this;
         var groupe = new GroupeModule();

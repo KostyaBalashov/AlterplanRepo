@@ -56,7 +56,7 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 
-    <table  id="calendar_table" class="tableauCliquable centered highlight">
+    <table  id="calendar_table" class="centered highlight">
         <thead>
         <tr>
             <th>Titre</th>
@@ -69,7 +69,7 @@ You should have received a copy of the GNU Affero General Public License along w
         <tbody>
         {% if ( calendars != null ) %}
             {% for calendar in calendars %}
-                    <tr class="clickable-row-calendar" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
+                    <tr class="clickable" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
                         <td>
                             {{ calendar.titre }}
                         </td>
@@ -109,7 +109,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
     $(document).ready(function() {
 
-        $('.clickable-row-calendar td:not(:last-child)').click(function() {
+        $('.clickable td:not(:last-child)').click(function() {
             //Récupération de la ligne contenant l'url cible
             var urlCalendrier = $(this).closest('tr').data("href");
             window.location = urlCalendrier;

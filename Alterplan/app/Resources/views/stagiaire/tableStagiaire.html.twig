@@ -14,7 +14,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </div>
 </div>
 
-<table class="tableauCliquable centered highlight">
+<table class="centered highlight">
     <thead>
     <tr>
         <th>Stagiaire</th>
@@ -25,7 +25,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </thead>
     <tbody>
     {% for stagiaireEntreprise in stagiairesEntreprise %}
-        <tr class="clickable-row-stagiaire" data-href="{{ path('stagiaires_show', { 'numLien': stagiaireEntreprise.numLien }) }}">
+        <tr class="clickable" data-href="{{ path('stagiaires_show', { 'numLien': stagiaireEntreprise.numLien }) }}">
 
             <td>
                 {{ stagiaireEntreprise.stagiaire.nom }} {{ stagiaireEntreprise.stagiaire.prenom }}
@@ -49,7 +49,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
     $(document).ready(function() {
 
-        $('.clickable-row-stagiaire').click(function() {
+        $('.clickable').click(function() {
             var urlStagiaire = $(this).closest('tr').data("href");
             window.location = urlStagiaire;
         });

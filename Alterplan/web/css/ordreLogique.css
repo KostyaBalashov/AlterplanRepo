@@ -25,16 +25,14 @@ You should have received a copy of the GNU Affero General Public License along w
 }
 
 .draggable-container.droite{
+    min-height: 45em;
     max-height: 45em;
     overflow: auto;
 }
 
 .draggable-container.centre{
     padding-bottom: 15px;
-}
-
-.clickable{
-    cursor: pointer;
+    min-height: 44em;
 }
 
 .selected{

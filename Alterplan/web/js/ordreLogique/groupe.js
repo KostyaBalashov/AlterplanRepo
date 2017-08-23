@@ -8,7 +8,12 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ * Création d'un prototype héritant de div
+ * @type {HTMLDivElement} div
+ */
 var GroupeModuleProto = Object.create(HTMLDivElement.prototype);
+
 
 GroupeModuleProto.createdCallback = function () {
     this.eventRemoved = document.createEvent('Event');
@@ -20,8 +25,6 @@ GroupeModuleProto.createdCallback = function () {
     this.sousGroupeRemoved.initEvent('sousGroupeRemoved', true, true);
 
     this.eventRemoved.data = [];
-    this.eventRemoved.data['groupe'] = this;
-
     this.sousGroupeAdded.data = [];
     this.sousGroupeRemoved.data = [];
 
@@ -31,30 +34,6 @@ GroupeModuleProto.createdCallback = function () {
     this.appendChild(container);
     this.appendChild(new ButtonRemoveSousGroupe());
 };
-
-GroupeModuleProto.nbSousGroupes = 0;
-
-Object.defineProperty(GroupeModuleProto, 'identifiant', {
-    configurable: true,
-    enumerable: true,
-    get: function () {
-        return this.id;
-    },
-    set: function (val) {
-        this.id = val;
-    }
-});
-
-Object.defineProperty(GroupeModuleProto, 'nbElements',{
-    configurable: true,
-    enumerable: true,
-    get: function () {
-        return this.nbSousGroupes;
-    },
-    set: function (val) {
-        this.nbSousGroupes = val;
-    }
-});
 
 GroupeModuleProto.addSousGroupe = function (sousGroupe) {
     var sousGroupes = this.getSousGroupes();
@@ -67,9 +46,9 @@ GroupeModuleProto.addSousGroupe = function (sousGroupe) {
     }
 
     sousGroupe.identifiant = ++idSousGroupe;
-    sousGroupe.groupeParent = this;
+    sousGroupe.groupeParent = this.identifiant;
 
-    this.sousGroupeAdded.data['groupe'] = this;
+    this.sousGroupeAdded.data['groupe'] = this.identifiant;
     this.sousGroupeAdded.data['sousGroupe'] = sousGroupe;
 
     this.getDraggableContainer().appendChild(sousGroupe);
@@ -79,9 +58,10 @@ GroupeModuleProto.addSousGroupe = function (sousGroupe) {
 };
 
 GroupeModuleProto.removeSousGroupe = function (sousGroupe) {
-    this.sousGroupeRemoved.data['groupe'] = this;
+    this.sousGroupeRemoved.data['groupe'] = this.identifiant;
     this.sousGroupeRemoved.data['sousGroupe'] = sousGroupe;
 
+    this.eventRemoved.data['groupe'] = this.identifiant;
     this.nbElements = this.getSousGroupes().length;
     this.dispatchEvent(this.sousGroupeRemoved);
 
@@ -109,3 +89,6 @@ GroupeModuleProto.toJson = function () {
 };
 
 var GroupeModule = document.registerElement('groupe-module', {prototype: GroupeModuleProto});
+
+GroupeModule.identifiant = -1;
+GroupeModule.nbElements = 0;

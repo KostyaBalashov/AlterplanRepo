@@ -30,7 +30,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </thead>
     <tbody>
     {% for utilisateur in utilisateurs %}
-        <tr class="clickable-row" data-href="{{ path('utilisateurs_edit', { 'id': utilisateur.id }) }}">
+        <tr class="clickable" data-href="{{ path('utilisateurs_edit', { 'id': utilisateur.id }) }}">
             <td class="col s2" style="padding:15px 5px">{{ utilisateur.username }}</a></td>
             <td class="col s3" style="padding:15px 5px">{{ utilisateur.nom }}</td>
             <td class="col s3" style="padding:15px 5px">{{ utilisateur.prenom }}</td>
@@ -82,7 +82,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
     $(document).ready(function() {
         //abonnement au click de la ligne (toute la ligne sauf la dernière colonne)
-        $('.clickable-row td:not(:last-child)').click(function() {
+        $('.clickable td:not(:last-child)').click(function() {
             //Récupération de la ligne contenant l'url cible
             var url = $(this).closest('tr').data("href");
 

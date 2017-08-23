@@ -10,7 +10,11 @@
  */
 
 var SousGroupeProto = Object.create(HTMLDivElement.prototype);
+
 SousGroupeProto.createdCallback = function () {
+    SousGroupe.identifiant = -1;
+    SousGroupe.nbElements = 0;
+    SousGroupe.groupeParent = -1;
 
     this.removedEvent = document.createEvent('Event');
     this.moduleRemovedEvent = document.createEvent('Event');
@@ -31,43 +35,6 @@ SousGroupeProto.createdCallback = function () {
     this.appendChild(new ButtonRemoveSousGroupe());
 };
 
-SousGroupeProto.nbModules = 0;
-SousGroupeProto.groupeParent = null;
-
-Object.defineProperty(SousGroupeProto, 'identifiant', {
-    configurable: true,
-    enumerable: true,
-    get: function () {
-        return this.id;
-    },
-    set: function (val) {
-        this.id = val;
-    }
-});
-
-
-Object.defineProperty(SousGroupeProto, 'nbElements', {
-    configurable: true,
-    enumerable: true,
-    get: function () {
-        return this.nbModules;
-    },
-    set: function (val) {
-        this.nbModules = val;
-    }
-});
-
-Object.defineProperty(SousGroupeProto, 'groupeParent',{
-    configurable: true,
-    enumerable: true,
-    get: function () {
-        return SousGroupe.groupeParent;
-    },
-    set: function (groupe) {
-        SousGroupe.groupeParent = groupe;
-    }
-});
-
 SousGroupeProto.addModule = function (module) {
     this.moduleAddedEvent.data['sousGroupe'] = this;
     this.moduleAddedEvent.data['module'] = module;
@@ -82,17 +49,14 @@ SousGroupeProto.addModule = function (module) {
 SousGroupeProto.removeModule = function (module) {
     this.moduleRemovedEvent.data['sousGroupe'] = this;
     this.moduleRemovedEvent.data['module'] = module;
+    this.removedEvent.data['groupe'] = this.groupeParent;
 
-    // var modulesContainer = document.getElementById('modules-disponibles-container');
-    var container = this.getDraggableContainer();
-    container.removeChild(module);
-    this.nbElements = this.getDraggableContainer().getElementsByTagName('module-disponible').length;
+    this.nbElements = this.getModules().length;
 
     this.dispatchEvent(this.moduleRemovedEvent);
 
     if (this.nbElements === 0) {
-        this.parentNode.removeChild(this);
-        this.dispatchEvent(this.removedEvent);
+        this.parentNode.parentNode.removeSousGroupe(this.parentNode.removeChild(this));
     }
 };
 

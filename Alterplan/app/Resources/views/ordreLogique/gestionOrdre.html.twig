@@ -50,60 +50,93 @@ You should have received a copy of the GNU Affero General Public License along w
     <script type="text/javascript" src="{{ asset('js/formation.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
             var ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
 
             $('.module.clickable').each(function (index) {
+                //Au click sur le module de gauche
                 $(this).click(function () {
                     var module = $(this);
+                    //On sélectionne le module côté Json
                     ordreLogique.formation.selectModule(module.attr('id'));
 
+                    //On désélectionne l'ancien
                     var otherSelected = $('.module.selected');
                     if (otherSelected){
                         otherSelected.each(function (index) {
                             $(otherSelected[index]).removeClass('selected');
                         });
                     }
-
                     module.addClass('selected');
+                    //On met à jour le text de la partie centrale
                     $('#selected-module-titre').text(module.text());
 
+                    //On crée les modules disponibles
                     ordreLogique.createModulesDisponibles();
+                    //On crée les groupes
                     ordreLogique.createGroupesModules();
                 });
             });
 
             var drake = new dragula({
                 isContainer: function (el) {
+                    //On définit les conteneurs
                     return $(el).hasClass('draggable-container') || el instanceof DraggableContainer;
                 },
                 moves: function (el, source, handle, sibling) {
+                    //On définit les éléments qui peuvent être bouger en fonction du conteneur
+
+                    //Si la source est le conteneur de droite (modules disponibles)
                     if (source.classList.contains('droite')) {
+                        //Seuls les modules bougent
                         return el instanceof Module;
+
+                    //Si c'est le centre (conteneur de grupes)
                     } else if (source.classList.contains('centre')) {
+                        //Seuls groupes bougent
                         return el instanceof GroupeModule;
+
+                    //Si c'est un groupe (conteneur de sous groupes)
                     } else if (source.parentElement instanceof GroupeModule) {
+                        //Seuls les sous groupes bougent
                         return el instanceof SousGroupe;
+
+                    //Si c'est un Sous Groupe (conteneur de modules)
                     } else if (source.parentElement instanceof SousGroupe) {
+                        //Seuls les modules bougent
                         return el instanceof Module;
                     }
                 },
                 accepts: function (el, target, source, sibling) {
+                    //On définit quels composants acceptent les conteneurs
                     var jTarget = $(target);
                     var jSibling = $(sibling);
                     var ok = true;
 
+                    //Petit patche pour ne pas accepter des éléments au dessus des titres
                     if(jSibling){
                         ok = !jSibling.hasClass('card-title');
                     }
 
+                    //Le conteneur de droite
                     if(jTarget.hasClass('droite')){
+                        //Accepte les modules
                         ok = ok && el instanceof Module;
+
+                    //Le conteneur de centre
                     }else if (jTarget.hasClass('centre')) {
+                        //Accepter les Groupes et les Modules
                         ok = ok && (el instanceof GroupeModule || el instanceof Module);
+
+                    //Le conteneur Groupe
                     } else if (target.parentElement instanceof GroupeModule) {
+                        //Accepte les Sous Groupes et les Modules seulement si il a moins de deux éléments
                         ok = ok && ((el instanceof SousGroupe || el instanceof Module)
                             && (target.parentElement.nbElements < 2));
+
+                    //Le conteneur Sous Groupe
                     } else if (target.parentElement instanceof SousGroupe){
+                        //Accepte les Modules s'il a moins de 4 éléments
                         ok = ok && (el instanceof Module && (target.parentElement.nbElements < 4));
                     }
 
@@ -112,16 +145,21 @@ You should have received a copy of the GNU Affero General Public License along w
                 revertOnSpill: false
             });
 
+            //Lorsqu'on drop un élément el, prevenant de source, dans le conteneur target devant le sibling
             drake.on('drop',function (el, target, source, sibling) {
+                //Si c'est un Module
                 if(el instanceof Module) {
+                    //Droppé depuis la droite
                     if (source.classList.contains('droite')){
+                        //On supprime le module disponible depuis Json
                         ordreLogique.formation.removeModuleDisponible(el);
                     }
 
+                    //Droppé au centre
                     if (target.classList.contains('centre')){
                         var idGroupe = -1;
                         var groupes = target.getElementsByTagName('groupe-module');
-
+                        //Génération de l'id du groupe
                         for (var i = 0, len = groupes.length; i < len; i++){
                             var id = parseInt(groupes[i].identifiant);
                             if (id > idGroupe){
@@ -133,6 +171,7 @@ You should have received a copy of the GNU Affero General Public License along w
                         var groupe = ordreLogique.createGroupe();
                         groupe.identifiant = ++idGroupe;
 
+                        //Ajout du groupe dans le Json
                         ordreLogique.formation.addGroupe(groupe);
                         groupe.addSousGroupe(sousGroupe);
                         sousGroupe.addModule(el);
@@ -143,11 +182,11 @@ You should have received a copy of the GNU Affero General Public License along w
                             target.appendChild(groupe);
                         }
 
+                    //Droppé dans un Groupe
                     }else if(target.parentElement instanceof GroupeModule){
                         var sousGroupe = ordreLogique.createSousGroupe();
-                        sousGroupe.addModule(el);
-
                         target.parentElement.addSousGroupe(sousGroupe);
+                        sousGroupe.addModule(el);
 
                         if (sibling){
                             target.insertBefore(sousGroupe, sibling);
@@ -155,6 +194,7 @@ You should have received a copy of the GNU Affero General Public License along w
                             target.appendChild(sousGroupe);
                         }
 
+                    //Droppé dans un Sous Groupe
                     }else if(target.parentElement instanceof SousGroupe){
                         target.parentElement.addModule(el);
                         if (sibling){
@@ -162,14 +202,19 @@ You should have received a copy of the GNU Affero General Public License along w
                         }else {
                             target.appendChild(el);
                         }
+                    //Droppé à droite
                     } else if (target.classList.contains('droite')){
+                        //Ajout du module disponible dans le Json
                        ordreLogique.formation.addModuleDisponible(el);
                     }
 
+                //Si c'est un Sous Groupe
                 }else if (el instanceof SousGroupe){
+                    //On l'ajoute au groupe (seul un Groupe accepte des Sous groupes cf. méthode accepts dessus)
                     target.parentElement.addSousGroupe(el);
                 }
 
+                //On fait la suppression nécessaire au niveau du Json
                 ordreLogique.handleRemove(source.parentElement, el);
             });
         });
