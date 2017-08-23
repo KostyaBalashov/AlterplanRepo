@@ -83,10 +83,10 @@ SousGroupeProto.removeModule = function (module) {
     this.moduleRemovedEvent.data['sousGroupe'] = this;
     this.moduleRemovedEvent.data['module'] = module;
 
-    var modulesContainer = document.getElementById('modules-disponibles-container');
+    // var modulesContainer = document.getElementById('modules-disponibles-container');
     var container = this.getDraggableContainer();
-    modulesContainer.appendChild(container.removeChild(module));
-    this.nbElements = container.getElementsByTagName('module-disponible').length;
+    container.removeChild(module);
+    this.nbElements = this.getDraggableContainer().getElementsByTagName('module-disponible').length;
 
     this.dispatchEvent(this.moduleRemovedEvent);
 

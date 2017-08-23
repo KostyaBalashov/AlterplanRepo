@@ -21,6 +21,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -44,6 +45,10 @@ class CalendrierController extends Controller
         {
             $calendrier = new Calendrier();
             $calendrier->setStagiaire($stagiaire);
+            $dt = new DateTime();
+            $calendrier->setDateCreation($dt);
+            $calendrier->setIsInscrit(false);
+            $calendrier->setIsModele(false);
 
         //Création du formulaire de création du calendrier
         $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
@@ -54,6 +59,8 @@ class CalendrierController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            dump($calendrier);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($calendrier);
             $em->flush();

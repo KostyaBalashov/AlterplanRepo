@@ -40,6 +40,7 @@ class CalendrierType extends AbstractType
                 'placeholder' => 'Formation',
                 'required' => true,
                 'choice_label' => 'libelleCourt',
+                'choice_value' => 'codeFormation',
                 'label_attr' => array(
                     'class' => 'col s2'
                 )

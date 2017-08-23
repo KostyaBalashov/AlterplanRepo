@@ -69,7 +69,7 @@ class Calendrier
     /**
      * @var \AppBundle\Entity\Stagiaire
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Stagiaire")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Stagiaire", inversedBy="calendrier")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
      * })
@@ -113,7 +113,10 @@ class Calendrier
      */
     public function setDateDebut($dateDebut)
     {
-        $this->dateDebut = $dateDebut;
+        if(is_string($dateDebut))
+            $this ->dateDebut = \DateTime::createFromFormat('Y/m/d', $dateDebut);
+        else
+            $this->dateDebut = $dateDebut;
         return $this;
     }
 
@@ -167,7 +170,10 @@ class Calendrier
      */
     public function setDateCreation($dateCreation)
     {
-        $this->dateCreation = $dateCreation;
+        if(is_string($dateCreation))
+            $this ->dateCreation = \DateTime::createFromFormat('Y/m/d', $dateCreation);
+        else
+            $this->dateCreation = $dateCreation;
         return $this;
     }
 
@@ -185,7 +191,10 @@ class Calendrier
      */
     public function setDateFin($dateFin)
     {
-        $this->dateFin = $dateFin;
+        if(is_string($dateFin))
+            $this ->dateFin = \DateTime::createFromFormat('Y/m/d', $dateFin);
+        else
+            $this->dateFin = $dateFin;
         return $this;
     }
 
