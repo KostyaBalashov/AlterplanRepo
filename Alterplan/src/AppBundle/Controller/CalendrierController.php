@@ -36,6 +36,18 @@ class CalendrierController extends Controller
 {
 
     /**
+     * Affiche le calendrier créé ou a éditer
+     * @Route("/edit/{codeCalendrier}", name="calendrier_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function indexAction(Calendrier $calendrier) {
+
+        return $this->render(':calendrier:index.html.twig', array(
+            'calendrier' => $calendrier,
+        ));
+    }
+
+    /**
      * Créé un nouveau calendrier.
      *
      * @Route("/new/{codeStagiaire}", name="calendrier_new")

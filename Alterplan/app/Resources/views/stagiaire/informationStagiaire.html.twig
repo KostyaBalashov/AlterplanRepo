@@ -10,7 +10,9 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <div class="card">
     <div class="row">
-        <h5 class="">Stagiaire</h5>
+        <div class="col s12">
+            <h5 class="">Stagiaire</h5>
+        </div>
     </div>
     <div class="row stagiaireInformation">
         <div class="col s4">
@@ -39,10 +41,16 @@ You should have received a copy of the GNU Affero General Public License along w
                     <span> Formation : {{ calendarRegistered.formation.codeTitre }} </span>
                 </div>
                 <div class="col s12">
-                    <span> Du </span> {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                    <span> Du </span>
+                    {% if calendarRegistered.dateDebut %}
+                        {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                    {% endif %}
                 </div>
                 <div class="col s12">
-                    <span> Au </span> {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                    <span> Au </span>
+                    {% if calendarRegistered.dateFin %}
+                        {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                    {% endif %}
                 </div>
             {% else %}
                 <div class="col s12">

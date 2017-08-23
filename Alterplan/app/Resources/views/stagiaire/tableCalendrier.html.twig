@@ -14,20 +14,26 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
         <div class="col s12">
             {% if ( calendarRegistered != null ) %}
-                <div class="row ligneInscrit">
-                    <div class="col s3">
-                        {{ calendarRegistered.titre }}
+                <a href="{{ path('calendrier_edit', { 'codeCalendrier': calendarRegistered.codeCalendrier }) }}">
+                    <div class="row ligneInscrit">
+                        <div class="col s3">
+                            {{ calendarRegistered.titre }}
+                        </div>
+                        <div class="col s3">
+                            {{ calendarRegistered.formation.codeFormation }}
+                        </div>
+                        <div class="col s3">
+                            {% if calendarRegistered.dateDebut %}
+                                {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                            {% endif %}
+                        </div>
+                        <div class="col s3">
+                            {% if calendarRegistered.dateFin %}
+                                {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="col s3">
-                        {{ calendarRegistered.formation.codeFormation }}
-                    </div>
-                    <div class="col s3">
-                        {{ calendarRegistered.dateDebut.format('d/m/Y') }}
-                    </div>
-                    <div class="col s3">
-                        {{ calendarRegistered.dateFin.format('d/m/Y') }}
-                    </div>
-                </div>
+                </a>
             {% else %}
                 {#Message informatif (Aucune donnée)#}
                 Aucun calendrier inscrit
@@ -50,7 +56,7 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 
-    <table  id="calendar_table">
+    <table  id="calendar_table" class="tableauCliquable centered highlight">
         <thead>
         <tr>
             <th>Titre</th>
@@ -63,30 +69,30 @@ You should have received a copy of the GNU Affero General Public License along w
         <tbody>
         {% if ( calendars != null ) %}
             {% for calendar in calendars %}
-            <tr>
-                <td>
-                    {{ calendar.titre }}
-                </td>
+                    <tr class="clickable-row-calendar" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
+                        <td>
+                            {{ calendar.titre }}
+                        </td>
 
-                <td>
-                    {{ calendar.formation.codeFormation }}
-                </td>
+                        <td>
+                            {{ calendar.formation.codeFormation }}
+                        </td>
 
-                <td>
-                    {{ calendar.dateDebut.format('d/m/Y') }}
-                </td>
+                        <td>
+                            {{ calendar.dateDebut.format('d/m/Y') }}
+                        </td>
 
-                <td>
-                    {{ calendar.dateFin.format('d/m/Y') }}
-                </td>
+                        <td>
+                            {{ calendar.dateFin.format('d/m/Y') }}
+                        </td>
 
-                <td>
-                    <a href="#">
-                        <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier, "numLien": stagiaireParEntreprise.numLien})}}">delete</i>
-                    </a>
-                </td>
-            </tr>
-        {% endfor %}
+                        <td>
+                            <a href="#">
+                                <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier, "numLien": stagiaireParEntreprise.numLien})}}">delete</i>
+                            </a>
+                        </td>
+                    </tr>
+            {% endfor %}
         {% else %}
             <tr>
                 <td>
@@ -102,6 +108,13 @@ You should have received a copy of the GNU Affero General Public License along w
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+        $('.clickable-row-calendar td:not(:last-child)').click(function() {
+            //Récupération de la ligne contenant l'url cible
+            var urlCalendrier = $(this).closest('tr').data("href");
+            window.location = urlCalendrier;
+        });
+
         $('.deleteIcon').click(function () {
             var url = $(this).data("href");
             deleteCalendar(url);

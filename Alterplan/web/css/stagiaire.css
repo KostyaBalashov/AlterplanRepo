@@ -32,3 +32,14 @@ You should have received a copy of the GNU Affero General Public License along w
 .stagiaireInformation span{
     font-weight: bold;
 }
+
+.calendrierInscrit a {
+    color: black;
+}
+.ligneInscrit:hover {
+    background-color: #f9d1a8;
+}
+
+.tableauCliquable tbody tr:hover{
+    cursor: pointer;
+}
