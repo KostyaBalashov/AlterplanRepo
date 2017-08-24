@@ -56,4 +56,71 @@ class FormationRepository extends EntityRepository
             return $this->findAll();
         }
     }
+
+    /**
+     * Finds entities by a set of criteria.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
+     *
+     * @return array The objects.
+     */
+
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    {
+        if(array_key_exists('codeFormation', $criteria))
+        {
+            if(strlen($criteria['codeFormation'])<8)
+            {
+                $criteria['codeFormation'] = str_pad($criteria['codeFormation'], 8);
+            }
+        }
+        return parent::findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+
+    /**
+     * Finds a single entity by a set of criteria.
+     *
+     * @param array $criteria
+     * @param array|null $orderBy
+     *
+     * @return object|null The entity instance or NULL if the entity can not be found.
+     */
+    public function findOneBy(array $criteria, array $orderBy = null)
+    {
+        if(array_key_exists('codeFormation', $criteria))
+        {
+            if(strlen($criteria['codeFormation'])<8)
+            {
+                $criteria['codeFormation'] = str_pad($criteria['codeFormation'], 8);
+            }
+        }
+        return parent::findOneBy($criteria, $orderBy);
+    }
+
+
+    /**
+     * Finds an entity by its primary key / identifier.
+     *
+     * @param mixed    $id          The identifier.
+     * @param int|null $lockMode    One of the \Doctrine\DBAL\LockMode::* constants
+     *                              or NULL if no specific lock mode should be used
+     *                              during the search.
+     * @param int|null $lockVersion The lock version.
+     *
+     * @return object|null The entity instance or NULL if the entity can not be found.
+     */
+    public function  find($id, $lockMode = null, $lockVersion = null)
+    {
+        if(strlen($id)<8)
+        {
+            $id = str_pad($id, 8);
+        }
+        return parent::find($id, $lockMode, $lockVersion);
+    }
+
 }

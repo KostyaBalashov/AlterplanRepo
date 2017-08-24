@@ -71,7 +71,6 @@ class CalendrierController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($calendrier);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($calendrier);

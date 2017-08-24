@@ -39,6 +39,7 @@ class CalendrierType extends AbstractType
                 'class' => 'AppBundle:Formation',
                 'placeholder' => 'Formation',
                 'required' => true,
+                'trim' => false,
                 'choice_label' => 'libelleCourt',
                 'choice_value' => 'codeFormation',
                 'label_attr' => array(
