@@ -22,7 +22,7 @@ function renderModal(idModalForm,controllerUrl,postSubmitCallback, onModalOpen) 
     $.get(controllerUrl, function( data ) {
 
         //insertion du form dans la div modale
-        $( ".modal-content" ).html( data );
+        $( modalSelector +  " > .modal-content" ).html( data );
 
         //ouverture de la modale
         $(modalSelector).modal('open',{
