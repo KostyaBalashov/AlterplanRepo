@@ -7,7 +7,7 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
  
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 #}
-<div class="card">
+<div class="card bloc_calendrier">
     <div class="row calendrierInscrit">
         <div class="col s6">
             <h5> Calendrier Inscrit </h5>
@@ -129,7 +129,7 @@ You should have received a copy of the GNU Affero General Public License along w
             success: function (data) {
                 dismissLoader();
                 showToast('Le calendrier a bien été supprimé');
-                var calendarTableDiv = $('#calendar_table');
+                var calendarTableDiv = $('.bloc_calendrier');
                 calendarTableDiv.empty();
                 calendarTableDiv.html(data);
 
