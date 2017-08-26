@@ -14,4 +14,3 @@ DraggableContainerProto.createdCallback = function () {
     this.id = 'draggable-container';
 };
 var DraggableContainer = document.registerElement('draggable-container',{prototype: DraggableContainerProto});
- 

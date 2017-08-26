@@ -171,7 +171,7 @@ class UtilisateurController extends Controller
             $em->flush();
             return new Response('Utlisateur ' . $utilisateur->getNom() . ' ' . $utilisateur->getPrenom() . ' a bien été supprimé.');
         } else {
-            return new Response('Ajax s\'il vous plait.');
+            return new Response('Action non autoriséee.', Response::HTTP_FORBIDDEN);
         }
     }
 }

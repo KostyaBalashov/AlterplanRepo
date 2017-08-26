@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Stagiaire
 {
+
     /**
      * @var integer
      *
@@ -176,7 +178,7 @@ class Stagiaire
     private $historique;
 
     /**
-     * @var calendrier
+     * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Calendrier", mappedBy="stagiaire")
      * @ORM\JoinColumns({
@@ -194,6 +196,11 @@ class Stagiaire
      * })
      */
     private $stagiaireParEntreprise;
+
+    public function __construct()
+    {
+        $this->calendrier = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -626,7 +633,7 @@ class Stagiaire
     }
 
     /**
-     * @return calendriers
+     * @return ArrayCollection
      */
     public function getCalendrier()
     {
@@ -634,7 +641,7 @@ class Stagiaire
     }
 
     /**
-     * @param calendriers $calendrier
+     * @param ArrayCollection $calendrier
      */
     public function setCalendrier($calendrier)
     {

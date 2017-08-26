@@ -23,6 +23,19 @@ use Doctrine\ORM\EntityRepository;
 
 class OrdreModuleRepository extends EntityRepository
 {
+    public function remove($codeOrdreModule){
+        $qb = $this->createQueryBuilder('om');
+        $qb->delete('AppBundle:OrdreModule', 'om')
+            ->where('om.codeOrdreModule = :code')->setParameter('code', $codeOrdreModule);
+        $qb->getQuery()->execute();
+    }
+
+    public function insert($codeFormation, $idModule){
+        $data = array('CodeFormation' => $codeFormation, 'IdModule' => $idModule);
+        $this->getEntityManager()->getConnection()->insert('OrdreModule', $data);
+        return $this->getEntityManager()->getConnection()->lastInsertId();
+    }
+
     public function getOrdreModuleByModule(Module $module){
         if ($module){
             $qb = $this->createQueryBuilder('om');

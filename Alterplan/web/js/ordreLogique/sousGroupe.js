@@ -30,9 +30,8 @@ SousGroupeProto.createdCallback = function () {
     this.moduleAddedEvent.data = [];
     this.moduleRemovedEvent.data = [];
 
-    this.className = 'card sous-groupe orange lighten-5 valign-wrapper col s12';
+    this.className = 'card sous-groupe valign-wrapper col s12 grey lighten-4';
     this.appendChild(new DraggableContainer());
-    this.appendChild(new ButtonRemoveSousGroupe());
 };
 
 SousGroupeProto.addModule = function (module) {

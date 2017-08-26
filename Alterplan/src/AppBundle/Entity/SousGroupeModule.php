@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * SousGroupeModule
  *
  * @ORM\Table(name="SousGroupeModule")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\SousGroupeModuleRepository")
  */
 class SousGroupeModule implements \JsonSerializable
 {
@@ -23,7 +23,7 @@ class SousGroupeModule implements \JsonSerializable
 
     /**
      * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="Module1", referencedColumnName="IdModule")
      * })
@@ -32,7 +32,7 @@ class SousGroupeModule implements \JsonSerializable
 
     /**
      * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="Module2", referencedColumnName="IdModule")
      * })
@@ -41,7 +41,7 @@ class SousGroupeModule implements \JsonSerializable
 
     /**
      * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="Module3", referencedColumnName="IdModule")
      * })
@@ -50,7 +50,7 @@ class SousGroupeModule implements \JsonSerializable
 
     /**
      * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="Module4", referencedColumnName="IdModule")
      * })

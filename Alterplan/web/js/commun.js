@@ -70,8 +70,11 @@ function showLoader() {
 
 //cache le loader
 function dismissLoader() {
-    $(".preloader-background").fadeOut('slow');
-    $(".preloader-wrapper").fadeOut('slow');
+    var loader = $('.preloader-background');
+    if (loader.is(':visible')){
+        loader.fadeOut('slow');
+        $(".preloader-wrapper").fadeOut('slow');
+    }
 }
 
 function postForm(form, postSubmitCallback, modalSelector) {

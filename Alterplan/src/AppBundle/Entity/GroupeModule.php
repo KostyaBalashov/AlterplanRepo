@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * GroupeModule
  *
  * @ORM\Table(name="GroupeModule")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\GroupeModuleRepository")
  */
 class GroupeModule implements \JsonSerializable
 {
@@ -23,20 +23,6 @@ class GroupeModule implements \JsonSerializable
     private $codeGroupeModule;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="CodeSousGroupe1", type="integer", nullable=true)
-     */
-    private $codeSousGroupe1;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="CodeSousGroupe2", type="integer", nullable=true)
-     */
-    private $codeSousGroupe2;
-
-    /**
      * @var \AppBundle\Entity\OrdreModule
      *
      * @ORM\ManyToOne(targetEntity="OrdreModule", inversedBy="groupes")
@@ -48,7 +34,7 @@ class GroupeModule implements \JsonSerializable
 
     /**
      * @var SousGroupeModule
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeSousGroupe1", referencedColumnName="CodeSousGroupeModule")
      * })
@@ -57,7 +43,7 @@ class GroupeModule implements \JsonSerializable
 
     /**
      * @var SousGroupeModule
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeSousGroupe2", referencedColumnName="CodeSousGroupeModule")
      * })
@@ -130,42 +116,6 @@ class GroupeModule implements \JsonSerializable
     public function setCodeGroupeModule($codeGroupeModule)
     {
         $this->codeGroupeModule = $codeGroupeModule;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCodeSousGroupe1()
-    {
-        return $this->codeSousGroupe1;
-    }
-
-    /**
-     * @param int $codeSousGroupe1
-     * @return GroupeModule
-     */
-    public function setCodeSousGroupe1($codeSousGroupe1)
-    {
-        $this->codeSousGroupe1 = $codeSousGroupe1;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCodeSousGroupe2()
-    {
-        return $this->codeSousGroupe2;
-    }
-
-    /**
-     * @param int $codeSousGroupe2
-     * @return GroupeModule
-     */
-    public function setCodeSousGroupe2($codeSousGroupe2)
-    {
-        $this->codeSousGroupe2 = $codeSousGroupe2;
         return $this;
     }
 

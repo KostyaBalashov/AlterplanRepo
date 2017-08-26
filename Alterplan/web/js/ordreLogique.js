@@ -136,34 +136,145 @@ function OrdreLogique(formationJson) {
 
         return groupe;
     };
-}
 
-//TODO gérer le click sur le bouton
-function materialIconClick(){
-    var groupe = this.parentElement;
-    if('add_circle_outline' === this.innerHTML){
-        var firstSousGroupe = groupe.getElementsByClassName('sous-groupe')[0];
-        firstSousGroupe.classList.remove('s12');
-        firstSousGroupe.classList.add('s6');
-        var sousGroupe = createSousGroupe(null);
-        sousGroupe.classList.add('col');
-        sousGroupe.classList.add('s6');
-        sousGroupe.classList.add('last');
-        //appendSousGroupe(groupe, sousGroupe);
-    }else{
-        var data = groupe.getElementsByClassName('draggable-container')[0];
-        var modules = data.getElementsByClassName('module');
-        var origine = document.getElementsByClassName('droite')[0];
-        var origineContainer = origine.getElementsByClassName('draggable-container')[0];
-        if (modules.length > 0){
-            for (var i = 0, len = -modules.length; len < i; len++) {
-                var module = modules[i];
-                origineContainer.appendChild(module);
-                handleRemove(groupe);
-            }
-        }else {
-            handleRemove(groupe);
-            groupe.remove();
+    this.isContainer = function (el) {
+        //On définit les conteneurs
+        return $(el).hasClass('draggable-container') || el instanceof DraggableContainer;
+    };
+
+    this.moves = function (el, source, handle, sibling) {
+        //On définit les éléments qui peuvent être bouger en fonction du conteneur
+
+        //Si la source est le conteneur de droite (modules disponibles)
+        if (source.classList.contains('droite')) {
+            //Seuls les modules bougent
+            return el instanceof Module;
+
+            //Si c'est le centre (conteneur de grupes)
+        } else if (source.classList.contains('centre')) {
+            //Seuls groupes bougent
+            return el instanceof GroupeModule;
+
+            //Si c'est un groupe (conteneur de sous groupes)
+        } else if (source.parentElement instanceof GroupeModule) {
+            //Seuls les sous groupes bougent
+            return el instanceof SousGroupe;
+
+            //Si c'est un Sous Groupe (conteneur de modules)
+        } else if (source.parentElement instanceof SousGroupe) {
+            //Seuls les modules bougent
+            return el instanceof Module;
         }
-    }
+    };
+
+    this.accepts = function (el, target, source, sibling) {
+        //On définit quels composants acceptent les conteneurs
+        var jTarget = $(target);
+        var jSibling = $(sibling);
+        var ok = true;
+
+        //Petit patche pour ne pas accepter des éléments au dessus des titres
+        if(jSibling){
+            ok = !jSibling.hasClass('card-title');
+        }
+
+        //Le conteneur de droite
+        if(jTarget.hasClass('droite')){
+            //Accepte les modules
+            ok = ok && el instanceof Module;
+
+            //Le conteneur de centre
+        }else if (jTarget.hasClass('centre')) {
+            //Accepter les Groupes et les Modules
+            ok = ok && (el instanceof GroupeModule || el instanceof Module);
+
+            //Le conteneur Groupe
+        } else if (target.parentElement instanceof GroupeModule) {
+            //Accepte les Sous Groupes et les Modules seulement si il a moins de deux éléments
+            ok = ok && ((el instanceof SousGroupe || el instanceof Module)
+                && (target.parentElement.nbElements < 2));
+
+            //Le conteneur Sous Groupe
+        } else if (target.parentElement instanceof SousGroupe){
+            //Accepte les Modules s'il a moins de 4 éléments
+            ok = ok && (el instanceof Module && (target.parentElement.nbElements < 4));
+        }
+
+        return ok;
+    };
+
+    var me = this;
+    this.onDrop = function (el, target, source, sibling) {
+        //Si c'est un Module
+        if(el instanceof Module) {
+            //Droppé depuis la droite
+            if (source.classList.contains('droite')){
+                //On supprime le module disponible depuis Json
+                me.formation.removeModuleDisponible(el);
+            }
+
+            //Droppé au centre
+            if (target.classList.contains('centre')){
+                var idGroupe = -1;
+                var groupes = target.getElementsByTagName('groupe-module');
+                //Génération de l'id du groupe
+                for (var i = 0, len = groupes.length; i < len; i++){
+                    var id = parseInt(groupes[i].identifiant);
+                    if (id > idGroupe){
+                        idGroupe = id;
+                    }
+                }
+
+                var sousGroupe = me.createSousGroupe();
+                var groupe = me.createGroupe();
+                groupe.identifiant = ++idGroupe;
+
+                //Ajout du groupe dans le Json
+                me.formation.addGroupe(groupe);
+                groupe.addSousGroupe(sousGroupe);
+                sousGroupe.addModule(el);
+
+                if(sibling){
+                    target.insertBefore(groupe, sibling);
+                }else {
+                    target.appendChild(groupe);
+                }
+
+                //Droppé dans un Groupe
+            }else if(target.parentElement instanceof GroupeModule){
+                var sousGroupe = me.createSousGroupe();
+                target.parentElement.addSousGroupe(sousGroupe);
+                sousGroupe.addModule(el);
+
+                if (sibling){
+                    target.insertBefore(sousGroupe, sibling);
+                }else {
+                    target.appendChild(sousGroupe);
+                }
+
+                //Droppé dans un Sous Groupe
+            }else if(target.parentElement instanceof SousGroupe){
+                target.parentElement.addModule(el);
+                if (sibling){
+                    target.insertBefore(el, sibling);
+                }else {
+                    target.appendChild(el);
+                }
+                //Droppé à droite
+            } else if (target.classList.contains('droite')){
+                if (!source.classList.contains('droite')){
+                    //Ajout du module disponible dans le Json
+                    me.formation.addModuleDisponible(el);
+                }
+            }
+
+            //Si c'est un Sous Groupe
+        }else if (el instanceof SousGroupe){
+            //On l'ajoute au groupe (seul un Groupe accepte des Sous groupes cf. méthode accepts dessus)
+            target.parentElement.addSousGroupe(el);
+        }
+
+        //On fait la suppression nécessaire au niveau du Json
+        me.handleRemove(source.parentElement, el);
+    };
 }

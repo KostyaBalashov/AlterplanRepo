@@ -12,21 +12,13 @@ You should have received a copy of the GNU Affero General Public License along w
     padding-top: 15px !important;
 }
 
-.sous-groupe div.draggable-container:empty{
-    min-height: 7.4em;
-}
-
-.sous-groupe.last{
-    margin-left: 15px !important;
-}
-
 .card.droite{
     display: inline-block;
 }
 
 .draggable-container.droite{
-    min-height: 45em;
-    max-height: 45em;
+    min-height: 44em;
+    max-height: 44em;
     overflow: auto;
 }
 

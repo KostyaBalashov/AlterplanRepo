@@ -143,13 +143,13 @@ class Formation implements \JsonSerializable
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UniteParFormation", mappedBy="formation")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\UniteParFormation", mappedBy="formation", fetch="EAGER")
      */
     private $unitesParFormation;
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrdreModule" , mappedBy="formation")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrdreModule" , mappedBy="formation", fetch="EAGER")
      */
     private $ordresModule;
 
@@ -176,10 +176,7 @@ class Formation implements \JsonSerializable
                 $ordreModule[$module->getIdModule()]['modulesDisponibles'][] = $moduleDispo->jsonSerialize();
             }
             $ordre = $this->getOrdreModuleFromModule($module);
-            if (!$ordre) {
-                $ordre = new OrdreModule();
-                $ordre->setModule($module);
-            }
+            $ordre->setModule($module);
             $ordreModule[$module->getIdModule()]['ordreModule'] = $ordre->jsonSerialize();
         }
         $result['modules'] = $ordreModule;
@@ -543,40 +540,39 @@ class Formation implements \JsonSerializable
     }
 
     private function getModulesDisponibles(Module $module){
-        $modulesDisponibles = new ArrayCollection();
-        $modulesFromOrdre = new ArrayCollection();
+        $modulesFromOrdre = null;
         $allModules = $this->getAllModules();
         $ordreModule = $this->getOrdreModuleFromModule($module);
 
-        if ($ordreModule){
-            $modulesFromOrdre->add($this->getModules($ordreModule));
-        }
+        $modulesFromOrdre = $this->getModules($ordreModule);
         $modulesFromOrdre->add($module);
-        $modulesDisponibles = ArrayCollectionUtils::outerJoin($allModules, $modulesFromOrdre);
-        return $modulesDisponibles;
+        return ArrayCollectionUtils::outerJoin($allModules, $modulesFromOrdre);
     }
 
     private function getOrdreModuleFromModule(Module $module){
-        if ($this->ordresModule){
-            foreach ($this->ordresModule as $item){
-                if ($item->getModule()->getIdModule() === $module->getIdModule()){
-                    return $item;
-                }
+        foreach ($this->ordresModule as $item){
+            if ($item->getModule()->getIdModule() === $module->getIdModule()){
+                return $item;
             }
         }
-        return null;
+
+        return new OrdreModule();
     }
 
     private function getModules(OrdreModule $ordreModule){
         $modules = new  ArrayCollection();
 
-        if ($ordreModule){
-            foreach ($ordreModule->getGroupes() as $groupe){
-                if ($groupe->getSousGroupe1())
-                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe1()));
+        foreach ($ordreModule->getGroupes() as $groupe){
+            if ($groupe->getSousGroupe1()){
+                foreach ($this->getModulesFromSousGroupe($groupe->getSousGroupe1()) as $value){
+                    $modules->add($value);
+                }
+            }
 
-                if ($groupe->getSousGroupe2())
-                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe2()));
+            if ($groupe->getSousGroupe2()){
+                foreach ($this->getModulesFromSousGroupe($groupe->getSousGroupe2()) as $value){
+                    $modules->add($value);
+                }
             }
         }
 

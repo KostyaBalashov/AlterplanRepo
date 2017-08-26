@@ -99,7 +99,7 @@ class CalendrierController extends Controller
     {
 
         if($calendar->isInscrit()) {
-            return Response('Le calendrier ' . $calendar->getTitre() . ' ne peut pas être supprimé car il est inscrit');
+            return new Response('Le calendrier ' . $calendar->getTitre() . ' ne peut pas être supprimé car il est inscrit.', Response::HTTP_FORBIDDEN);
         } else {
             $em = $this->getDoctrine()->getManager();
             $em->remove($calendar);

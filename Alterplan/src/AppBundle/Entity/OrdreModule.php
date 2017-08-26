@@ -46,7 +46,7 @@ class OrdreModule implements \JsonSerializable
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GroupeModule", mappedBy="ordreModule")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GroupeModule", mappedBy="ordreModule", fetch="EAGER")
      */
     private $groupes;
 

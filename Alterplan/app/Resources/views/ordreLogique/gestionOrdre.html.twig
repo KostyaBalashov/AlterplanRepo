@@ -35,6 +35,14 @@ You should have received a copy of the GNU Affero General Public License along w
         <div class="col s9 ordreContent">
             {% include ':ordreLogique:ordreModule.html.twig'%}
         </div>
+        <div class="fixed-action-btn">
+            <a id="save" class="btn-floating btn-large waves-effect waves-light">
+                <i class="large material-icons">save</i>
+            </a>
+            <a id="cancel" class="btn-floating btn-large waves-effect waves-light red">
+                <i class="large material-icons">cancel</i>
+            </a>
+        </div>
     </div>
 {% endblock %}
 
@@ -42,23 +50,53 @@ You should have received a copy of the GNU Affero General Public License along w
     <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/webReflection/document-register-element.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique/module.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/ordreLogique/buttonIcon.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique/draggableContainer.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique/sousGroupe.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique/groupe.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/ordreLogique.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/formation.js') }}"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
+        var ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
 
-            var ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        $(document).ready(function () {
+            $('#save').click(function (e) {
+                e.preventDefault();
+                showLoader();
+                $.post("{{ path('formations_save', {'codeFormation': formation.codeFormation}) }}",
+                    {'ordreLogique': ordreLogique.formation.getInnerFormation()}).done(function (data) {
+                        ordreLogique = new OrdreLogique(JSON.parse(data));
+                        ordreLogique.formation.selectModule(parseInt($('.module.selected').attr('id'), 10));
+                        showToast('Les modifications ont été enregistrées');
+                }).fail(function () {
+                    showToast("Erreur interne", 'error');
+                }).always(function () {
+                    dismissLoader();
+                });
+            });
+
+            $('#cancel').click(function (e) {
+                e.preventDefault();
+                showLoader();
+                $.get("{{ path('formations_edit',{'codeFormation': formation.codeFormation}) }}", function (data) {
+                    ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+                    var selectedModule = $('.module.selected');
+                    if (selectedModule){
+                        selectedModule.removeClass('selected');
+                    }
+                    $('.ordreContent').html(data);
+                }).fail(function () {
+                    showToast('Erreur interne', 'error');
+                }).always(function () {
+                    dismissLoader();
+                });
+            });
 
             $('.module.clickable').each(function (index) {
                 //Au click sur le module de gauche
                 $(this).click(function () {
                     var module = $(this);
                     //On sélectionne le module côté Json
-                    ordreLogique.formation.selectModule(module.attr('id'));
+                    ordreLogique.formation.selectModule(parseInt(module.attr('id'), 10));
 
                     //On désélectionne l'ancien
                     var otherSelected = $('.module.selected');
@@ -79,144 +117,15 @@ You should have received a copy of the GNU Affero General Public License along w
             });
 
             var drake = new dragula({
-                isContainer: function (el) {
-                    //On définit les conteneurs
-                    return $(el).hasClass('draggable-container') || el instanceof DraggableContainer;
-                },
-                moves: function (el, source, handle, sibling) {
-                    //On définit les éléments qui peuvent être bouger en fonction du conteneur
-
-                    //Si la source est le conteneur de droite (modules disponibles)
-                    if (source.classList.contains('droite')) {
-                        //Seuls les modules bougent
-                        return el instanceof Module;
-
-                    //Si c'est le centre (conteneur de grupes)
-                    } else if (source.classList.contains('centre')) {
-                        //Seuls groupes bougent
-                        return el instanceof GroupeModule;
-
-                    //Si c'est un groupe (conteneur de sous groupes)
-                    } else if (source.parentElement instanceof GroupeModule) {
-                        //Seuls les sous groupes bougent
-                        return el instanceof SousGroupe;
-
-                    //Si c'est un Sous Groupe (conteneur de modules)
-                    } else if (source.parentElement instanceof SousGroupe) {
-                        //Seuls les modules bougent
-                        return el instanceof Module;
-                    }
-                },
-                accepts: function (el, target, source, sibling) {
-                    //On définit quels composants acceptent les conteneurs
-                    var jTarget = $(target);
-                    var jSibling = $(sibling);
-                    var ok = true;
-
-                    //Petit patche pour ne pas accepter des éléments au dessus des titres
-                    if(jSibling){
-                        ok = !jSibling.hasClass('card-title');
-                    }
-
-                    //Le conteneur de droite
-                    if(jTarget.hasClass('droite')){
-                        //Accepte les modules
-                        ok = ok && el instanceof Module;
-
-                    //Le conteneur de centre
-                    }else if (jTarget.hasClass('centre')) {
-                        //Accepter les Groupes et les Modules
-                        ok = ok && (el instanceof GroupeModule || el instanceof Module);
-
-                    //Le conteneur Groupe
-                    } else if (target.parentElement instanceof GroupeModule) {
-                        //Accepte les Sous Groupes et les Modules seulement si il a moins de deux éléments
-                        ok = ok && ((el instanceof SousGroupe || el instanceof Module)
-                            && (target.parentElement.nbElements < 2));
-
-                    //Le conteneur Sous Groupe
-                    } else if (target.parentElement instanceof SousGroupe){
-                        //Accepte les Modules s'il a moins de 4 éléments
-                        ok = ok && (el instanceof Module && (target.parentElement.nbElements < 4));
-                    }
-
-                    return ok;
-                },
-                revertOnSpill: false
+                isContainer: ordreLogique.isContainer,
+                moves: ordreLogique.moves,
+                accepts: ordreLogique.accepts,
+                revertOnSpill: false,
+                delay: 500
             });
 
             //Lorsqu'on drop un élément el, prevenant de source, dans le conteneur target devant le sibling
-            drake.on('drop',function (el, target, source, sibling) {
-                //Si c'est un Module
-                if(el instanceof Module) {
-                    //Droppé depuis la droite
-                    if (source.classList.contains('droite')){
-                        //On supprime le module disponible depuis Json
-                        ordreLogique.formation.removeModuleDisponible(el);
-                    }
-
-                    //Droppé au centre
-                    if (target.classList.contains('centre')){
-                        var idGroupe = -1;
-                        var groupes = target.getElementsByTagName('groupe-module');
-                        //Génération de l'id du groupe
-                        for (var i = 0, len = groupes.length; i < len; i++){
-                            var id = parseInt(groupes[i].identifiant);
-                            if (id > idGroupe){
-                                idGroupe = id;
-                            }
-                        }
-
-                        var sousGroupe = ordreLogique.createSousGroupe();
-                        var groupe = ordreLogique.createGroupe();
-                        groupe.identifiant = ++idGroupe;
-
-                        //Ajout du groupe dans le Json
-                        ordreLogique.formation.addGroupe(groupe);
-                        groupe.addSousGroupe(sousGroupe);
-                        sousGroupe.addModule(el);
-
-                        if(sibling){
-                            target.insertBefore(groupe, sibling);
-                        }else {
-                            target.appendChild(groupe);
-                        }
-
-                    //Droppé dans un Groupe
-                    }else if(target.parentElement instanceof GroupeModule){
-                        var sousGroupe = ordreLogique.createSousGroupe();
-                        target.parentElement.addSousGroupe(sousGroupe);
-                        sousGroupe.addModule(el);
-
-                        if (sibling){
-                            target.insertBefore(sousGroupe, sibling);
-                        }else {
-                            target.appendChild(sousGroupe);
-                        }
-
-                    //Droppé dans un Sous Groupe
-                    }else if(target.parentElement instanceof SousGroupe){
-                        target.parentElement.addModule(el);
-                        if (sibling){
-                            target.insertBefore(el, sibling);
-                        }else {
-                            target.appendChild(el);
-                        }
-                    //Droppé à droite
-                    } else if (target.classList.contains('droite')){
-                        //Ajout du module disponible dans le Json
-                       ordreLogique.formation.addModuleDisponible(el);
-                    }
-
-                //Si c'est un Sous Groupe
-                }else if (el instanceof SousGroupe){
-                    //On l'ajoute au groupe (seul un Groupe accepte des Sous groupes cf. méthode accepts dessus)
-                    target.parentElement.addSousGroupe(el);
-                }
-
-                //On fait la suppression nécessaire au niveau du Json
-                ordreLogique.handleRemove(source.parentElement, el);
-            });
+            drake.on('drop', ordreLogique.onDrop);
         });
     </script>
 {% endblock %}
