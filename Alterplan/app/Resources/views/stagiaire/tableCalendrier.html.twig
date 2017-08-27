@@ -140,9 +140,35 @@ You should have received a copy of the GNU Affero General Public License along w
             }
         });
     }
+    function dateCheck() {
+
+        var debutPicker = $('#appbundle_calendrier_dateDebut').pickadate('picker');
+        var finPicker = $('#appbundle_calendrier_dateFin').pickadate('picker');
+        var debut = debutPicker.get('select','dd/mm/yyyy');
+        var fin = finPicker.get('select','dd/mm/yyyy')
+
+        var partsDebut = debut.split('/');
+        var partsFin = fin.split('/');
+        var dateDebut = new Date(partsDebut[2],partsDebut[1]-1,partsDebut[0])
+        var dateFin = new Date(partsFin[2],partsFin[1]-1,partsFin[0])
+        console.debug(partsDebut);
+        console.debug(dateDebut);
+        console.debug(dateFin);
+        $('#appbundle_calendrier_dateFin').pickadate({
+            onSet: function () {
+                if (dateFin<=dateDebut){
+                    console.debug('if');
+                    finPicker.get(0).setCustomValidity('La date de fin du calendrier dont être postérieure à sa date de début');
+                }else {
+                    finPicker.get(0).setCustomValidity('');
+                    console.debug('else');
+                }
+            }
+        })
+    }
 
     var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
     $('#btn_new').click(function () {
-        renderModal('calendrier',url);
+        renderModal('calendrier',url,dateCheck);
     })
 </script>
