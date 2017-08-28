@@ -106,6 +106,25 @@ function postForm(form, postSubmitCallback, modalSelector) {
     });
 }
 
+function initDatePicker(selector) {
+    $(selector).pickadate({
+        labelMonthNext: 'mois suivant',
+        labelMonthPrev: 'mois précédent',
+        labelMonthSelect: 'Sélectionnez un mois',
+        labelYearSelect: 'Sélectionnez une année',
+        monthsFull: [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ],
+        monthsShort: [ 'janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc' ],
+        weekdaysFull: [ 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'vendredi', 'Samedi', 'Dimanche' ],
+        weekdaysShort: [ 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim' ],
+        weekdaysLetter: [ 'L', 'M', 'M', 'J', 'V', 'S', 'D' ],
+        today: 'Aujourd\'hui',
+        clear: 'Annuler',
+        close: 'Fermer',
+        formatSubmit: 'yyyy/mm/dd',
+        hiddenName: true
+    });
+}
+
 function passwordCheck() {
     var firstPwd = $('#appbundle_utilisateur_plainPassword');
     var secondPwd = $('#appbundle_utilisateur_checkPassword');

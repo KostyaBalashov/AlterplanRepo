@@ -118,7 +118,12 @@ You should have received a copy of the GNU Affero General Public License along w
         $('.deleteIcon').click(function () {
             var url = $(this).data("href");
             deleteCalendar(url);
-        })
+        });
+
+        $('#btn_new').click(function () {
+            var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
+            renderModal('calendrier',url,dateCheck);
+        });
     });
 
     function deleteCalendar(urlAction) {
@@ -166,9 +171,4 @@ You should have received a copy of the GNU Affero General Public License along w
             }
         })
     }
-
-    var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
-    $('#btn_new').click(function () {
-        renderModal('calendrier',url,dateCheck);
-    })
 </script>
