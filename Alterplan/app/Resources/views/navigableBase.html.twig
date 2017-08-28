@@ -29,7 +29,7 @@ You should have received a copy of the GNU Affero General Public License along w
             $('#mon_compte').click(function (event) {
                 event.preventDefault();
                 var url = $(this).attr('href');
-                renderModal('user', url, undefined, passwordCheck);
+                renderModal('user', url, true, undefined, passwordCheck);
             });
         })
     </script>

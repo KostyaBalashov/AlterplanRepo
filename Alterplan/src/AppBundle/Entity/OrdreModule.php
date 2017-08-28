@@ -63,7 +63,7 @@ class OrdreModule implements \JsonSerializable
         $result['idModule'] = $this->module->getIdModule();
         $groupes = array();
         foreach ($this->groupes as $groupe){
-            $groupes[] = $groupe->jsonSerialize();
+            $groupes[$groupe->getCodeGroupeModule()] = $groupe->jsonSerialize();
         }
         $result['groupes'] = $groupes;
         return $result;

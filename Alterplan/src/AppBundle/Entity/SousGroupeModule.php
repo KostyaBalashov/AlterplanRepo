@@ -63,16 +63,16 @@ class SousGroupeModule implements \JsonSerializable
         $result['codeSousGroupe'] = $this->codeSousGroupeModule;
         $modules = array();
         if ($this->module1){
-            $modules[] = $this->module1->jsonSerialize();
+            $modules[$this->module1->getIdModule()] = $this->module1->jsonSerialize();
         }
         if ($this->module2){
-            $modules[] = $this->module2->jsonSerialize();
+            $modules[$this->module2->getIdModule()] = $this->module2->jsonSerialize();
         }
         if ($this->module3){
-            $modules[] = $this->module3->jsonSerialize();
+            $modules[$this->module3->getIdModule()] = $this->module3->jsonSerialize();
         }
         if ($this->module4){
-            $modules[] = $this->module4->jsonSerialize();
+            $modules[$this->module4->getIdModule()] = $this->module4->jsonSerialize();
         }
         $result['modules'] = $modules;
         return $result;

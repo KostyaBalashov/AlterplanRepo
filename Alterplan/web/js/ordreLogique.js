@@ -57,17 +57,19 @@ function OrdreLogique(formationJson) {
             $(this).remove();
         });
 
-        for (var i = 0, len = groupesJson.length; i < len; i++){
-            var groupe = this.createGroupe();
-            groupe.identifiant = groupesJson[i].codeGroupeModule;
+        for(grp in groupesJson){
+            if (groupesJson.hasOwnProperty(grp)){
+                var groupe = this.createGroupe();
+                groupe.identifiant = groupesJson[grp].codeGroupe;
 
-            var sousGroupes = this.createSousGroupes(groupesJson[i].sousGroupes);
-            for (var j = 0, jLen = sousGroupes.length; j < jLen; j++){
-                sousGroupes[j].groupeParent = groupe.identifiant;
-                groupe.getDraggableContainer().appendChild(sousGroupes[j]);
+                var sousGroupes = this.createSousGroupes(groupesJson[grp].sousGroupes);
+                for (var j = 0, jLen = sousGroupes.length; j < jLen; j++){
+                    sousGroupes[j].groupeParent = groupe.identifiant;
+                    groupe.getDraggableContainer().appendChild(sousGroupes[j]);
+                }
+                groupe.nbElements = groupe.getSousGroupes().length;
+                container.appendChild(groupe);
             }
-            groupe.nbElements = groupe.getSousGroupes().length;
-            container.appendChild(groupe);
         }
     };
 
@@ -78,19 +80,23 @@ function OrdreLogique(formationJson) {
      */
     this.createSousGroupes = function (sousGroupesJson) {
         var sousGroupes = [];
-        for (var i = 0 , len = sousGroupesJson.length; i < len; i++){
-            var sousGroupe = this.createSousGroupe();
-            sousGroupe.identifiant = sousGroupesJson[i].codeSousGroupe;
+        for (ssGrp in sousGroupesJson){
+            if (sousGroupesJson.hasOwnProperty(ssGrp)){
+                var sousGroupe = this.createSousGroupe();
+                sousGroupe.identifiant = sousGroupesJson[ssGrp].codeSousGroupe;
 
-            var modulesJson = sousGroupesJson[i].modules;
-            for (var j = 0, mLen = modulesJson.length; j < mLen; j++){
-                var module = new Module();
-                module.identifiant = modulesJson[j].idModule;
-                module.libelle = modulesJson[j].libelle;
-                sousGroupe.getDraggableContainer().appendChild(module);
+                var modulesJson = sousGroupesJson[ssGrp].modules;
+                for (m in modulesJson){
+                    if (modulesJson.hasOwnProperty(m)){
+                        var module = new Module();
+                        module.identifiant = modulesJson[m].idModule;
+                        module.libelle = modulesJson[m].libelle;
+                        sousGroupe.getDraggableContainer().appendChild(module);
+                    }
+                }
+                sousGroupe.nbElements = sousGroupe.getModules().length;
+                sousGroupes.push(sousGroupe);
             }
-            sousGroupe.nbElements = sousGroupe.getModules().length;
-            sousGroupes.push(sousGroupe);
         }
         return sousGroupes;
     };

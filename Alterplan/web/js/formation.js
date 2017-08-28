@@ -51,7 +51,7 @@ function Formation(formationJson) {
      * @param groupe une instance de GroupeModule
      */
     this.addGroupe = function (groupe) {
-        this.getGroupesModules(idSelectedModule).push(groupe.toJson());
+        this.getGroupesModules(idSelectedModule)[groupe.identifiant] = groupe.toJson();
     };
 
     /**
@@ -60,7 +60,8 @@ function Formation(formationJson) {
      * @param sousGroupe instance de SousGroupe
      */
     this.addSousGroupeToGroupe = function (groupe, sousGroupe) {
-        this.getGroupesModules(idSelectedModule)[groupe].sousGroupes.push(sousGroupe.toJson());
+        this.getGroupesModules(idSelectedModule)[groupe]
+            .sousGroupes[sousGroupe.identifiant] = sousGroupe.toJson();
     };
 
     /**
@@ -69,7 +70,8 @@ function Formation(formationJson) {
      * @param module Instance de Module
      */
     this.addModuleToSousGroupe = function (sousGroupe, module) {
-        this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent].sousGroupes[sousGroupe.identifiant].modules.push(module.toJson());
+        this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent].sousGroupes[sousGroupe.identifiant]
+            .modules[module.identifiant] = module.toJson();
     };
 
     /**
@@ -105,17 +107,10 @@ function Formation(formationJson) {
      * @param module instance de Module
      */
     this.removeModuleFromSousGroupe = function (sousGroupe, module) {
-        var index = -1;
-        var modules = this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent].sousGroupes[sousGroupe.identifiant].modules;
-        for (var i = 0, len = modules.length; i < len; i++){
-            if (parseInt(modules[i].idModule,10) === parseInt(module.identifiant,10)){
-                index = i;
-                break;
-            }
-        }
-
-        if (index > -1){
-            this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent].sousGroupes[sousGroupe.identifiant].modules.splice(index, 1);
+        if (module.identifiant in this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent]
+                .sousGroupes[sousGroupe.identifiant].modules){
+            delete this.getGroupesModules(idSelectedModule)[sousGroupe.groupeParent]
+                .sousGroupes[sousGroupe.identifiant].modules[module.identifiant];
         }
     };
 
@@ -125,17 +120,8 @@ function Formation(formationJson) {
      * @param groupe identifaint du Groupe
      */
     this.removeSousGroupe = function (sousGroupe, groupe) {
-        var index = -1;
-        var sousGroupes = this.getGroupesModules(idSelectedModule)[groupe].sousGroupes;
-        for (var i = 0, len = sousGroupes.length; i < len; i++){
-            if (parseInt(sousGroupes[i].codeSousGroupe, 10) === parseInt(sousGroupe.identifiant, 10)){
-                index = i;
-                break;
-            }
-        }
-
-        if (index > -1){
-            this.getGroupesModules(idSelectedModule)[groupe].sousGroupes.splice(index, 1);
+        if (sousGroupe.identifiant in this.getGroupesModules(idSelectedModule)[groupe]){
+            delete this.getGroupesModules(idSelectedModule)[groupe].sousGroupes[sousGroupe.identifiant];
         }
     };
 
@@ -144,17 +130,8 @@ function Formation(formationJson) {
      * @param groupe identifiant du groupe
      */
     this.removeGroupe = function (groupe) {
-        var index = -1;
-        var groupes = this.getGroupesModules(idSelectedModule);
-        for (var i = 0, len = groupes.length; i < len; i++){
-            if (parseInt(groupes[i].codeGroupeModule, 10) === parseInt(groupe, 10)){
-                index = i;
-                break;
-            }
-        }
-
-        if (index > -1){
-            this.getGroupesModules(idSelectedModule).splice(index, 1);
+        if (groupe in this.getGroupesModules(idSelectedModule)){
+            delete this.getGroupesModules(idSelectedModule)[groupe];
         }
     }
 }

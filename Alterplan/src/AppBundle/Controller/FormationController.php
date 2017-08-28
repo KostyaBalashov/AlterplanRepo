@@ -114,51 +114,39 @@ class FormationController extends Controller
         if ($request->isXmlHttpRequest()) {
             $formationRepo = $this->getDoctrine()->getRepository(Formation::class);
             $ordreModuleRepo = $this->getDoctrine()->getRepository(OrdreModule::class);
-            $groupesRepo = $this->getDoctrine()->getRepository(GroupeModule::class);
-            $sousGroupeRepo = $this->getDoctrine()->getRepository(SousGroupeModule::class);
 
             $receivedModulesJson = $request->get('ordreLogique')['modules'];
-            $modulesJson = $formation->jsonSerialize()['modules'];
+            $referenceModulesJson = $formation->jsonSerialize()['modules'];
 
             foreach ($receivedModulesJson as $idModule => $ordreModule){
 
                 if (isset($ordreModule['ordreModule']['groupes'])){
                     $receivedGroupes = $ordreModule['ordreModule']['groupes'];
-                    $referenceGroups = $modulesJson[$idModule]['ordreModule']['groupes'];
+                    $referenceGroups = $referenceModulesJson[$idModule]['ordreModule']['groupes'];
 
                     if(sizeof($referenceGroups) > 0){
-                        //TODO comparer les groupes
-                        /*
-                         * array_diff
-                         * http://www.php.net/manual/en/language.operators.array.php
-                         * array_intersect
-                         * array_filter
-                         * $unchangedGroupes = array_intersect($receivedGroupes, $referenceGroups);
-                        $groupesToRemove = array_diff($referenceGroups, $receivedGroupes);
-                        $groupesToAdd = array_diff($receivedGroupes, $referenceGroups);*/
-                    }else{
-                        $idOrdreModue = $ordreModuleRepo->insert($formation->getCodeFormation(), $ordreModule['ordreModule']['idModule']);
-
-                        foreach ($receivedGroupes as $groupeKey => $groupeValue){
-                            $sousGroupesId = array();
-
-                            $sousGroupes = $groupeValue['sousGroupes'];
-                            foreach ($sousGroupes as $sousGroupeKey => $sousGroupeValue){
-                                $moduesId = array();
-                                $modules = $sousGroupeValue['modules'];
-                                foreach ($modules as $k => $v){
-                                    $moduesId[] = $v['idModule'];
-                                }
-
-                                $sousGroupesId[] = $sousGroupeRepo->insert($moduesId);
-                            }
-
-                            $groupesRepo->insert($idOrdreModue, $sousGroupesId);
+                        $addedGroupes = array_diff_key($receivedGroupes, $referenceGroups);
+                        if (sizeof($addedGroupes) > 0){
+                            $idOrdreModule = $ordreModule['ordreModule']['codeOrdreModule'];
+                            $this->insertGroupes($addedGroupes, $idOrdreModule);
                         }
+
+                        $removedGroupes = array_diff_key($referenceGroups, $receivedGroupes);
+                        if (sizeof($removedGroupes)){
+                            $this->removeGroupes($removedGroupes);
+                        }
+
+                        $unchagedGroupes = array_intersect_key($receivedGroupes, $referenceGroups);
+                        if (sizeof($unchagedGroupes) > 0){
+                            $test = 0;
+                        }
+                    }else{
+                        $idOrdreModule = $ordreModuleRepo->insert($formation->getCodeFormation(), $ordreModule['ordreModule']['idModule']);
+                        $this->insertGroupes($receivedGroupes, $idOrdreModule);
                     }
                 }else{
-                    if (sizeof($modulesJson[$idModule]['ordreModule']['groupes']) > 0){
-                        $ordreModuleRepo->remove($modulesJson[$idModule]['ordreModule']['codeOrdreModule']);
+                    if (sizeof($referenceModulesJson[$idModule]['ordreModule']['groupes']) > 0){
+                        $ordreModuleRepo->remove($referenceModulesJson[$idModule]['ordreModule']['codeOrdreModule']);
                     }
                 }
             }
@@ -168,5 +156,35 @@ class FormationController extends Controller
         }else{
             return new Response('Action non autorisée', Response::HTTP_FORBIDDEN);
         }
+    }
+
+    private function insertGroupes($groupes, $idOrdreModule){
+        $groupesRepo = $this->getDoctrine()->getRepository(GroupeModule::class);
+        foreach ($groupes as $groupeKey => $groupeValue){
+            $sousGroupesId = $this->insertSousGroupes($groupeValue['sousGroupes']);
+            $groupesRepo->insert($idOrdreModule, $sousGroupesId);
+        }
+    }
+
+    private function removeGroupes($groupes){
+        $groupesRepo = $this->getDoctrine()->getRepository(GroupeModule::class);
+        $groupesRepo->remove(array_keys($groupes));
+    }
+
+    private function insertSousGroupes($sousGroupes){
+        $sousGroupeRepo = $this->getDoctrine()->getRepository(SousGroupeModule::class);
+        $sousGroupesId = array();
+
+        foreach ($sousGroupes as $sousGroupeKey => $sousGroupeValue){
+            $moduesId = array();
+            $modules = array_filter($sousGroupeValue['modules']);
+            foreach ($modules as $k => $v){
+                $moduesId[] = $v['idModule'];
+            }
+
+            $sousGroupesId[] = $sousGroupeRepo->insert($moduesId);
+        }
+
+        return $sousGroupesId;
     }
 }

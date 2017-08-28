@@ -86,7 +86,7 @@ You should have received a copy of the GNU Affero General Public License along w
             //Récupération de la ligne contenant l'url cible
             var url = $(this).closest('tr').data("href");
 
-            renderModal('user', url, refreshTable, passwordCheck);
+            renderModal('user', url, true, refreshTable, passwordCheck);
         });
 
         $('.deleteIcon').click(function () {
@@ -96,6 +96,6 @@ You should have received a copy of the GNU Affero General Public License along w
     });
 
     $('#btn_create_user').click(function () {
-        renderModal('user','/utilisateurs/new', refreshTable, passwordCheck);
+        renderModal('user','/utilisateurs/new', true, refreshTable, passwordCheck);
     })
 </script>

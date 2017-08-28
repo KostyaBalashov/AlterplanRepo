@@ -56,10 +56,10 @@ class GroupeModule implements \JsonSerializable
         $result['codeGroupe'] = $this->codeGroupeModule;
         $sousGroupes = array();
         if ($this->sousGroupe1){
-            $sousGroupes[] = $this->sousGroupe1->jsonSerialize();
+            $sousGroupes[$this->sousGroupe1->getCodeSousGroupeModule()] = $this->sousGroupe1->jsonSerialize();
         }
         if ($this->sousGroupe2){
-            $sousGroupes[] = $this->sousGroupe2->jsonSerialize();
+            $sousGroupes[$this->sousGroupe2->getCodeSousGroupeModule()] = $this->sousGroupe2->jsonSerialize();
         }
         $result['sousGroupes'] = $sousGroupes;
         return $result;

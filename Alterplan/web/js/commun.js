@@ -12,7 +12,7 @@
 /*
 * Affiche un formulaire dans une fenêtre modale
 * */
-function renderModal(idModalForm,controllerUrl,postSubmitCallback, onModalOpen) {
+function renderModal(idModalForm,controllerUrl, useCustomSubmit, postSubmitCallback, onModalOpen) {
     var modalSelector ="[data-target='"+idModalForm+"']";
     var formSelector = '#'+idModalForm;
 
@@ -34,16 +34,18 @@ function renderModal(idModalForm,controllerUrl,postSubmitCallback, onModalOpen) 
                     onModalOpen();
                 }
 
-                var frm = $(formSelector);
+                if (useCustomSubmit){
+                    var frm = $(formSelector);
 
-                //abonnement au submit du form
-                frm.submit(function (event) {
+                    //abonnement au submit du form
+                    frm.submit(function (event) {
 
-                    event.preventDefault();
+                        event.preventDefault();
 
-                    postForm(frm, postSubmitCallback, modalSelector);
+                        postForm(frm, postSubmitCallback, modalSelector);
 
-                });
+                    });
+                }
             }
         });
     }).always(function(){
@@ -96,10 +98,12 @@ function postForm(form, postSubmitCallback, modalSelector) {
         }
 
         //affichage du message retourné par le controller
+        //TODO mettre le message dans postSublmit
         showToast(data);
 
     }).fail(function () {
         //en cas d'échec affichage du msg d'erreur
+        //TODO changer le message ou le passer un paramètres...?
         showToast('Erreur d\'enregistrement', 'error');
     }).always(function () {
         dismissLoader();

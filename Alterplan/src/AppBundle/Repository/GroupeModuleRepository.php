@@ -22,10 +22,10 @@ use Doctrine\ORM\EntityRepository;
 
 class GroupeModuleRepository extends EntityRepository
 {
-    public function remove($codeGroupeModule){
+    public function remove($codesGroupeModule){
         $qb = $this->createQueryBuilder('gm');
         $qb->delete('AppBundle:GroupeModule', 'gm')
-            ->where('gm.codeGroupeModule = :code')->setParameter('code', $codeGroupeModule);
+            ->where('gm.codeGroupeModule IN (:code)')->setParameter('code', $codesGroupeModule);
         $qb->getQuery()->execute();
     }
 
