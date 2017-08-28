@@ -21,6 +21,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
+use AppBundle\Filtre\CalendrierFiltre;
+use AppBundle\Form\Filtre\CalendrierFiltreType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +89,45 @@ class CalendrierController extends Controller
         ));
     }
 
+    /**
+     * Rechercher un calendrier à dupliquer ou à appliquer un thème
+     *
+     * @Route("/duplicate}", name="calendrier_search")
+     * @Method({"GET", "POST"})
+     */
+    public function searchCalendrier(){
+        $em = $this->getDoctrine()->getManager();
 
+        $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+
+        //Création de l'objet filtre
+        $filtre = new  CalendrierFiltre();
+
+        //Création du formulaire de recherche
+        $form = $this->createForm('AppBundle\Form\Filtre\CalendrierFiltreType', $filtre, array(
+            'attr' => array('id' => 'calendrier_search'),
+            'action' => $this->generateUrl('calendrier_search'),
+            'method' => 'POST'
+        ));
+
+        $calendriers = null;
+
+        // Le formulaire écoute les requêtes (pour le submit)
+        //$form->handleRequest($request);
+
+
+        //Si le formulaire est sousmis
+        if ($form->isSubmitted()) {
+
+        } else {
+            $calendriers = $repo->search();
+
+            return $this->render(':calendrier:modalSearchCalendrier.html.twig', array(
+                'calendriers' => $calendriers,
+                'form' => $form->createView(),
+            ));
+        }
+    }
 
     /**
      * Deletes a calendar entity.

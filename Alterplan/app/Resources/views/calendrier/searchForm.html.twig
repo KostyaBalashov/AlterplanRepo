@@ -1,0 +1,61 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+
+<div class="row">
+    <h5 class="center">{{ titre }}</h5>
+</div>
+
+
+{{ form_start(formSearch, {'attr': {'id':'calendrier_search', 'method': 'POST'}}) }}
+<div class="row center-align">
+
+    <div class="valign-wrapper col s6">
+        <i class="material-icons col s1">today</i>
+        {{ form_widget(formSearch.dateDebut, {'attr':{'placeholder':'Date début'}}) }}
+    </div>
+    <div class="valign-wrapper col s6">
+        <i class="material-icons col s1">today</i>
+        {{ form_widget(formSearch.dateFin, {'attr':{'placeholder':'Date Fin'}}) }}
+    </div>
+    <div class="valign-wrapper col s6 ">
+        <i class="material-icons col s1">title</i>
+        {{ form_widget(formSearch.titre, {'attr':{'placeholder':'Titre'}}) }}
+    </div>
+    <div class="valign-wrapper col s6   ">
+        <i class="material-icons col s1">description</i>
+        {{ form_widget(formSearch.formation, {'attr':{'placeholder':'Formation'}}) }}
+    </div>
+</div>
+{{ form_end(formSearch) }}
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+
+    $('.datepicker').pickadate({
+        labelMonthNext: 'mois suivant',
+        labelMonthPrev: 'mois précédent',
+        labelMonthSelect: 'Sélectionnez un mois',
+        labelYearSelect: 'Sélectionnez une année',
+        monthsFull: [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ],
+        monthsShort: [ 'janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc' ],
+        weekdaysFull: [ 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'vendredi', 'Samedi', 'Dimanche' ],
+        weekdaysShort: [ 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim' ],
+        weekdaysLetter: [ 'L', 'M', 'M', 'J', 'V', 'S', 'D' ],
+        today: 'Aujourd\'hui',
+        clear: 'Annuler',
+        close: 'Fermer',
+        formatSubmit: 'yyyy/mm/dd',
+        hiddenName: true
+    });
+</script>

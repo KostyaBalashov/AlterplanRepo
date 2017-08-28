@@ -50,7 +50,7 @@ You should have received a copy of the GNU Affero General Public License along w
             {#Dropdown Créer un nouveau calendrier#}
             <ul id='creerDopDown' class='dropdown-content'>
                 <li><a id="btn_new">Nouveau</a></li>
-                <li><a href="#!">Dupliquer</a></li>
+                <li><a id="btn_duplicate">Dupliquer</a></li>
                 <li><a href="#!">Appliquer un thème</a></li>
             </ul>
         </div>
@@ -124,6 +124,11 @@ You should have received a copy of the GNU Affero General Public License along w
             var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
             renderModal('calendrier',url,dateCheck);
         });
+
+        var urlDuplicate = "{{ path('calendrier_search')}}";
+        $('#btn_duplicate').click(function () {
+            renderModal('calendrier_search',urlDuplicate);
+        })
     });
 
     function deleteCalendar(urlAction) {

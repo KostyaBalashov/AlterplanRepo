@@ -79,6 +79,8 @@ class StagiaireParEntrepriseController extends Controller
 
         // Affichage de la fiche du stagiaire avec la liste de ses calendrier
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+
+        // TODO : Modifier les appels en base pour retourner les calendriers du stagiaire et créer des tableaux.
         $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire(), 'isInscrit' => 0));
         $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $stagiaireParEntreprise->getStagiaire(), 'isInscrit' => 1));
 
