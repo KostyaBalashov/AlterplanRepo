@@ -172,7 +172,6 @@ class Formation implements \JsonSerializable
             $modulesDisponibles = $this->getModulesDisponibles($module);
             $ordreModule[$module->getIdModule()]['modulesDisponibles'] = array();
             foreach ($modulesDisponibles as $moduleDispo){
-                //$moduleDispo->getIdModule()
                 $ordreModule[$module->getIdModule()]['modulesDisponibles'][] = $moduleDispo->jsonSerialize();
             }
             $ordre = $this->getOrdreModuleFromModule($module);
@@ -563,34 +562,13 @@ class Formation implements \JsonSerializable
         $modules = new  ArrayCollection();
 
         foreach ($ordreModule->getGroupes() as $groupe){
-            if ($groupe->getSousGroupe1()){
-                foreach ($this->getModulesFromSousGroupe($groupe->getSousGroupe1()) as $value){
-                    $modules->add($value);
-                }
-            }
-
-            if ($groupe->getSousGroupe2()){
-                foreach ($this->getModulesFromSousGroupe($groupe->getSousGroupe2()) as $value){
-                    $modules->add($value);
+            foreach ($groupe->getSousGroupes() as $sousGroupe){
+                foreach ($sousGroupe->getModules() as $module){
+                    $modules->add($module);
                 }
             }
         }
 
-        return $modules;
-    }
-
-    private function getModulesFromSousGroupe(SousGroupeModule $sousGroupe){
-        $modules = new ArrayCollection();
-        if ($sousGroupe){
-            if ($sousGroupe->getModule1())
-                $modules->add($sousGroupe->getModule1());
-            if ($sousGroupe->getModule2())
-                $modules->add($sousGroupe->getModule2());
-            if ($sousGroupe->getModule3())
-                $modules->add($sousGroupe->getModule3());
-            if ($sousGroupe->getModule4())
-                $modules->add($sousGroupe->getModule4());
-        }
         return $modules;
     }
 }

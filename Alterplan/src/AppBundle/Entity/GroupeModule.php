@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,71 +34,45 @@ class GroupeModule implements \JsonSerializable
     private $ordreModule;
 
     /**
-     * @var SousGroupeModule
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="CodeSousGroupe1", referencedColumnName="CodeSousGroupeModule")
-     * })
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\SousGroupeModule", mappedBy="groupe", fetch="EAGER")
      */
-    private $sousGroupe1;
+    private $sousGroupes;
 
-    /**
-     * @var SousGroupeModule
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\SousGroupeModule", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="CodeSousGroupe2", referencedColumnName="CodeSousGroupeModule")
-     * })
-     */
-    private $sousGroupe2;
+    public function __construct()
+    {
+        $this->sousGroupes = new ArrayCollection();
+    }
 
     function jsonSerialize()
     {
         $result = array();
         $result['codeGroupe'] = $this->codeGroupeModule;
         $sousGroupes = array();
-        if ($this->sousGroupe1){
-            $sousGroupes[$this->sousGroupe1->getCodeSousGroupeModule()] = $this->sousGroupe1->jsonSerialize();
+
+        foreach ($this->sousGroupes as $sousGroupe){
+            $sousGroupes[$sousGroupe->getCodeSousGroupeModule()] = $sousGroupe->jsonSerialize();
         }
-        if ($this->sousGroupe2){
-            $sousGroupes[$this->sousGroupe2->getCodeSousGroupeModule()] = $this->sousGroupe2->jsonSerialize();
-        }
+
         $result['sousGroupes'] = $sousGroupes;
         return $result;
     }
 
     /**
-     * @return SousGroupeModule
+     * @return ArrayCollection
      */
-    public function getSousGroupe1()
+    public function getSousGroupes()
     {
-        return $this->sousGroupe1;
+        return $this->sousGroupes;
     }
 
     /**
-     * @param SousGroupeModule $sousGroupe1
+     * @param ArrayCollection $sousGroupes
      * @return GroupeModule
      */
-    public function setSousGroupe1($sousGroupe1)
+    public function setSousGroupes($sousGroupes)
     {
-        $this->sousGroupe1 = $sousGroupe1;
-        return $this;
-    }
-
-    /**
-     * @return SousGroupeModule
-     */
-    public function getSousGroupe2()
-    {
-        return $this->sousGroupe2;
-    }
-
-    /**
-     * @param SousGroupeModule $sousGroupe2
-     * @return GroupeModule
-     */
-    public function setSousGroupe2($sousGroupe2)
-    {
-        $this->sousGroupe2 = $sousGroupe2;
+        $this->sousGroupes = $sousGroupes;
         return $this;
     }
 

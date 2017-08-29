@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,131 +23,74 @@ class SousGroupeModule implements \JsonSerializable
     private $codeSousGroupeModule;
 
     /**
-     * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="Module1", referencedColumnName="IdModule")
-     * })
+     * @var GroupeModule
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\GroupeModule", inversedBy="sousGroupes")
+     * @ORM\JoinColumn(name="CodeGroupeModule", referencedColumnName="CodeGroupeModule")
      */
-    private $module1;
+    private $groupe;
 
     /**
-     * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="Module2", referencedColumnName="IdModule")
-     * })
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
+     * @ORM\JoinTable(name="AssocitionModuleSousGroupeModule",
+     *     joinColumns={@ORM\JoinColumn(name="CodeSousGroupeModule", referencedColumnName="CodeSousGroupeModule")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")})
      */
-    private $module2;
+    private $modules;
 
-    /**
-     * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="Module3", referencedColumnName="IdModule")
-     * })
-     */
-    private $module3;
-
-    /**
-     * @var Module
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Module", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="Module4", referencedColumnName="IdModule")
-     * })
-     */
-    private $module4;
+    public function __construct()
+    {
+        $this->modules = new ArrayCollection();
+    }
 
     public function jsonSerialize()
     {
         $result = array();
         $result['codeSousGroupe'] = $this->codeSousGroupeModule;
         $modules = array();
-        if ($this->module1){
-            $modules[$this->module1->getIdModule()] = $this->module1->jsonSerialize();
+
+        foreach ($this->modules as $module){
+            $modules[$module->getIdModule()] = $module->jsonSerialize();
         }
-        if ($this->module2){
-            $modules[$this->module2->getIdModule()] = $this->module2->jsonSerialize();
-        }
-        if ($this->module3){
-            $modules[$this->module3->getIdModule()] = $this->module3->jsonSerialize();
-        }
-        if ($this->module4){
-            $modules[$this->module4->getIdModule()] = $this->module4->jsonSerialize();
-        }
+
         $result['modules'] = $modules;
         return $result;
     }
 
     /**
-     * @return Module
+     * @return GroupeModule
      */
-    public function getModule1()
+    public function getGroupe()
     {
-        return $this->module1;
+        return $this->groupe;
     }
 
     /**
-     * @param Module $module1
+     * @param GroupeModule $groupe
      * @return SousGroupeModule
      */
-    public function setModule1($module1)
+    public function setGroupe($groupe)
     {
-        $this->module1 = $module1;
+        $this->groupe = $groupe;
         return $this;
     }
 
     /**
-     * @return Module
+     * @return ArrayCollection
      */
-    public function getModule2()
+    public function getModules()
     {
-        return $this->module2;
+        return $this->modules;
     }
 
     /**
-     * @param Module $module2
+     * @param ArrayCollection $modules
      * @return SousGroupeModule
      */
-    public function setModule2($module2)
+    public function setModules($modules)
     {
-        $this->module2 = $module2;
-        return $this;
-    }
-
-    /**
-     * @return Module
-     */
-    public function getModule3()
-    {
-        return $this->module3;
-    }
-
-    /**
-     * @param Module $module3
-     * @return SousGroupeModule
-     */
-    public function setModule3($module3)
-    {
-        $this->module3 = $module3;
-        return $this;
-    }
-
-    /**
-     * @return Module
-     */
-    public function getModule4()
-    {
-        return $this->module4;
-    }
-
-    /**
-     * @param Module $module4
-     * @return SousGroupeModule
-     */
-    public function setModule4($module4)
-    {
-        $this->module4 = $module4;
+        $this->modules = $modules;
         return $this;
     }
 

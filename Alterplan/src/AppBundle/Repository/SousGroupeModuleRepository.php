@@ -22,19 +22,16 @@ use Doctrine\ORM\EntityRepository;
 
 class SousGroupeModuleRepository extends EntityRepository
 {
-    public function insert($idModules = array()){
-        $insertedId = -1;
-        if (sizeof($idModules) > 0){
-            $index = 1;
-            $data = array();
+    public function insert($codeGroupe){
+        $this->getEntityManager()->getConnection()->insert('SousGroupeModule',
+            array('CodeGroupeModule' => $codeGroupe));
+        return $this->getEntityManager()->getConnection()->lastInsertId();
+    }
 
-            foreach ($idModules as $idModule){
-                $data['Module'.$index++] = $idModule;
-            }
-
-            $this->getEntityManager()->getConnection()->insert('SousGroupeModule', $data);
-            $insertedId = $this->getEntityManager()->getConnection()->lastInsertId();
-        }
-        return $insertedId;
+    public function remove($codesSousGroupe){
+        $qb = $this->createQueryBuilder('sgm');
+        $qb->delete('AppBundle:SousGroupeModule', 'sgm')
+            ->where('sgm.codeSousGroupeModule IN (:codes)')->setParameter('codes', $codesSousGroupe);
+        $qb->getQuery()->execute();
     }
 }

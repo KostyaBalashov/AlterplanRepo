@@ -26,50 +26,10 @@ use Doctrine\ORM\EntityRepository;
 
 class ModuleRepository extends EntityRepository
 {
-    public function getFormationModules(Formation $formation){
-        $modules = new  ArrayCollection();
-
-        if ($formation){
-            foreach ($formation->getUnitesParFormation() as $uniteParFormation){
-                foreach ($uniteParFormation->getModulesParUnite() as $moduleParUnite){
-                    if ($moduleParUnite && ($moduleParUnite->getModule())){
-                        $modules->add($moduleParUnite->getModule());
-                    }
-                }
-            }
-        }
-
-        return $modules;
-    }
-
-    public function getOrdreModules(OrdreModule $ordreModule){
-        $modules = new  ArrayCollection();
-
-        if ($ordreModule){
-            foreach ($ordreModule->getGroupes() as $groupe){
-                if ($groupe->getSousGroupe1())
-                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe1()));
-
-                if ($groupe->getSousGroupe2())
-                    $modules->add($this->getModulesFromSousGroupe($groupe->getSousGroupe2()));
-            }
-        }
-
-        return $modules;
-    }
-
-    private function getModulesFromSousGroupe(SousGroupeModule $sousGroupe){
-        $modules = new ArrayCollection();
-        if ($sousGroupe){
-            if ($sousGroupe->getModule1())
-                $modules->add($sousGroupe->getModule1());
-            if ($sousGroupe->getModule2())
-                $modules->add($sousGroupe->getModule2());
-            if ($sousGroupe->getModule3())
-                $modules->add($sousGroupe->getModule3());
-            if ($sousGroupe->getModule4())
-                $modules->add($sousGroupe->getModule4());
-        }
-        return $modules;
+    public function setSousGroupe($idsModules, $codeSousGroupe){
+        $qb = $this->createQueryBuilder('m');
+        $qb->update('AppBundle:Module', 'm')
+            ->set('m.sousGroupe', $codeSousGroupe)
+            ->where('m.idModule IN (:codes)')->setParameter('codes', $idsModules);
     }
 }

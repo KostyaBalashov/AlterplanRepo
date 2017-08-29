@@ -120,7 +120,7 @@ function Formation(formationJson) {
      * @param groupe identifaint du Groupe
      */
     this.removeSousGroupe = function (sousGroupe, groupe) {
-        if (sousGroupe.identifiant in this.getGroupesModules(idSelectedModule)[groupe]){
+        if (sousGroupe.identifiant in this.getGroupesModules(idSelectedModule)[groupe].sousGroupes){
             delete this.getGroupesModules(idSelectedModule)[groupe].sousGroupes[sousGroupe.identifiant];
         }
     };

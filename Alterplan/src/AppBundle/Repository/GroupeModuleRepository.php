@@ -29,15 +29,9 @@ class GroupeModuleRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    public function insert($codeOrdreModule, $sousGroupesIds = array()){
-        if (sizeof($sousGroupesIds) > 0){
-            $index = 1;
-            $data = array('CodeOrdreModule' => $codeOrdreModule);
-            foreach ($sousGroupesIds as $sgId){
-                $data['CodeSousGroupe'.$index++] = $sgId;
-            }
-
-            $this->getEntityManager()->getConnection()->insert('GroupeModule', $data);
-        }
+    public function insert($codeOrdreModule){
+        $this->getEntityManager()->getConnection()->insert('GroupeModule',
+            array('CodeOrdreModule' => $codeOrdreModule));
+        return $this->getEntityManager()->getConnection()->lastInsertId();
     }
 }
