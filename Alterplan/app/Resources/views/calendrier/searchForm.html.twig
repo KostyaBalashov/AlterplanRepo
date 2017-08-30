@@ -8,12 +8,6 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 #}
 
-
-<div class="row">
-    <h5 class="center">{{ titre }}</h5>
-</div>
-
-
 {{ form_start(formSearch, {'attr': {'id':'calendrier_search', 'method': 'POST'}}) }}
 <div class="row center-align">
 
@@ -25,13 +19,13 @@ You should have received a copy of the GNU Affero General Public License along w
         <i class="material-icons col s1">today</i>
         {{ form_widget(formSearch.dateFin, {'attr':{'placeholder':'Date Fin'}}) }}
     </div>
-    <div class="valign-wrapper col s6 ">
+    <div class="valign-wrapper col s6">
         <i class="material-icons col s1">title</i>
         {{ form_widget(formSearch.titre, {'attr':{'placeholder':'Titre'}}) }}
     </div>
-    <div class="valign-wrapper col s6   ">
+    <div class="valign-wrapper col s6">
         <i class="material-icons col s1">description</i>
-        {{ form_widget(formSearch.formation, {'attr':{'placeholder':'Formation'}}) }}
+        {{ form_widget(formSearch.Formation, {'attr':{'placeholder':'Formation'}}) }}
     </div>
 </div>
 {{ form_end(formSearch) }}

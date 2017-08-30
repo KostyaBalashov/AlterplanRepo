@@ -1,0 +1,57 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+<div class="card bloc_calendrier">
+    <div class="row">
+        <div class="col s6">
+            <h5>Liste des calendriers ({{ calendars|length }})</h5>
+        </div>
+    </div>
+
+    <table  id="calendar_table" class="centered highlight">
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Formation</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if ( calendars != null ) %}
+            {% for calendar in calendars %}
+                <tr class="clickable clickable-row-calendar" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
+                    <td>
+                        {{ calendar.titre }}
+                    </td>
+
+                    <td>
+                        {{ calendar.formation.libelleCourt }}
+                    </td>
+
+                    <td>
+                        {{ calendar.dateDebut.format('d/m/Y') }}
+                    </td>
+
+                    <td>
+                        {{ calendar.dateFin.format('d/m/Y') }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td>
+                    Aucun calendrier pour ce stagiaire
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>

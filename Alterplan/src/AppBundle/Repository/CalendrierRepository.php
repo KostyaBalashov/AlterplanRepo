@@ -20,10 +20,39 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Entreprise;
 use AppBundle\Entity\Stagiaire;
+use AppBundle\Filtre\CalendrierFiltre;
 use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use Doctrine\ORM\EntityRepository;
 
 class CalendrierRepository extends EntityRepository
 {
 
+   /**
+     * @param CalendrierFiltre|null $filter
+     * @return mixed
+     */
+    public function search(CalendrierFiltre $filter = null){
+        //Si le filtre n'est pas null
+        if ($filter !== null){
+
+            // On effectue les jointures avec les tables stagiaire et entreprise
+            $query = $this->createQueryBuilder('calendrier')
+                ->innerJoin('calendrier.formation','fo');
+
+
+            // Si le champ titre est saisi, on inclut la recherche par le titre du calendrier
+            if ($filter->getTitre() !== null && trim($filter->getTitre()) !== ''){
+                $query->andWhere('calendrier.nom LIKE :titre')->setParameter('titre','%'.$filter->getTitre().'%');
+            }
+
+            //On retourne le résultat
+            return $query->getQuery()->getResult();
+        }else{
+            //S'il n'y a pas de filtre on retourne 50 stagiaires
+            $query = $this->createQueryBuilder('calendrier')
+                ->innerJoin('calendrier.formation','fo');
+
+            return $query->getQuery()->getResult();
+        }
+    }
 }

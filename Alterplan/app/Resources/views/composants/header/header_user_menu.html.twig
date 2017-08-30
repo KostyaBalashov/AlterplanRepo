@@ -9,7 +9,7 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 <ul id="dropdown1" class="dropdown-content">
     <li>
-        <a id="mon_compte" href="{{ path('utilisateurs_edit', {'id':app.user.id}) }}">Mon compte</a>
+        <a id="mon_compte">Mon compte</a>
     </li>
 
     {% if is_granted('ROLE_ADMIN') %}
@@ -22,6 +22,6 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <ul class="right hide-on-med-and-down">
     <li>
-        <a class="dropdown-button" href="#" data-activates="dropdown1">{{ app.user.nom }} {{ app.user.prenom }}<i class="material-icons right">perm_identity</i></a>
+        <a class="dropdown-button" href="#" data-activates="dropdown1"><i class="material-icons right">perm_identity</i></a>
     </li>
 </ul>

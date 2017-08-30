@@ -18,7 +18,13 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Form\Filtre;
 
 
-class CalendrierFiltreType
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class CalendrierFiltreType extends AbstractType
 {
     /**
      * @inheritdoc
@@ -27,16 +33,20 @@ class CalendrierFiltreType
     {
         $builder
             ->add('dateDebut',  TextType::class, array(
+                'attr' => array('class'=> 'col s10'),
                 'required' => false,
             ))->add('dateFin',  TextType::class, array(
+                'attr' => array('class'=> 'col s10'),
                 'required' => false,
             ))->add('titre',  TextType::class, array(
+                'attr' => array('class'=> 'col s10'),
                 'required' => false,
             ))->add('Formation',  EntityType::class, array(
-            'class' => 'AppBundle:Formation',
-            'placeholder' => 'Formation',
-            'required' => false,
-            'choice_label' => 'libelle'));
+                'attr' => array('class'=> 'col s10'),
+                'class' => 'AppBundle:Formation',
+                'placeholder' => 'Formation',
+                'required' => false,
+                'choice_label' => 'libelleCourt'));
     }
 
     /**

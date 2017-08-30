@@ -112,19 +112,26 @@ class CalendrierController extends Controller
 
         $calendriers = null;
 
-        // Le formulaire écoute les requêtes (pour le submit)
+
         //$form->handleRequest($request);
 
 
         //Si le formulaire est sousmis
         if ($form->isSubmitted()) {
 
+            $calendriers = $repo->search($filtre);
+
+            return $this->render(':calendrier:modaleSearchCalendrier.html.twig', array(
+                'calendars' => $calendriers,
+                'formSearch' => $form->createView(),
+            ));
+
         } else {
             $calendriers = $repo->search();
 
-            return $this->render(':calendrier:modalSearchCalendrier.html.twig', array(
-                'calendriers' => $calendriers,
-                'form' => $form->createView(),
+            return $this->render(':calendrier:modaleSearchCalendrier.html.twig', array(
+                'calendars' => $calendriers,
+                'formSearch' => $form->createView(),
             ));
         }
     }
