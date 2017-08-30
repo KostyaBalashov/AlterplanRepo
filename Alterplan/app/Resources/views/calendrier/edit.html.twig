@@ -1,0 +1,88 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+{% extends 'navigableBase.html.twig' %}
+
+{%  block title %} Calendrier {% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}" />
+{% endblock %}
+
+{% block body %}
+    <div class="row center blue lighten-1">
+        <div class="col s6 offset-s3">
+            <div class="hoverable">
+                <span class="center-align flow-text white-text">{{ calendrier.titre }}</span>
+            </div>
+            <input class="clickedit white" type="text" style="margin: 7px 0 7px 0" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-title">
+                        <span class="flow-text">Modules</span>
+                        <div class="fixed-action-btn horizontal" style="position: absolute; display: inline-block;">
+                            <a class="btn-floating btn-large red">
+                                <i class="material-icons large" style="line-height: 56px;">mode_edit</i>
+                            </a>
+                            <ul>
+                                <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
+                                <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+                                <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+                                <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s9">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Calendrier</span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block customJS %}
+    <script type="text/javascript">
+        var defaultText = '{{ calendrier.titre }}';
+
+        function endEdit(e) {
+            var input = $(e.target),
+                div = input && input.prev();
+
+            div.find('span').text(input.val() === '' ? defaultText : input.val());
+            input.hide();
+            div.show();
+        }
+
+        $(document).ready(function () {
+            $('.clickedit').hide()
+                .focusout(endEdit)
+                .keyup(function (e) {
+                    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                        endEdit(e);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
+                .prev().click(function () {
+                $(this).hide();
+                $(this).next().show().focus();
+            });
+        });
+    </script>
+{% endblock %}

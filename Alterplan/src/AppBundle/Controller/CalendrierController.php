@@ -44,7 +44,7 @@ class CalendrierController extends Controller
      */
     public function indexAction(Calendrier $calendrier) {
 
-        return $this->render(':calendrier:index.html.twig', array(
+        return $this->render(':calendrier:edit.html.twig', array(
             'calendrier' => $calendrier,
         ));
     }

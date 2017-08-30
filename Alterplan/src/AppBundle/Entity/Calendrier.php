@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -94,10 +96,12 @@ class Calendrier
      * @var Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Contrainte" , mappedBy="calendrier")
      */
-    private $formations;
+    private $contraintes;
 
-
-
+    public function __construct()
+    {
+        $this->contraintes = new ArrayCollection();
+    }
 
     /**
      * @return \DateTime
@@ -291,17 +295,17 @@ class Calendrier
     /**
      * @return Collection
      */
-    public function getFormations()
+    public function getContraintes()
     {
-        return $this->formations;
+        return $this->contraintes;
     }
 
     /**
-     * @param Collection $formations
+     * @param Collection $contraintes
      */
-    public function setFormations($formations)
+    public function setContraintes($contraintes)
     {
-        $this->formations = $formations;
+        $this->contraintes = $contraintes;
     }
 
 
