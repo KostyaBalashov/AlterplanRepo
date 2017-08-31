@@ -129,6 +129,7 @@ function initDatePicker(selector) {
     });
 }
 
+
 function passwordCheck() {
     var firstPwd = $('#appbundle_utilisateur_plainPassword');
     var secondPwd = $('#appbundle_utilisateur_checkPassword');
@@ -141,4 +142,3 @@ function passwordCheck() {
         }
     });
 }
-
