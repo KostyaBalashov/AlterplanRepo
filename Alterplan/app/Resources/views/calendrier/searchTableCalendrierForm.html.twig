@@ -15,7 +15,7 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
 
-    <table  id="calendar_table" class="centered highlight">
+    <table  id="search_calendar_table" class="centered highlight">
         <thead>
         <tr>
             <th>Titre</th>
@@ -27,7 +27,7 @@ You should have received a copy of the GNU Affero General Public License along w
         <tbody>
         {% if ( calendars != null ) %}
             {% for calendar in calendars %}
-                <tr class="clickable clickable-row-calendar" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
+                <tr class="clickable clickable-row-calendar" data-href="">
                     <td>
                         {{ calendar.titre }}
                     </td>
@@ -48,7 +48,7 @@ You should have received a copy of the GNU Affero General Public License along w
         {% else %}
             <tr>
                 <td>
-                    Aucun calendrier pour ce stagiaire
+                    Aucun calendrier répond à cette recherche
                 </td>
             </tr>
         {% endif %}

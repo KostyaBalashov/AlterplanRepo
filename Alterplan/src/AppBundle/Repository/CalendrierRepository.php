@@ -23,6 +23,7 @@ use AppBundle\Entity\Stagiaire;
 use AppBundle\Filtre\CalendrierFiltre;
 use AppBundle\Filtre\StagiaireParEntrepriseFiltre;
 use Doctrine\ORM\EntityRepository;
+use DateTime;
 
 class CalendrierRepository extends EntityRepository
 {
@@ -42,7 +43,26 @@ class CalendrierRepository extends EntityRepository
 
             // Si le champ titre est saisi, on inclut la recherche par le titre du calendrier
             if ($filter->getTitre() !== null && trim($filter->getTitre()) !== ''){
-                $query->andWhere('calendrier.nom LIKE :titre')->setParameter('titre','%'.$filter->getTitre().'%');
+                $query->andWhere('calendrier.titre LIKE :titre')->setParameter('titre','%'.$filter->getTitre().'%');
+            }
+
+            // Si le champ date de début est saisi, on inclut la recherche par la date de début de formation
+            if ($filter->getDateDebut() !== null && trim($filter->getDateDebut()) !== ''){
+                $dateDebut = new DateTime($filter->getDateDebut());
+                $dateDebut = $dateDebut->format('Y-m-d');
+                $query->andWhere('calendrier.dateDebut = :dateDebut')->setParameter('dateDebut',$dateDebut);
+            }
+
+            // Si le champ date de fin est saisi, on inclut la recherche par la date de fin de formation
+            if ($filter->getDateFin() !== null && trim($filter->getDateFin()) !== ''){
+                $dateFin = new DateTime($filter->getDateFin());
+                $dateFin = $dateFin->format('Y-m-d');
+                $query->andWhere('calendrier.dateFin = :dateFin')->setParameter('dateFin',$dateFin);
+            }
+
+            // Si le une formation est sélectionnée, on inclut la recherche par le libelleCourt de la formation
+            if ($filter->getFormation() !== null && trim($filter->getFormation()) !== ''){
+                $query->andWhere('calendrier.codeFormation = :codeFormation')->setParameter('codeFormation',$filter->getFormation());
             }
 
             //On retourne le résultat

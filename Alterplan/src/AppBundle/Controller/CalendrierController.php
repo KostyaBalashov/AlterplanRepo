@@ -92,10 +92,11 @@ class CalendrierController extends Controller
     /**
      * Rechercher un calendrier à dupliquer ou à appliquer un thème
      *
+     * @param $request request
      * @Route("/duplicate}", name="calendrier_search")
      * @Method({"GET", "POST"})
      */
-    public function searchCalendrier(){
+    public function searchCalendrier(Request $request){
         $em = $this->getDoctrine()->getManager();
 
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
@@ -113,7 +114,7 @@ class CalendrierController extends Controller
         $calendriers = null;
 
 
-        //$form->handleRequest($request);
+        $form->handleRequest($request);
 
 
         //Si le formulaire est sousmis
@@ -121,9 +122,8 @@ class CalendrierController extends Controller
 
             $calendriers = $repo->search($filtre);
 
-            return $this->render(':calendrier:modaleSearchCalendrier.html.twig', array(
+            return $this->render(':calendrier:searchTableCalendrierForm.html.twig', array(
                 'calendars' => $calendriers,
-                'formSearch' => $form->createView(),
             ));
 
         } else {
