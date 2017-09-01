@@ -18,6 +18,8 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Form\Filtre;
 
 
+use AppBundle\Repository\CalendrierRepository;
+use AppBundle\Repository\FormationRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

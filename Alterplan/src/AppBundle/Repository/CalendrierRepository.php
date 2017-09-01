@@ -37,8 +37,7 @@ class CalendrierRepository extends EntityRepository
         if ($filter !== null){
 
             // On effectue les jointures avec les tables stagiaire et entreprise
-            $query = $this->createQueryBuilder('calendrier')
-                ->innerJoin('calendrier.formation','fo');
+            $query = $this->createQueryBuilder('calendrier');
 
 
             // Si le champ titre est saisi, on inclut la recherche par le titre du calendrier
@@ -61,9 +60,9 @@ class CalendrierRepository extends EntityRepository
             }
 
             // Si le une formation est sélectionnée, on inclut la recherche par le libelleCourt de la formation
-            if ($filter->getFormation() !== null && trim($filter->getFormation()) !== ''){
-                $query->andWhere('calendrier.codeFormation = :codeFormation')->setParameter('codeFormation',$filter->getFormation());
-            }
+            //if ($filter->getFormation() !== null){
+                $query->andWhere('calendrier.codeFormation = :codeFormation')->setParameter('codeFormation',$filter->getFormation()->getCodeFormation());
+            //}
 
             //On retourne le résultat
             return $query->getQuery()->getResult();

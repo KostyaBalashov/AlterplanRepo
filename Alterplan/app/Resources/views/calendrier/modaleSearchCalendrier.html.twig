@@ -25,3 +25,28 @@ You should have received a copy of the GNU Affero General Public License along w
         {% include ':calendrier:searchTableCalendrierForm.html.twig' %}
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Récupération du formulaire de recherche
+        var frm = $('#calendrier_search');
+
+        //Abonnement à l'événement submit du formulaire
+        frm.submit(function (event) {
+            showLoader();
+            event.preventDefault();
+
+            var url = frm.attr('action');
+            $.post(url, frm.serialize(), function (data) {
+                //En cas de succès on mets à jour le tabeau
+                var calendrierTableDiv = $('#search_calendar_table');
+                calendrierTableDiv.empty();
+                calendrierTableDiv.html(data);
+            }).fail(function () {
+                showToast('Erreur de recherche', 'error');
+            }).always(function () {
+                dismissLoader();
+            })
+        });
+    })
+</script>
