@@ -22,5 +22,5 @@
     {{ parent() }}
     {% include ':composants:modale.html.twig' with {'id' : 'calendrier', 'formId' : 'calendrier'} %}
     {# Soumettre le form du tableau à renvoyer#}
-    {% include ':composants:modale.html.twig' with {'id' : 'calendrier_search', 'formId' : 'formSearch'} %}
+    {% include ':composants:modale.html.twig' with {'id' : 'calendrier_search', 'formId' : 'formSearch', 'customClass' : 'modal-search'} %}
 {% endblock %}

@@ -43,3 +43,14 @@ You should have received a copy of the GNU Affero General Public License along w
 .tableauCliquable tbody tr:hover{
     cursor: pointer;
 }
+
+.modal-search{
+    top: 2% !important;
+    max-height: 100% !important;
+    height: 95% !important;
+    width: 85% !important;
+}
+
+.modal-search > .modal-content{
+    padding: 13px 24px 0 24px !important;
+}

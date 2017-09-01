@@ -10,7 +10,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {#{% block modal_id %}user{% endblock %}#}
 
-<div class="modal modal-fixed-footer left-align" data-target="{{ id|default('user') }}">
+<div class="modal modal-fixed-footer left-align {{ customClass|default('') }}" data-target="{{ id|default('user') }}">
     <div class="modal-content">
 
     </div>

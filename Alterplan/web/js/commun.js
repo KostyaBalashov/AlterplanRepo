@@ -130,6 +130,8 @@ function initDatePicker(selector, onSetCallBack) {
         close: 'Fermer',
         formatSubmit: 'yyyy/mm/dd',
         hiddenName: true,
+        selectYears: true,
+        selectMonths: true,
         onSet: onSetCallBack
     });
 }
@@ -146,4 +148,33 @@ function passwordCheck() {
             secondPwd.get(0).setCustomValidity('');
         }
     });
+}
+
+function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax){
+    if ( event.select ) {
+        pickerToSet.set(minOrMax, pickerContainingValue.get('select'))
+    }
+    else if ( 'clear' in event ) {
+        pickerToSet.set(minOrMax, false)
+    }
+}
+
+function getDateDebutPicker(){
+    var from_$input = $("input[id*='dateDebut']").pickadate();
+    return from_$input.pickadate('picker');
+}
+
+function getDateFinPicker(){
+    var to_$input = $("input[id*='dateFin']").pickadate();
+    return to_$input.pickadate('picker');
+}
+
+function onSetDateFin(event) {
+    setPickerMinOrMaxVlueFromPickerValue(event, getDateDebutPicker(),
+        getDateFinPicker(), 'max');
+}
+
+function onSetDateDebut(event) {
+    setPickerMinOrMaxVlueFromPickerValue(event, getDateFinPicker(),
+        getDateDebutPicker(), 'min');
 }

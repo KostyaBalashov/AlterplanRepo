@@ -8,82 +8,68 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 #}
 
-<div class="card">
-    <div class="row">
-        <div class="col s12">
-            <h5 class="">Stagiaire</h5>
+<div class="card col s4" style="height: 19em;">
+    <div class="card-content">
+        <span class="card-title">Stagiaire: {{ stagiaireParEntreprise.stagiaire.nom }} {{ stagiaireParEntreprise.stagiaire.prenom }}</span>
+        <div class="row">
+            <span> Adresse : {{ stagiaireParEntreprise.stagiaire.adresse1 }}</span>
+        </div>
+        <div class="row">
+            <span>  Code Postal : {{ stagiaireParEntreprise.stagiaire.codePostal }} </span>
+        </div>
+        <div class="row">
+            <span> Ville : {{ stagiaireParEntreprise.stagiaire.ville }}</span>
+        </div>
+        <div class="row">
+            <span> Téléphone : {{ stagiaireParEntreprise.stagiaire.telephoneFixe }}</span>
+        </div>
+        <div class="row">
+            <span> Email : {{ stagiaireParEntreprise.stagiaire.email }}</span>
         </div>
     </div>
-    <div class="row stagiaireInformation">
-        <div class="col s4">
-            <div class="col s12">
-                 <span> Stagiaire : {{ stagiaireParEntreprise.stagiaire.nom }} {{ stagiaireParEntreprise.stagiaire.prenom }} </span>
+</div>
+<div class="card col s4" style="height: 19em;">
+    <div class="card-content" style="height: 100%">
+        <span class="card-title">Formation  {% if calendarRegistered %}: {{ calendarRegistered.formation.codeTitre }} {% endif %} </span>
+        {% if ( calendarRegistered != null ) %}
+            <div class="valign-wrapper" style="height: 75%">
+                <div class="row">
+                <span> Du:
+                    <span class="flow-text">
+                        {% if calendarRegistered.dateDebut %}
+                            {{ calendarRegistered.dateDebut.format('d/m/Y') }}
+                        {% endif %}
+                    </span>
+                </span>
+                    <span> Au:
+                    <span class="flow-text">
+                        {% if calendarRegistered.dateFin %}
+                            {{ calendarRegistered.dateFin.format('d/m/Y') }}
+                        {% endif %}
+                    </span>
+                </span>
+                </div>
             </div>
-            <div class="col s12">
-                <span> adresse : </span> {{ stagiaireParEntreprise.stagiaire.adresse1 }}
-            </div>
-            <div class="col s12">
-                <span>  Code Postal : </span> {{ stagiaireParEntreprise.stagiaire.codePostal }}
-            </div>
-            <div class="col s12">
-                <span> Ville : </span> {{ stagiaireParEntreprise.stagiaire.ville }}
-            </div>
-            <div class="col s12">
-                <span> Téléphone : </span> {{ stagiaireParEntreprise.stagiaire.telephoneFixe }}
-            </div>
-            <div class="col s12">
-                <span> Email : </span> {{ stagiaireParEntreprise.stagiaire.email }}
-            </div>
+        {% endif %}
+    </div>
+</div>
+<div class="card col s4" style="height: 19em;">
+    <div class="card-content">
+        <span class="card-title">Entreprise: {{ stagiaireParEntreprise.entreprise.raisonsociale }} </span>
+        <div class="row">
+            <span> Adresse : {{ stagiaireParEntreprise.entreprise.adresse1 }} </span>
         </div>
-        <div class="col s4 formationInformation">
-            {% if ( calendarRegistered != null ) %}
-                <div class="col s12">
-                    <span> Formation : {{ calendarRegistered.formation.codeTitre }} </span>
-                </div>
-                <div class="col s12">
-                    <span> Du </span>
-                    {% if calendarRegistered.dateDebut %}
-                        {{ calendarRegistered.dateDebut.format('d/m/Y') }}
-                    {% endif %}
-                </div>
-                <div class="col s12">
-                    <span> Au </span>
-                    {% if calendarRegistered.dateFin %}
-                        {{ calendarRegistered.dateFin.format('d/m/Y') }}
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="col s12">
-                    <span>Formation :</span>
-                </div>
-                <div class="col s12">
-                    <span> Du </span>
-                </div>
-                <div class="col s12">
-                    <span> Au </span>
-                </div>
-            {% endif %}
-
+        <div class="row">
+            <span> Ville : {{ stagiaireParEntreprise.entreprise.ville }} </span>
         </div>
-        <div class="col s4 entrepriseInformation">
-            <div class="col s12">
-                <span> Entreprise : {{ stagiaireParEntreprise.entreprise.raisonsociale }} </span>
-            </div>
-            <div class="col s12">
-                <span> Adresse : </span> {{ stagiaireParEntreprise.entreprise.adresse1 }}
-            </div>
-            <div class="col s12">
-                <span> Ville : </span> {{ stagiaireParEntreprise.entreprise.ville }}
-            </div>
-            <div class="col s12">
-                <span> Code postal : </span> {{ stagiaireParEntreprise.entreprise.codePostal }}
-            </div>
-            <div class="col s12">
-                <span> Téléphone : </span> {{ stagiaireParEntreprise.entreprise.telephone }}
-            </div>
-            <div class="col s12">
-                <span> Email : </span> {{ stagiaireParEntreprise.entreprise.email }}
-            </div>
+        <div class="row">
+            <span> Code postal : {{ stagiaireParEntreprise.entreprise.codePostal }} </span>
+        </div>
+        <div class="row">
+            <span> Téléphone : {{ stagiaireParEntreprise.entreprise.telephone }} </span>
+        </div>
+        <div class="row">
+            <span> Email : {{ stagiaireParEntreprise.entreprise.email }} </span>
         </div>
     </div>
 </div>
