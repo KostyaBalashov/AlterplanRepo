@@ -110,7 +110,11 @@ function postForm(form, postSubmitCallback, modalSelector) {
     });
 }
 
-function initDatePicker(selector) {
+function initDatePicker(selector, onSetCallBack) {
+    if (!selector){
+        selector = '.datepicker';
+    }
+
     $(selector).pickadate({
         labelMonthNext: 'mois suivant',
         labelMonthPrev: 'mois précédent',
@@ -125,7 +129,8 @@ function initDatePicker(selector) {
         clear: 'Annuler',
         close: 'Fermer',
         formatSubmit: 'yyyy/mm/dd',
-        hiddenName: true
+        hiddenName: true,
+        onSet: onSetCallBack
     });
 }
 

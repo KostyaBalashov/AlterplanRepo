@@ -36,10 +36,16 @@ You should have received a copy of the GNU Affero General Public License along w
             {% include ':ordreLogique:ordreModule.html.twig'%}
         </div>
         <div class="fixed-action-btn">
-            <a id="save" class="btn-floating btn-large waves-effect waves-light">
+            <a id="save" class="btn-floating btn-large waves-effect waves-light tooltipped"
+               data-position="top"
+               data-delay="50"
+               data-tooltip="Enregistrer les modifications">
                 <i class="large material-icons">save</i>
             </a>
-            <a id="cancel" class="btn-floating btn-large waves-effect waves-light red">
+            <a id="cancel" class="btn-floating btn-large waves-effect waves-light red tooltipped"
+               data-position="top"
+               data-delay="50"
+               data-tooltip="Annuler les modifications">
                 <i class="large material-icons">cancel</i>
             </a>
         </div>

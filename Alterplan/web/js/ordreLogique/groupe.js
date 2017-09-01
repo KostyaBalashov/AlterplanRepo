@@ -28,7 +28,10 @@ GroupeModuleProto.createdCallback = function () {
     this.sousGroupeAdded.data = [];
     this.sousGroupeRemoved.data = [];
 
-    this.className = 'card groupe valign-wrapper col s12 grey lighten-5';
+    //teal lighten-5
+    //blue lighten-5
+    //indigo lighten-5
+    this.className = 'card groupe valign-wrapper col s12 blue lighten-5';
     var container = new DraggableContainer();
     container.classList.add('valign-wrapper');
     this.appendChild(container);

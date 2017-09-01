@@ -31,14 +31,29 @@ You should have received a copy of the GNU Affero General Public License along w
                     <div class="card-title">
                         <span class="flow-text">Modules</span>
                         <div class="fixed-action-btn horizontal" style="position: absolute; display: inline-block;">
-                            <a class="btn-floating btn-large red">
-                                <i class="material-icons large" style="line-height: 56px;">mode_edit</i>
+                            <a class="btn-floating btn-large teal lighten-2 tooltipped"
+                               data-position="top"
+                               data-delay="50"
+                               data-tooltip="Modifier la liste des modules">
+                                <i class="large material-icons" style="line-height: 56px;">mode_edit</i>
                             </a>
                             <ul>
-                                <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-                                <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-                                <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-                                <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+                                <li>
+                                    <a class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
+                                       data-position="top"
+                                       data-delay="50"
+                                       data-tooltip="Rechercher parmis des modules d'une autre formation">
+                                        <i class="material-icons" style="line-height: 41px;">search</i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
+                                       data-position="top"
+                                       data-delay="50"
+                                       data-tooltip="Ajouter un module indépendant">
+                                        <i class="material-icons" style="line-height: 41px;">add_circle_outline</i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -81,7 +96,10 @@ You should have received a copy of the GNU Affero General Public License along w
                 })
                 .prev().click(function () {
                 $(this).hide();
-                $(this).next().show().focus();
+                $(this).next().show(function () {
+                    $(this).val('{{ calendrier.titre }}');
+                    return true;
+                }).focus();
             });
         });
     </script>
