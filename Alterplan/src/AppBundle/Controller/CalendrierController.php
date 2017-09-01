@@ -78,8 +78,7 @@ class CalendrierController extends Controller
             $em->persist($calendrier);
             $em->flush();
 
-
-            return new Response('Le calendrier ' . $calendrier->getTitre() . ' a bien été enregistré.');
+            return $this->redirect($this->generateUrl('calendrier_edit', array('codeCalendrier' => $calendrier->getCodeCalendrier())));
         }
 
         return $this->render(':calendrier:newCalendrierForm.html.twig', array(

@@ -122,7 +122,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
         $('#btn_new').click(function () {
             var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
-            renderModal('calendrier',url,true);
+            renderModal('calendrier',url,false);
         });
 
         var urlDuplicate = "{{ path('calendrier_search')}}";
