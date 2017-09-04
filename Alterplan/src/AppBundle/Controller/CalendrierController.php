@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CalendrierController
- * @Route("calendrier")
+ * @Route("calendriers")
  */
 class CalendrierController extends Controller
 {

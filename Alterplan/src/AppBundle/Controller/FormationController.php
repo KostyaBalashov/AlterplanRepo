@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Utilisateur controller.
  *
- * @Route("Formations")
+ * @Route("formations")
  */
 class FormationController extends Controller
 {
