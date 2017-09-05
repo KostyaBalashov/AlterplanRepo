@@ -246,6 +246,9 @@ function OrdreLogique(formationJson) {
                     target.appendChild(groupe);
                 }
 
+                //On fait la suppression nécessaire au niveau du Json
+                me.handleRemove(source.parentElement, el);
+
                 //Droppé dans un Groupe
             }else if(target.parentElement instanceof GroupeModule){
                 var sousGroupe = me.createSousGroupe();
@@ -258,19 +261,29 @@ function OrdreLogique(formationJson) {
                     target.appendChild(sousGroupe);
                 }
 
+                //On fait la suppression nécessaire au niveau du Json
+                me.handleRemove(source.parentElement, el);
+
                 //Droppé dans un Sous Groupe
             }else if(target.parentElement instanceof SousGroupe){
-                target.parentElement.addModule(el);
-                if (sibling){
-                    target.insertBefore(el, sibling);
-                }else {
-                    target.appendChild(el);
+                if(target.parentElement.identifiant !== source.parentElement.identifiant){
+                    target.parentElement.addModule(el);
+                    if (sibling){
+                        target.insertBefore(el, sibling);
+                    }else {
+                        target.appendChild(el);
+                    }
+
+                    //On fait la suppression nécessaire au niveau du Json
+                    me.handleRemove(source.parentElement, el);
                 }
                 //Droppé à droite
             } else if (target.classList.contains('droite')){
                 if (!source.classList.contains('droite')){
                     //Ajout du module disponible dans le Json
                     me.formation.addModuleDisponible(el);
+                    //On fait la suppression nécessaire au niveau du Json
+                    me.handleRemove(source.parentElement, el);
                 }
             }
 
@@ -278,9 +291,8 @@ function OrdreLogique(formationJson) {
         }else if (el instanceof SousGroupe){
             //On l'ajoute au groupe (seul un Groupe accepte des Sous groupes cf. méthode accepts dessus)
             target.parentElement.addSousGroupe(el);
+            //On fait la suppression nécessaire au niveau du Json
+            me.handleRemove(source.parentElement, el);
         }
-
-        //On fait la suppression nécessaire au niveau du Json
-        me.handleRemove(source.parentElement, el);
     };
 }

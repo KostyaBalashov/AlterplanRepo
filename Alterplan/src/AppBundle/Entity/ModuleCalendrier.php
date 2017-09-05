@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -48,6 +50,31 @@ class ModuleCalendrier
      * @ORM\JoinColumn(name="IdCours", referencedColumnName="IdCours", nullable=true)
      */
     private $cours;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Dispense", mappedBy="moduleCalendrier")
+     */
+    private $dispenses;
+
+    public function __construct()
+    {
+        $this->dispenses = new ArrayCollection();
+    }
+
+    public function getNombreHeuresReel(){
+        $result = 35;
+
+        foreach ($this->dispenses as $dispense){
+            $interval = date_diff($dispense->getDateFin(), $dispense->getDateDebut(), true);
+            if ($interval){
+                $result = $result - ($interval->days + 1);
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * @return int

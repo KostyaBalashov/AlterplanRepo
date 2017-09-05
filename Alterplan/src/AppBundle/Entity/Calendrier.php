@@ -98,9 +98,17 @@ class Calendrier
      */
     private $contraintes;
 
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", mappedBy="calendrier")
+     */
+    private $modulesCalendrier;
+
     public function __construct()
     {
         $this->contraintes = new ArrayCollection();
+        $this->modulesCalendrier = new ArrayCollection();
     }
 
     /**
@@ -207,6 +215,16 @@ class Calendrier
      */
     public function getDureeEnHeures()
     {
+        if (sizeof($this->modulesCalendrier) > 0){
+
+            $result = 0;
+            foreach ($this->modulesCalendrier as $value){
+                $result += $value->getNombreHeuresReel();
+            }
+
+            return $result;
+        }
+
         return $this->dureeEnHeures;
     }
 
@@ -308,6 +326,22 @@ class Calendrier
         $this->contraintes = $contraintes;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getModulesCalendrier()
+    {
+        return $this->modulesCalendrier;
+    }
 
+    /**
+     * @param Collection $modulesCalendrier
+     * @return Calendrier
+     */
+    public function setModulesCalendrier($modulesCalendrier)
+    {
+        $this->modulesCalendrier = $modulesCalendrier;
+        return $this;
+    }
 }
 

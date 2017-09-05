@@ -81,7 +81,7 @@ GroupeModuleProto.getDraggableContainer = function () {
 };
 
 GroupeModuleProto.toJson = function () {
-    var result = {codeGroupeModule: this.identifiant, sousGroupes: []};
+    var result = {codeGroupe: this.identifiant, sousGroupes: []};
 
     var sousGroupes = this.getSousGroupes();
     for (var i = 0, len = sousGroupes.length; i < len; i++){
