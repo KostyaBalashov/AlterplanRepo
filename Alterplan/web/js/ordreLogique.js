@@ -266,7 +266,7 @@ function OrdreLogique(formationJson) {
 
                 //Droppé dans un Sous Groupe
             }else if(target.parentElement instanceof SousGroupe){
-                if(target.parentElement.identifiant !== source.parentElement.identifiant){
+                if(target.parentElement !== source.parentElement){
                     target.parentElement.addModule(el);
                     if (sibling){
                         target.insertBefore(el, sibling);
