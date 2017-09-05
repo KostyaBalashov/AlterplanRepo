@@ -12,6 +12,6 @@ div.hoverable:hover{
     cursor: pointer;
 }
 
-div.fixed-action-btn.horizontal > a.btn-large:hover{
+div.fixed-action-btn > a.btn-large:hover{
     cursor: default;
 }
