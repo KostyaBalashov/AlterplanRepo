@@ -60,16 +60,17 @@ class CalendrierRepository extends EntityRepository
             }
 
             // Si le une formation est sélectionnée, on inclut la recherche par le libelleCourt de la formation
-            //if ($filter->getFormation() !== null){
-                $query->andWhere('calendrier.codeFormation = :codeFormation')->setParameter('codeFormation',$filter->getFormation()->getCodeFormation());
-            //}
+            if ($filter->getFormation() !== null){
+                $query->andWhere('calendrier.formation = :codeFormation')->setParameter('codeFormation',$filter->getFormation());
+            }
+
+            $query->andWhere('calendrier.isModele = :isModele')->setParameter('isModele',$filter->isModele());
 
             //On retourne le résultat
             return $query->getQuery()->getResult();
         }else{
             //S'il n'y a pas de filtre on retourne 50 stagiaires
-            $query = $this->createQueryBuilder('calendrier')
-                ->innerJoin('calendrier.formation','fo');
+            $query = $this->createQueryBuilder('calendrier');
 
             return $query->getQuery()->getResult();
         }

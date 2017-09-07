@@ -10,44 +10,56 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <div id="search_calendar_table" class="card-content bloc_calendrier" style="max-height: 19em;overflow-x: auto;">
     <h5 class="card-title">Liste des calendriers ({{ calendars|length }})</h5>
+    <form method="post" action="" id="form_search_tab_calendar">
+        <table class="centered highlight" id="table_calendars">
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Formation</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+            </tr>
+            </thead>
+            <tbody class="calendrier_rows">
+            {% if ( calendars != null ) %}
+                {% for calendar in calendars %}
+                    <tr class="clickable clickable-row-calendar" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier, 'codeStagiaire': stagiaire.codeStagiaire }) }}">
+                        <td>
+                            {{ calendar.titre }}
+                        </td>
 
-    <table class="centered highlight">
-        <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Formation</th>
-            <th>Date de début</th>
-            <th>Date de fin</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% if ( calendars != null ) %}
-            {% for calendar in calendars %}
-                <tr class="clickable clickable-row-calendar" data-href="">
-                    <td>
-                        {{ calendar.titre }}
-                    </td>
+                        <td>
+                            {{ calendar.formation.libelleCourt }}
+                        </td>
 
-                    <td>
-                        {{ calendar.formation.libelleCourt }}
-                    </td>
+                        <td>
+                            {{ calendar.dateDebut.format('d/m/Y') }}
+                        </td>
 
+                        <td>
+                            {{ calendar.dateFin.format('d/m/Y') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
                     <td>
-                        {{ calendar.dateDebut.format('d/m/Y') }}
-                    </td>
-
-                    <td>
-                        {{ calendar.dateFin.format('d/m/Y') }}
+                        Aucun calendrier répond à cette recherche
                     </td>
                 </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td>
-                    Aucun calendrier répond à cette recherche
-                </td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
+            {% endif %}
+            </tbody>
+        </table>
+    </form>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".calendrier_rows tr").click(function () {
+            // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
+            $(this).addClass('selected').siblings().removeClass("selected");
+            var url = $(this).data("href");
+
+            $('#form_search_tab_calendar').attr('action', url);
+        });
+    })
+</script>

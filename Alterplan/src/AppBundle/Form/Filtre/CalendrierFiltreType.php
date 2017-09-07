@@ -48,6 +48,7 @@ class CalendrierFiltreType extends AbstractType
                 'class' => 'AppBundle:Formation',
                 'placeholder' => 'Formation',
                 'required' => false,
+                'trim'=> false,
                 'choice_label' => 'libelleCourt',
                 'choice_value' => 'codeFormation'));
     }

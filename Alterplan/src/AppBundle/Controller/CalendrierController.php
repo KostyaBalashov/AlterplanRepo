@@ -92,26 +92,41 @@ class CalendrierController extends Controller
      * Rechercher un calendrier à dupliquer ou à appliquer un thème
      *
      * @param $request request
-     * @Route("/duplicate}", name="calendrier_search")
+     * @param $nameModal string
+     * @param $stagiaire Stagiaire
+     * @Route("/searchCalendar/{nameModal}/{codeStagiaire}", name="calendrier_search")
      * @Method({"GET", "POST"})
+     * @return Response
      */
-    public function searchCalendrier(Request $request){
+    public function searchCalendrier(Request $request, $nameModal, Stagiaire $stagiaire){
         $em = $this->getDoctrine()->getManager();
 
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
 
         //Création de l'objet filtre
         $filtre = new  CalendrierFiltre();
-
         //Création du formulaire de recherche
         $form = $this->createForm('AppBundle\Form\Filtre\CalendrierFiltreType', $filtre, array(
             'attr' => array('id' => 'calendrier_search'),
-            'action' => $this->generateUrl('calendrier_search'),
+            'action' => $this->generateUrl('calendrier_search', array('nameModal' => $nameModal , 'codeStagiaire' => $stagiaire->getCodeStagiaire())),
             'method' => 'POST'
         ));
 
         $calendriers = null;
+        $nameAction = null;
 
+        // On récupère la modal qu'on a ouvert.
+        // Si celle-ci est la modal pour la duplication d'un calendrier ou pour appliquer un thème
+        if($nameModal == "duplicate") {
+            $filtre->setIsModele(0);
+            $nameAction = "calendrier_duplicate";
+        } elseif($nameModal == "applyModel") {
+            $filtre->setIsModele(1);
+            $nameAction = "apply_model";
+        } else {
+            $filtre->setIsModele(0);
+            $nameAction = "calendrier_duplicate";
+        }
 
         $form->handleRequest($request);
 
@@ -122,24 +137,86 @@ class CalendrierController extends Controller
             $calendriers = $repo->search($filtre);
 
             return $this->render(':calendrier:searchTableCalendrierForm.html.twig', array(
+                'nameAction' => $nameAction,
+                'stagiaire' =>$stagiaire,
                 'calendars' => $calendriers,
             ));
 
         } else {
-            $calendriers = $repo->search();
+
+            $newFiltre = new  CalendrierFiltre();
+            $newFiltre->setIsModele($filtre->isModele());
+            $calendriers = $repo->search($newFiltre);
 
             return $this->render(':calendrier:modaleSearchCalendrier.html.twig', array(
                 'calendars' => $calendriers,
+                'nameAction' => $nameAction,
+                'stagiaire' => $stagiaire,
                 'formSearch' => $form->createView(),
             ));
         }
     }
 
     /**
+     * Duplicate a calendar entity
+     *
+     * @param $calendrier Calendrier
+     * @param $stagiaire Stagiaire
+     * @Route("/duplicate/{codeCalendrier}/{codeStagiaire}", name="calendrier_duplicate")
+     * @Method({"GET", "POST"})
+     * @return Response
+     */
+    public function duplicate(Calendrier $calendrier, Stagiaire $stagiaire) {
+        // On crée un nouveau calendrier en reprenant les données du calendrier sélectionné
+        $newCalendrier = clone $calendrier;
+
+        $newCalendrier->setStagiaire($stagiaire);
+
+        //TODO : Dupliquer tous les cours du calendrier
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($newCalendrier);
+        $em->flush();
+
+            return $this->redirectToRoute('calendrier_edit', array(
+                'codeCalendrier' => $newCalendrier->getCodeCalendrier(),
+            ));
+    }
+
+    /**
+     * Apply modele
+     *
+     * @param $calendrier Calendrier
+     * @param $stagiaire Stagiaire
+     * @Route("/applyModel/{codeCalendrier}/{codeStagiaire}", name="apply_model")
+     * @Method({"GET", "POST"})
+     * @return Response
+     */
+    public function applyModel(Calendrier $calendrier, Stagiaire $stagiaire) {
+        // On crée un nouveau calendrier en reprenant les données du calendrier sélectionné
+        $newCalendrier = clone $calendrier;
+
+        $newCalendrier->setStagiaire($stagiaire);
+        $newCalendrier->setIsModele(0);
+
+        //TODO : Appliquer un thème. On ne récupère pas le stagiaire, ainsi que les contraintes associés au calendrier
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($newCalendrier);
+        $em->flush();
+
+        return $this->redirectToRoute('calendrier_edit', array(
+            'codeCalendrier' => $newCalendrier->getCodeCalendrier(),
+        ));
+    }
+
+    /**
      * Deletes a calendar entity.
      *
+     * @param $request Request
+     * @param $calendar Calendrier
+     * @param $stagiaireParEntreprise StagiaireParEntreprise
      * @Route("/{codeCalendrier}/{numLien}", name="calendar_delete")
      * @Method("DELETE")
+     * @return Response
      */
     public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise)
     {

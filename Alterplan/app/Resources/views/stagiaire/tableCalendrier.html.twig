@@ -51,7 +51,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <ul id='creerDopDown' class='dropdown-content'>
                 <li><a id="btn_new">Nouveau</a></li>
                 <li><a id="btn_duplicate">Dupliquer</a></li>
-                <li><a href="#!">Appliquer un thème</a></li>
+                <li><a id="btn_apply_model">Appliquer un thème</a></li>
             </ul>
         </div>
     </div>
@@ -125,9 +125,14 @@ You should have received a copy of the GNU Affero General Public License along w
             renderModal('calendrier',url,false);
         });
 
-        var urlDuplicate = "{{ path('calendrier_search')}}";
+        var urlDuplicate = "{{ path('calendrier_search', {'nameModal' : 'duplicate', 'codeStagiaire': stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
         $('#btn_duplicate').click(function () {
-            renderModal('calendrier_search',urlDuplicate, false);
+            renderModal('modal_search_calendar_to_duplicate',urlDuplicate, false);
+        })
+
+        var urlApplyModel = "{{ path('calendrier_search', {'nameModal' : 'applyModel', 'codeStagiaire': stagiaireParEntreprise.stagiaire.codeStagiaire }) }}";
+        $('#btn_apply_model').click(function () {
+            renderModal('modal_search_calendar_to_apply_model',urlApplyModel, false);
         })
     });
 

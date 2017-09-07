@@ -21,6 +21,10 @@
 {% block modal %}
     {{ parent() }}
     {% include ':composants:modale.html.twig' with {'id' : 'calendrier', 'formId' : 'calendrier'} %}
-    {# Soumettre le form du tableau à renvoyer#}
-    {% include ':composants:modale.html.twig' with {'id' : 'calendrier_search', 'formId' : 'formSearch', 'customClass' : 'modal-search'} %}
+
+    {#Modal duplication d'un calendrier#}
+    {% include ':composants:modale.html.twig' with {'id' : 'modal_search_calendar_to_duplicate', 'formId' : 'form_search_tab_calendar', 'customClass' : 'modal-search'} %}
+
+    {#Modal appliquer un thème#}
+    {% include ':composants:modale.html.twig' with {'id' : 'modal_search_calendar_to_apply_model', 'formId' : 'form_search_tab_calendar', 'customClass' : 'modal-search'} %}
 {% endblock %}

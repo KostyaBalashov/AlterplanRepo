@@ -12,6 +12,11 @@ div.hoverable:hover{
     cursor: pointer;
 }
 
-div.fixed-action-btn > a.btn-large:hover{
+div.fixed-action-btn.horizontal > a.btn-large:hover{
     cursor: default;
+}
+
+.calendrier_rows tr.selected {
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
 }

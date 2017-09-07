@@ -48,6 +48,12 @@ class CalendrierFiltre
     private $formation;
 
     /**
+     * @var boolean
+     * isModel est un modèle
+     */
+    private $isModele;
+
+    /**
      * @return string
      */
     public function getDateDebut()
@@ -109,5 +115,21 @@ class CalendrierFiltre
     public function setFormation($formation)
     {
         $this->formation = $formation;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isModele()
+    {
+        return $this->isModele;
+    }
+
+    /**
+     * @param bool $isModele
+     */
+    public function setIsModele($isModele)
+    {
+        $this->isModele = $isModele;
     }
 }
