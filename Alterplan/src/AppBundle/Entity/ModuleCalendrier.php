@@ -36,7 +36,7 @@ class ModuleCalendrier
     /**
      * @var \AppBundle\Entity\Calendrier
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier", cascade={"persist", "remove" })
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")
      * })

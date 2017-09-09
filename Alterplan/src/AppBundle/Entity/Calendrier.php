@@ -94,14 +94,14 @@ class Calendrier
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Contrainte" , mappedBy="calendrier")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Contrainte" , mappedBy="calendrier", cascade={"persist", "remove" })
      */
     private $contraintes;
 
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", mappedBy="calendrier")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", mappedBy="calendrier", cascade={"persist", "remove" })
      */
     private $modulesCalendrier;
 
@@ -342,6 +342,46 @@ class Calendrier
     {
         $this->modulesCalendrier = $modulesCalendrier;
         return $this;
+    }
+
+    /**
+     * On Surcharge la fonction clone pour cloner toute la grappe du calendrier.
+     * Contraintes - moduleCalendrier
+     */
+    public function __clone() {
+        if($this->codeCalendrier) {
+            // On crée une nouvelle liste de clone de moduleCalendrier
+            $listModuleCalendrierClone = new ArrayCollection();
+
+            // On parcourt la liste des moduleCalendrier de ce calendrier
+            foreach ($this->modulesCalendrier as $moduleCalendrier) {
+                $moduleCalendrierClone = clone $moduleCalendrier;
+
+                // Pour chaque module de ce calendrier, on le clone
+                $moduleCalendrierClone->setCalendrier($this);
+                $listModuleCalendrierClone->add($moduleCalendrierClone);
+                if (!$this->isModele) {
+                    // On crée une nouvelle liste de clone de contrainte
+                    $listContrainteClone = new ArrayCollection();
+
+                    // On parcourt la liste des contraintes de ce calendrier
+                    foreach ($this->contraintes as $contrainte) {
+
+                        // Pour chaque contrainte de ce calendrier, on le clone
+                        // et on l'ajoute à la nouvelle liste des contraintes
+                        $contrainteClone = clone $contrainte;
+                        $contrainteClone->setCalendrier($this);
+                        $listContrainteClone->add($contrainteClone);
+                    }
+
+                    // On met à jour la liste de moduleCalendrier et contraintes de ce calendrier avec les nouvelles
+                    // Cela va permettre de cloner les données lié au calendrier à cloner pour les lier et les persister
+                    // au nouveau calendrier
+                    $this->setContraintes($listContrainteClone);
+                }
+                $this->setModulesCalendrier($listModuleCalendrierClone);
+            }
+        }
     }
 }
 

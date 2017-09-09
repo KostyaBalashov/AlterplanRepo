@@ -171,8 +171,7 @@ class CalendrierController extends Controller
         $newCalendrier = clone $calendrier;
 
         $newCalendrier->setStagiaire($stagiaire);
-
-        //TODO : Dupliquer tous les cours du calendrier
+        $newCalendrier->setDateCreation(new DateTime());
         $em = $this->getDoctrine()->getManager();
         $em->persist($newCalendrier);
         $em->flush();
@@ -196,6 +195,7 @@ class CalendrierController extends Controller
         $newCalendrier = clone $calendrier;
 
         $newCalendrier->setStagiaire($stagiaire);
+        $newCalendrier->setDateCreation(new DateTime());
         $newCalendrier->setIsModele(0);
 
         //TODO : Appliquer un thème. On ne récupère pas le stagiaire, ainsi que les contraintes associés au calendrier

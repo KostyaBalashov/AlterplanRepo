@@ -102,7 +102,7 @@ class Contrainte
     /**
      * @var \AppBundle\Entity\Calendrier
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier", inversedBy="contraintes")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier", inversedBy="contraintes", cascade={"persist", "remove" })
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")
      * })
