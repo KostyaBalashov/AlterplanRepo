@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License along w
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Stagiaire;
+use AppBundle\Entity\TypeContrainte;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,33 +31,22 @@ class ContrainteController extends Controller
 {
     /**
      * @param Request $request
+     * @param Calendrier $calendrier
      *
-     * @Route("/{calendrier}/contraintes", name="contraintes_edit")
+     * @Route("/contraintes/{codeCalendrier}", name="contraintes_edit")
      * @Method({"GET", "POST"})
      */
-    public function editContraintes(Request $request, Calendrier $calendrier, array $contraintes){
-
-        $form = $this->createForm('AppBundle\Form\contrainteType', $calendrier, $contraintes,
-            array('attr' => array('id' => 'contraintes'),
-                'action' =>$this->generateUrl('contraintes_edit',
-                    array('id'=>$calendrier->getId())),
-                'method'=>'POST'));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return new Response('Les contraintes ont bien été modifiées.');
-        }
+    public function editContraintes(Request $request, Calendrier $calendrier)
+    {
 
         $titre = 'Modification des contraintes ';
+        $tcRepository = $this->getDoctrine()->getRepository(TypeContrainte::class);
+        $typecontrainteList = $tcRepository->findAll();
 
 
-        return $this->render(':contraintes:contrainteForm.html.twig', array(
+        return $this->render(':contraintes:contraintesForm.html.twig', array(
             'calendrier' => $calendrier,
-            'contraintes' => $contraintes,
-            'form' => $form->createView(),
+            'typeContraintes' => $typecontrainteList,
             'titre' => $titre
         ));
     }

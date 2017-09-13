@@ -10,31 +10,31 @@
  */
 
 /*
-* Affiche un formulaire dans une fenêtre modale
-* */
-function renderModal(idModalForm,controllerUrl, useCustomSubmit, postSubmitCallback, onModalOpen) {
-    var modalSelector ="[data-target='"+idModalForm+"']";
-    var formSelector = '#'+idModalForm;
+ * Affiche un formulaire dans une fenêtre modale
+ * */
+function renderModal(idModalForm, controllerUrl, useCustomSubmit, postSubmitCallback, onModalOpen) {
+    var modalSelector = "[data-target='" + idModalForm + "']";
+    var formSelector = '#' + idModalForm;
 
     showLoader();
 
     //get en ajax pour récupérer le form à afficher
-    $.get(controllerUrl, function( data ) {
+    $.get(controllerUrl, function (data) {
 
         //insertion du form dans la div modale
-        $( modalSelector +  " > .modal-content" ).html( data );
+        $(modalSelector + " > .modal-content").html(data);
 
         //ouverture de la modale
-        $(modalSelector).modal('open',{
+        $(modalSelector).modal('open', {
 
             //à l'ouverture de la modale
             ready: function () {
 
-                if (onModalOpen !== undefined){
+                if (onModalOpen !== undefined) {
                     onModalOpen();
                 }
 
-                if (useCustomSubmit){
+                if (useCustomSubmit) {
                     var frm = $(formSelector);
 
                     //abonnement au submit du form
@@ -48,7 +48,7 @@ function renderModal(idModalForm,controllerUrl, useCustomSubmit, postSubmitCallb
                 }
             }
         });
-    }).always(function(){
+    }).always(function () {
         dismissLoader();
     });
 }
@@ -56,9 +56,9 @@ function renderModal(idModalForm,controllerUrl, useCustomSubmit, postSubmitCallb
 //affiche un message sous forme de toast
 function showToast(content, msgType) {
     var toastColor;
-    if ('error' === msgType){
+    if ('error' === msgType) {
         toastColor = 'red';
-    }else {
+    } else {
         toastColor = 'light-blue';
     }
     Materialize.toast(content, 5000, toastColor);
@@ -73,7 +73,7 @@ function showLoader() {
 //cache le loader
 function dismissLoader() {
     var loader = $('.preloader-background');
-    if (loader.is(':visible')){
+    if (loader.is(':visible')) {
         loader.fadeOut('slow');
         $(".preloader-wrapper").fadeOut('slow');
     }
@@ -93,7 +93,7 @@ function postForm(form, postSubmitCallback, modalSelector) {
         $(modalSelector).modal('close');
 
         //appelle de la méthode postSubmit
-        if (postSubmitCallback !== undefined){
+        if (postSubmitCallback !== undefined) {
             postSubmitCallback();
         }
 
@@ -111,20 +111,20 @@ function postForm(form, postSubmitCallback, modalSelector) {
 }
 
 function initDatePicker(selector, onSetCallBack) {
-    if (!selector){
+    if (!selector) {
         selector = '.datepicker';
     }
-
+    console.log('selector!');
     $(selector).pickadate({
         labelMonthNext: 'mois suivant',
         labelMonthPrev: 'mois précédent',
         labelMonthSelect: 'Sélectionnez un mois',
         labelYearSelect: 'Sélectionnez une année',
-        monthsFull: [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ],
-        monthsShort: [ 'janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc' ],
-        weekdaysFull: [ 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'vendredi', 'Samedi', 'Dimanche' ],
-        weekdaysShort: [ 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim' ],
-        weekdaysLetter: [ 'L', 'M', 'M', 'J', 'V', 'S', 'D' ],
+        monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+        monthsShort: ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc'],
+        weekdaysFull: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'vendredi', 'Samedi', 'Dimanche'],
+        weekdaysShort: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
+        weekdaysLetter: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
         today: 'Aujourd\'hui',
         clear: 'Annuler',
         close: 'Fermer',
@@ -142,29 +142,29 @@ function passwordCheck() {
     var secondPwd = $('#appbundle_utilisateur_checkPassword');
 
     secondPwd.change(function () {
-        if (firstPwd.val() !== secondPwd.val()){
+        if (firstPwd.val() !== secondPwd.val()) {
             secondPwd.get(0).setCustomValidity('Les deux mots de passes ne correspondent pas');
-        }else {
+        } else {
             secondPwd.get(0).setCustomValidity('');
         }
     });
 }
 
-function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax){
-    if ( event.select ) {
+function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax) {
+    if (event.select) {
         pickerToSet.set(minOrMax, pickerContainingValue.get('select'))
     }
-    else if ( 'clear' in event ) {
+    else if ('clear' in event) {
         pickerToSet.set(minOrMax, false)
     }
 }
 
-function getDateDebutPicker(){
-    var from_$input = $("input[id*='dateDebut']").pickadate();
+function getDateDebutPicker() {
+        var from_$input = $("input[id*='dateDebut']").pickadate();
     return from_$input.pickadate('picker');
 }
 
-function getDateFinPicker(){
+function getDateFinPicker() {
     var to_$input = $("input[id*='dateFin']").pickadate();
     return to_$input.pickadate('picker');
 }

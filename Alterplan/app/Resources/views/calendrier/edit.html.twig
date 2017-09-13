@@ -9,10 +9,10 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 {% extends 'navigableBase.html.twig' %}
 
-{%  block title %} Calendrier {% endblock %}
+{% block title %} Calendrier {% endblock %}
 
 {% block customCSS %}
-    <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}"/>
 {% endblock %}
 
 {% block body %}
@@ -21,7 +21,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <div class="hoverable">
                 <span class="center-align flow-text white-text">{{ calendrier.titre }}</span>
             </div>
-            <input class="clickedit white" type="text" style="margin: 7px 0 7px 0" />
+            <input class="clickedit white" type="text" style="margin: 7px 0 7px 0"/>
         </div>
     </div>
     <div class="row">
@@ -30,7 +30,8 @@ You should have received a copy of the GNU Affero General Public License along w
                 <div class="card-content">
                     <div class="card-title">
                         <span class="flow-text">Modules</span>
-                        <div class="fixed-action-btn horizontal" style="position: absolute; display: inline-block; z-index: 1">
+                        <div class="fixed-action-btn horizontal"
+                             style="position: absolute; display: inline-block; z-index: 1">
                             <a class="btn-floating btn-large teal lighten-2 tooltipped"
                                data-position="top"
                                data-delay="50"
@@ -79,7 +80,8 @@ You should have received a copy of the GNU Affero General Public License along w
         </a>
         <ul>
             <li>
-                <a class="btn-floating red tooltipped"
+                <a id="editContraintes"
+                   class="btn-floating red tooltipped"
                    data-position="left"
                    data-delay="50"
                    data-tooltip="Gérer les contraintes">
@@ -121,38 +123,49 @@ You should have received a copy of the GNU Affero General Public License along w
         </ul>
     </div>
 {% endblock %}
-
-{% block customJS %}
-    <script type="text/javascript">
-        var defaultText = '{{ calendrier.titre }}';
-
-        function endEdit(e) {
-            var input = $(e.target),
-                div = input && input.prev();
-
-            div.find('span').text(input.val() === '' ? defaultText : input.val());
-            input.hide();
-            div.show();
-        }
-
-        $(document).ready(function () {
-            $('.clickedit').hide()
-                .focusout(endEdit)
-                .keyup(function (e) {
-                    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-                        endEdit(e);
-                        return false;
-                    } else {
-                        return true;
-                    }
-                })
-                .prev().click(function () {
-                $(this).hide();
-                $(this).next().show(function () {
-                    $(this).val('{{ calendrier.titre }}');
-                    return true;
-                }).focus();
-            });
-        });
-    </script>
+{% block modal %}
+    {{ parent() }}
+    {% include ':composants:modale.html.twig' with {'id' : 'contrainte', 'formId' : 'contrainte'} %}
 {% endblock %}
+
+    {% block customJS %}
+        <script type="text/javascript">
+            var defaultText = '{{ calendrier.titre }}';
+
+            function endEdit(e) {
+                var input = $(e.target),
+                    div = input && input.prev();
+
+                div.find('span').text(input.val() === '' ? defaultText : input.val());
+                input.hide();
+                div.show();
+            }
+
+            $(document).ready(function () {
+                $('.clickedit').hide()
+                    .focusout(endEdit)
+                    .keyup(function (e) {
+                        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                            endEdit(e);
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    })
+                    .prev().click(function () {
+                    $(this).hide();
+                    $(this).next().show(function () {
+                        $(this).val('{{ calendrier.titre }}');
+                        return true;
+                    }).focus();
+                });
+
+                $('#editContraintes').click(function () {
+                    var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
+                    renderModal('contrainte', url, false);
+                });
+            });
+
+
+        </script>
+    {% endblock %}

@@ -12,6 +12,7 @@ use AppBundle\Repository\StagiaireParEntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,7 +62,7 @@ class StagiaireParEntrepriseController extends Controller
         } else {
             $stagiairesEntreprise = $repo->search();
 
-             return $this->render('stagiaire/index.html.twig', array(
+            return $this->render('stagiaire/index.html.twig', array(
                 'stagiairesEntreprise' => $stagiairesEntreprise,
                 'formSearch' => $form->createView()
             ));
@@ -90,5 +91,23 @@ class StagiaireParEntrepriseController extends Controller
             'calendars' => $calendrierNonInscrit,
             'calendarRegistered' => $calendrierInscrit,
         ));
+    }
+
+    /**
+     * Finds and display all entities
+     *
+     * @Route("/all", name="all_Stagiaires")
+     * @Method("GET")
+     */
+    public function StagiairesAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {//check if request is AJAX request, if not redirect
+            return $this->redirectToRoute(
+                'stagiaires_index'//changed this, of course
+            );
+        }
+        $repo = $this->getDoctrine()->getRepository(StagiaireParEntreprise::class);
+        $stagiaires = $repo->search();
+        return new Response($stagiaires);
     }
 }
