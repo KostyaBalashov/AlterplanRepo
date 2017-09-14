@@ -12,11 +12,32 @@ div.hoverable:hover{
     cursor: pointer;
 }
 
-div.fixed-action-btn.horizontal > a.btn-large:hover{
+div.fixed-action-btn > a.btn-large:hover{
     cursor: default;
 }
 
-.calendrier_rows tr.selected {
-    background-color: rgba(41, 103, 182, 0.89);
-    color: #FFF;
+.modules-modale{
+    top: 0 !important;
+    max-height: 100% !important;
+    height: 99% !important;
+    width: 90% !important;
+}
+
+.modules-modale > .modal-content{
+    padding: 0.5em 1em 0 1em !important;
+}
+
+.custom-padding{
+    padding-top: 1em !important;
+    padding-bottom: 0.5em !important;
+}
+
+.bordered{
+    border-color: #e0e0e0;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.indicateur{
+    width: 1%;
 }

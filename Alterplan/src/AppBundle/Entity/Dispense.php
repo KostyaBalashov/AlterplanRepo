@@ -38,7 +38,7 @@ class Dispense
     /**
      * @var \AppBundle\Entity\ModuleCalendrier
      *
-     * @ORM\ManyToOne(targetEntity="ModuleCalendrier")
+     * @ORM\ManyToOne(targetEntity="ModuleCalendrier", inversedBy="dispenses")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeModuleCalendrier", referencedColumnName="CodeModuleCalendrier")
      * })

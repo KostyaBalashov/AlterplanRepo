@@ -13,9 +13,8 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Form;
 
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Form\Type\FormationType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -35,13 +34,9 @@ class CalendrierType extends AbstractType
                 'class' => 'col s2'
             )
         ))
-            ->add('formation', EntityType::class, array(
-                'class' => 'AppBundle:Formation',
-                'placeholder' => 'Formation',
+            ->add('formation', FormationType::class, array(
                 'required' => true,
                 'trim' => false,
-                'choice_label' => 'libelleCourt',
-                'choice_value' => 'codeFormation',
                 'label_attr' => array(
                     'class' => 'col s2'
                 )

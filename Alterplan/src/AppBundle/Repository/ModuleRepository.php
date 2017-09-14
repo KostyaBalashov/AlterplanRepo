@@ -19,17 +19,45 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Entity\Formation;
+use AppBundle\Entity\ModuleParUnite;
 use AppBundle\Entity\OrdreModule;
 use AppBundle\Entity\SousGroupeModule;
+use AppBundle\Entity\UniteFormation;
+use AppBundle\Entity\UniteParFormation;
+use AppBundle\Filtre\ModuleFiltre;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 class ModuleRepository extends EntityRepository
 {
-    public function setSousGroupe($idsModules, $codeSousGroupe){
-        $qb = $this->createQueryBuilder('m');
-        $qb->update('AppBundle:Module', 'm')
-            ->set('m.sousGroupe', $codeSousGroupe)
-            ->where('m.idModule IN (:codes)')->setParameter('codes', $idsModules);
+    public function search(ModuleFiltre $filtre = null){
+        if ($filtre !== null){
+            $qb = $this->createQueryBuilder('m');
+            $this->joinOnFormation($qb);
+            if ($filtre->getTitre() !== null
+                && '' !== trim($filtre->getTitre())){
+                $qb->andWhere('m.libelle LIKE :titre')->setParameter('titre', $filtre->getTitre().'%');
+            }
+            if ($filtre->getFormation() !== null){
+                $qb->andWhere('f.codeFormation = :code')
+                    ->setParameter('code', $filtre->getFormation()->getCodeFormation());
+            }
+            if ($filtre->getLieu() !== null){
+                $qb->andWhere('f.codeLieu = :codeLieu')
+                    ->setParameter('codeLieu', $filtre->getLieu()->getCodeLieu());
+            }
+            $qb->andWhere('f.archiver = false')->andWhere('m.archiver = false');
+            return $qb->getQuery()->getResult();
+        }else{
+            return $this->findAll();
+        }
+    }
+
+    private function joinOnFormation(QueryBuilder $qb){
+        return $qb->join(ModuleParUnite::class, 'mp', Join::WITH, 'm.idModule = mp.module')
+            ->join(UniteParFormation::class, 'uf', Join::WITH, 'mp.uniteParFormation = uf.id')
+            ->join(Formation::class, 'f', Join::WITH, 'uf.formation = f.codeFormation');
     }
 }

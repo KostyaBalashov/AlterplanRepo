@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,7 +32,7 @@ class ModuleParUnite
     /**
      * @var \AppBundle\Entity\Module
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Module")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Module", inversedBy="modulesParUnite")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")
      * })

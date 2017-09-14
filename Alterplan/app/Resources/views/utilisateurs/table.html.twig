@@ -55,7 +55,8 @@ You should have received a copy of the GNU Affero General Public License along w
 {# les actions spécifiques aux utilisateurs #}
 <script type="text/javascript">
 
-    function refreshTable() {
+    function refreshTable(donnes) {
+        postSubmitUserForm(donnes);
         $.get('/utilisateurs', function (data) {
             var userTableDiv = $('#user_table');
             userTableDiv.empty();

@@ -62,3 +62,14 @@ nav {
 .clickable:hover{
     cursor: pointer;
 }
+
+tr.selected, tr.selected:hover{
+    background-color: rgba(41, 103, 182, 0.89) !important;
+    color: #FFF !important;
+}
+
+div.selected{
+    background-color: #64b5f6;
+    border-color: black;
+    color: white;
+}

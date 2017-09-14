@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: penno
- * Date: 01/08/2017
- * Time: 17:06
+ * User: void
+ * Date: 06/09/2017
+ * Time: 14:13
  *//*
 This file is part of Alterplan. 
  
@@ -17,44 +17,33 @@ You should have received a copy of the GNU Affero General Public License along w
 
 namespace AppBundle\Form\Filtre;
 
+
+use AppBundle\Form\Type\FormationType;
 use AppBundle\Form\Type\LieuType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FormationFiltreType  extends AbstractType
+class ModuleFiltreType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('libelleCourt',TextType::class, array(
+        $builder->add('titre', TextType::class, array(
             'required' => false
-            ))
-            ->add('codeFormation', TextType::class, array(
-                'required' => false
-            ))
-            ->add('lieu',  LieuType::class);
+        ))->add('formation', FormationType::class)->add('lieu', LieuType::class);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Filtre\FormationFiltre'
+            'data_class' => 'AppBundle\Filtre\ModuleFiltre'
         ));
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getBlockPrefix()
     {
-        return 'appbundle_formation_filtre';
+        return "appbundle_modules_search";
     }
 }

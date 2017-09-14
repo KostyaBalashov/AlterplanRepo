@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -66,6 +67,8 @@ class UniteParFormation
      */
     public function getModulesParUnite()
     {
+        $criteria = Criteria::create();
+        $criteria->andWhere(Criteria::expr()->eq('module.archiver', false));
         return $this->modulesParUnite;
     }
 

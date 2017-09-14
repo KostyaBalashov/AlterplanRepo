@@ -1,0 +1,42 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+<div class="row" style="margin-bottom: 0">
+    <div class="col s6">
+        {% include ':modules:search.html.twig' %}
+        <div id="modules-search-result-container">
+            {% include ':modules:searchResultRenderer.html.twig' %}
+        </div>
+    </div>
+    <div class="col s1 valign-wrapper" style="height: 46em;">
+        <div class="row center">
+            <div class="row">
+                <div class="clickable hoverable btn
+                waves-effect waves-light disabled"
+                     data-module-action="add"
+                     data-module-table-destination="#modules-a-planifier"
+                     onclick="modulesManager.transferRow(this)">
+                    <i class="material-icons medium">chevron_right</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="clickable hoverable btn
+                waves-effect waves-light disabled"
+                     data-module-action="remove"
+                     data-module-table-destination="#modules-planifiables"
+                     onclick="modulesManager.transferRow(this)">
+                    <i class="material-icons medium">chevron_left</i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col s5">
+        {% include ':modules:modulesAPlanifier.html.twig' %}
+    </div>
+</div>

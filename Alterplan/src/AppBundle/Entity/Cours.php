@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Cours")
  * @ORM\Entity
  */
-class Cours
+class Cours implements \JsonSerializable
 {
     /**
      * @var guid
@@ -78,11 +78,12 @@ class Cours
     private $dateAdefinir;
 
     /**
-     * @var string
+     * @var Salle
      *
-     * @ORM\Column(name="CodeSalle", type="string", length=5, nullable=true)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Salle")
+     * @ORM\JoinColumn(name="CodeSalle", referencedColumnName="CodeSalle")
      */
-    private $codeSalle;
+    private $salle;
 
     /**
      * @var integer
@@ -92,11 +93,12 @@ class Cours
     private $codeFormateur;
 
     /**
-     * @var integer
+     * @var Lieu
      *
-     * @ORM\Column(name="CodeLieu", type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lieu")
+     * @ORM\JoinColumn(name="CodeLieu", referencedColumnName="CodeLieu")
      */
-    private $codeLieu;
+    private $lieu;
 
     /**
      * @var \AppBundle\Entity\Module
@@ -117,6 +119,25 @@ class Cours
      * })
      */
     private $promotion;
+
+    public function jsonSerialize()
+    {
+        $result = [];
+        $result['idCours'] = $this->getIdCours();
+
+        if ($this->lieu != null){
+            $result['lieu'] = ['code' => $this->lieu->getCodeLieu(), 'libelle' => $this->lieu->getLibelle()];
+        }
+
+        if ($this->salle != null){
+            $result['salle'] = ['code' => $this->salle->getCodeSalle(),
+                'libelle' => $this->salle->getLibelle(), 'capacite' => $this->salle->getCapacite()];
+        }
+
+        $result['dateDebut'] = $this->debut;
+        $result['dateFin'] = $this->fin;
+        return $result;
+    }
 
     /**
      * @return guid
@@ -281,20 +302,20 @@ class Cours
     }
 
     /**
-     * @return string
+     * @return Salle
      */
-    public function getCodeSalle()
+    public function getSalle()
     {
-        return $this->codeSalle;
+        return $this->salle;
     }
 
     /**
-     * @param string $codeSalle
+     * @param Salle $salle
      * @return Cours
      */
-    public function setCodeSalle($codeSalle)
+    public function setSalle($salle)
     {
-        $this->codeSalle = $codeSalle;
+        $this->salle = $salle;
         return $this;
     }
 
@@ -317,20 +338,20 @@ class Cours
     }
 
     /**
-     * @return int
+     * @return Lieu
      */
-    public function getCodeLieu()
+    public function getLieu()
     {
-        return $this->codeLieu;
+        return $this->lieu;
     }
 
     /**
-     * @param int $codeLieu
+     * @param Lieu $lieu
      * @return Cours
      */
-    public function setCodeLieu($codeLieu)
+    public function setLieu($lieu)
     {
-        $this->codeLieu = $codeLieu;
+        $this->lieu = $lieu;
         return $this;
     }
 

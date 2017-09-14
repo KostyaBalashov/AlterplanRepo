@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -77,12 +79,69 @@ class Module implements \JsonSerializable
      */
     private $typeModule;
 
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleParUnite", mappedBy="module")
+     */
+    private $modulesParUnite;
+
+    public function __construct()
+    {
+        $this->modulesParUnite = new ArrayCollection();
+    }
+
     public function jsonSerialize()
     {
         $result = array();
         $result['idModule'] = $this->idModule;
         $result['libelle'] = $this->libelle;
+        if ($this->getFormation() != null){
+            $result['formation'] = ['CodeFormation' => $this->getFormation()->getCodeFormation(),
+                'Libelle' => $this->getFormation()->getLibelleLong().' ('.$this->getFormation()->getLibelleCourt().')',
+                'Lieu' => ($this->getFormation()->getLieu() != null ?
+                    $this->getFormation()->getLieu()->getLibelle() : '-')];
+        }
         return $result;
+    }
+
+    /**
+     * @return Formation
+     */
+    public function getFormation()
+    {
+        $formation = null;
+
+        foreach ($this->modulesParUnite as $item){
+            $uf = $item->getUniteParFormation();
+            $f = ($uf != null ? $uf->getFormation() : null);
+
+            if ($f){
+                if ($f->getAllModules()->contains($this)){
+                    $formation = $f;
+                }
+            }
+        }
+
+        return $formation;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getModulesParUnite()
+    {
+        return $this->modulesParUnite;
+    }
+
+    /**
+     * @param Collection $modulesParUnite
+     * @return Module
+     */
+    public function setModulesParUnite($modulesParUnite)
+    {
+        $this->modulesParUnite = $modulesParUnite;
+        return $this;
     }
 
     /**

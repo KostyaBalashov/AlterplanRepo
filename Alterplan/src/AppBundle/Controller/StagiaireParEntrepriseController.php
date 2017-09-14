@@ -72,7 +72,7 @@ class StagiaireParEntrepriseController extends Controller
     /**
      * Finds and displays a stagiaire entity.
      *
-     * @Route("/{numLien}", name="stagiaires_show")
+     * @Route("/show/{numLien}", name="stagiaires_show")
      * @Method("GET")
      */
     public function showAction(StagiaireParEntreprise $stagiaireParEntreprise)

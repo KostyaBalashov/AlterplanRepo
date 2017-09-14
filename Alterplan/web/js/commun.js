@@ -42,7 +42,7 @@ function renderModal(idModalForm, controllerUrl, useCustomSubmit, postSubmitCall
 
                         event.preventDefault();
 
-                        postForm(frm, postSubmitCallback, modalSelector);
+                        postForm(frm, postSubmitCallback);
 
                     });
                 }
@@ -79,7 +79,7 @@ function dismissLoader() {
     }
 }
 
-function postForm(form, postSubmitCallback, modalSelector) {
+function postForm(form, postSubmitCallback) {
 
     showLoader();
 
@@ -89,22 +89,13 @@ function postForm(form, postSubmitCallback, modalSelector) {
     //post en ajax des données
     $.post(action, form.serialize()).done(function (data) {
         //si le post réussit
-        //fermeture de la modale
-        $(modalSelector).modal('close');
-
         //appelle de la méthode postSubmit
-        if (postSubmitCallback !== undefined) {
-            postSubmitCallback();
+        if (postSubmitCallback !== undefined){
+            postSubmitCallback(data);
         }
-
-        //affichage du message retourné par le controller
-        //TODO mettre le message dans postSublmit
-        showToast(data);
-
     }).fail(function () {
         //en cas d'échec affichage du msg d'erreur
-        //TODO changer le message ou le passer un paramètres...?
-        showToast('Erreur d\'enregistrement', 'error');
+        showToast('Erreur interne', 'error');
     }).always(function () {
         dismissLoader();
     });
@@ -136,22 +127,8 @@ function initDatePicker(selector, onSetCallBack) {
     });
 }
 
-
-function passwordCheck() {
-    var firstPwd = $('#appbundle_utilisateur_plainPassword');
-    var secondPwd = $('#appbundle_utilisateur_checkPassword');
-
-    secondPwd.change(function () {
-        if (firstPwd.val() !== secondPwd.val()) {
-            secondPwd.get(0).setCustomValidity('Les deux mots de passes ne correspondent pas');
-        } else {
-            secondPwd.get(0).setCustomValidity('');
-        }
-    });
-}
-
-function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax) {
-    if (event.select) {
+function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax){
+    if ( event.select ) {
         pickerToSet.set(minOrMax, pickerContainingValue.get('select'))
     }
     else if ('clear' in event) {

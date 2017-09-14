@@ -30,8 +30,8 @@ You should have received a copy of the GNU Affero General Public License along w
                 <div class="card-content">
                     <div class="card-title">
                         <span class="flow-text">Modules</span>
-                        <div class="fixed-action-btn horizontal"
-                             style="position: absolute; display: inline-block; z-index: 1">
+                        <div class="fixed-action-btn horizontal right"
+                             style="position: relative;display: inline-block;z-index: 1;top: -0.9em;right: -0.6em;">
                             <a class="btn-floating btn-large teal lighten-2 tooltipped"
                                data-position="top"
                                data-delay="50"
@@ -40,7 +40,8 @@ You should have received a copy of the GNU Affero General Public License along w
                             </a>
                             <ul>
                                 <li>
-                                    <a class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
+                                    <a id="modules_search"
+                                       class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
                                        data-position="top"
                                        data-delay="50"
                                        data-tooltip="Rechercher parmis des modules d'une autre formation">
@@ -58,6 +59,9 @@ You should have received a copy of the GNU Affero General Public License along w
                             </ul>
                         </div>
                     </div>
+                    <div id="modules-planifiables-container" class="row">
+                        {# le contenu est ajouté dans refreshModules(modules) du calendrier.js#}
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,8 +70,42 @@ You should have received a copy of the GNU Affero General Public License along w
                 <div class="card-content">
                     <span class="card-title">Calendrier</span>
                     <div class="row center">
-                        <div class="col s3 offset-s6">
-                            <span class="flow-text">Volume : {{ calendrier.dureeEnHeures }}</span>
+                        <div class="col s3 offset-s4">
+                            <span class="flow-text">Volume : {{ calendrier.dureeEnHeures }} H</span>
+                        </div>
+                    </div>
+                    <div id="calendar" class="row">
+                        <div id="calandar-hearder" class="row bordered">
+                            <div class="indicateur">
+
+                            </div>
+                            <div class="col s11">
+                                <div class="col s3 center">
+                                    <span class="flow-text blue-text text-darken-2">Date</span>
+                                </div>
+                                <div class="col s2 center">
+                                    <span class="flow-text blue-text text-darken-2">Lieu</span>
+                                </div>
+                                <div class="col s6 center">
+                                    <span class="flow-text blue-text text-darken-2">Programme</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="calnendar-body" class="row">
+                            <div class="indicateur amber lighten-4">
+                                <span class="hide">X</span>
+                            </div>
+                            <div class="cours col s11 center">
+                                <div class="col s3 dates">
+                                    <span>Début - fin</span>
+                                </div>
+                                <div class="col s2 lieu">
+                                    <span>Quelque part</span>
+                                </div>
+                                <div class="col s6">
+                                    <span>Quelque chose</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -123,49 +161,67 @@ You should have received a copy of the GNU Affero General Public License along w
         </ul>
     </div>
 {% endblock %}
+
 {% block modal %}
     {{ parent() }}
-    {% include ':composants:modale.html.twig' with {'id' : 'contrainte', 'formId' : 'contrainte'} %}
+    {% embed ':composants:modale.html.twig' with {'id' : 'gestion-modules',
+    'customClass' : 'modules-modale'} %}
+        {% block modal_action_buttons %}
+            <button type="button" onclick="closeModale()"
+                    class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
+            </button>
+            <button type="button" onclick="valider()"
+                    class="modal-action waves-effect waves-green btn">Valider
+            </button>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}
 
-    {% block customJS %}
-        <script type="text/javascript">
-            var defaultText = '{{ calendrier.titre }}';
+{% block customJS %}
+    <script type="text/javascript" src="{{ asset('js/module.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
+    <script type="text/javascript">
 
-            function endEdit(e) {
-                var input = $(e.target),
-                    div = input && input.prev();
+        var jFormation = {
+            'CodeFormation': '{{ calendrier.formation.codeFormation }}',
+            'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
+            'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
+        var calendrier = new Calendrier(jFormation, {{ formationModules|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        var modulesManager = new ModulesManager(calendrier);
 
-                div.find('span').text(input.val() === '' ? defaultText : input.val());
-                input.hide();
-                div.show();
+        $(document).ready(function () {
+            initTitleInput('{{ calendrier.titre }}');
+            refreshModules(calendrier.modules);
+            $('#modules_search').click(function () {
+                renderModal('gestion-modules',
+                    '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
+                    true, undefined, modulesManager.onModaleOpen);
+            });
+        });
+
+        function valider() {
+            showLoader();
+            closeModale();
+
+            for (removedKey in modulesManager.removedModules) {
+                if (calendrier.modules.hasOwnProperty(removedKey)
+                    && (removedKey in calendrier.modules)) {
+                    delete calendrier.modules[removedKey];
+                }
             }
 
-            $(document).ready(function () {
-                $('.clickedit').hide()
-                    .focusout(endEdit)
-                    .keyup(function (e) {
-                        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-                            endEdit(e);
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    })
-                    .prev().click(function () {
-                    $(this).hide();
-                    $(this).next().show(function () {
-                        $(this).val('{{ calendrier.titre }}');
-                        return true;
-                    }).focus();
-                });
+            for (addedKey in modulesManager.addedModules) {
+                if (!calendrier.modules.hasOwnProperty(addedKey)) {
+                    calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
+                }
+            }
 
-                $('#editContraintes').click(function () {
-                    var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
-                    renderModal('contrainte', url, false);
-                });
-            });
+            refreshModules(calendrier.modules);
+            dismissLoader();
+        }
 
-
-        </script>
-    {% endblock %}
+        function closeModale() {
+            $("div[data-target='gestion-modules']").modal('close');
+        }
+    </script>
+{% endblock %}

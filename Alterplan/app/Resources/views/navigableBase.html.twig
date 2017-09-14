@@ -18,6 +18,7 @@ You should have received a copy of the GNU Affero General Public License along w
 {% endblock %}
 
 {% block javascripts %}
+    <script type="text/javascript" src="{{ asset('js/utilisateur.js') }}"></script>
     <script type="text/javascript">
         $( document ).ready(function(){
             $(".btn-collapse").sideNav();
@@ -29,7 +30,7 @@ You should have received a copy of the GNU Affero General Public License along w
             $('#mon_compte').click(function (event) {
                 event.preventDefault();
                 var url = $(this).attr('href');
-                renderModal('user', url, true, undefined, passwordCheck);
+                renderModal('user', url, true, postSubmitUserForm, passwordCheck);
             });
         })
     </script>

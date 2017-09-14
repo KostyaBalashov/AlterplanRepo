@@ -44,8 +44,10 @@ class CalendrierController extends Controller
      */
     public function indexAction(Calendrier $calendrier) {
 
+        //TODO charger le reste des données
         return $this->render(':calendrier:edit.html.twig', array(
             'calendrier' => $calendrier,
+            'formationModules' => $calendrier->getFormation()->getAllModules()->toArray()
         ));
     }
 

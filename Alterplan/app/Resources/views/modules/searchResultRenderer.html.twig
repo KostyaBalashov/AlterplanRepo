@@ -1,0 +1,62 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+<div class="card" style="height: 22em; max-height: 22em; overflow: auto;">
+    <div class="card-content custom-padding">
+        <span class="card-title">
+            Modules planifiables
+        </span>
+        <table class="highlight centered responsive-table bordered">
+            <thead>
+                <tr>
+                    <th class="col s4">Titre</th>
+                    <th class="col s4">Formation</th>
+                    <th class="col s4">Lieu</th>
+                </tr>
+            </thead>
+            <tbody id="modules-planifiables">
+            {% if searchModules %}
+                {% for module in searchModules %}
+                    <tr id="{{ module.idModule }}" class="clickable"
+                        data-activate-selector="div[data-module-action='add']"
+                        data-module = '{{ module|json_encode()|raw }}'
+                        onclick="modulesManager.selectRow(this)">
+                        <td class="col s4 truncate"
+                            title ="{{ module.libelle }}">{{ module.libelle }}</td>
+                        <td class="col s4 truncate"
+                            {% if module.formation %}
+                                title="{{ module.formation.libelleLong }}({{ module.formation.libelleCourt }})"
+                            {% endif %}>
+                                {% if module.formation %}
+                                    {{ module.formation.libelleLong }}({{ module.formation.libelleCourt }})
+                                {% else %}
+                                    -
+                                {% endif %}
+                        </td>
+                        <td class="col s4">
+                            {% if module.formation %}
+                                {% if module.formation.lieu %}
+                                    {{ module.formation.lieu.libelle }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                Aucun résultat trouvé
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

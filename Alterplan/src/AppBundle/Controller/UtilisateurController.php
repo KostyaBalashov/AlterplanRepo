@@ -5,11 +5,10 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Utilisateur;
 use AppBundle\Filtre\UtilisateurFiltre;
 use AppBundle\Form\UtilisateurFiltreType;
-use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,7 +21,8 @@ class UtilisateurController extends Controller
 {
     private $userManager;
 
-    function __construct(UserManagerInterface $userManager) {
+    function __construct(UserManagerInterface $userManager)
+    {
         $this->userManager = $userManager;
     }
 
@@ -51,7 +51,7 @@ class UtilisateurController extends Controller
         $form->handleRequest($request);
 
         //Si le formulaire est sousmis
-        if ($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             //On recherche les utilisateurs avec les critères de filtre
             $utilisateurs = $repo->search($filtre);
 
@@ -65,8 +65,8 @@ class UtilisateurController extends Controller
         //On charge tous les utilisateurs
         $utilisateurs = $repo->search();
 
-        if ($request->getMethod() == 'GET'){
-            if ($request->isXmlHttpRequest()){
+        if ($request->getMethod() == 'GET') {
+            if ($request->isXmlHttpRequest()) {
                 //La réponse au GET en ajax
                 //survient après la création ou la modification de l'utilisateur
                 return $this->render(':utilisateurs:table.html.twig', array(
@@ -129,9 +129,9 @@ class UtilisateurController extends Controller
     {
         $form = $this->createForm('AppBundle\Form\UtilisateurType', $utilisateur,
             array('attr' => array('id' => 'user'),
-                'action' =>$this->generateUrl('utilisateurs_edit',
-                    array('id'=>$utilisateur->getId())),
-                'method'=>'POST'));
+                'action' => $this->generateUrl('utilisateurs_edit',
+                    array('id' => $utilisateur->getId())),
+                'method' => 'POST'));
 
         $form->handleRequest($request);
 
@@ -139,14 +139,14 @@ class UtilisateurController extends Controller
             $this->userManager->updateUser($utilisateur);
             $this->getDoctrine()->getManager()->flush();
 
-            return new Response('Utlisateur '.$utilisateur->getNom().' '.$utilisateur->getPrenom().' a bien été modifié.');
+            return new Response('Utlisateur ' . $utilisateur->getNom() . ' ' . $utilisateur->getPrenom() . ' a bien été modifié.');
         }
 
         $titre = 'Modification de l\'utilisateur ';
 
-        if ($this->getUser()->getId() !== $utilisateur->getId()){
-            $titre = $titre.$utilisateur->getUsername();
-        }else{
+        if ($this->getUser()->getId() !== $utilisateur->getId()) {
+            $titre = $titre . $utilisateur->getUsername();
+        } else {
             $titre = 'Mon compte';
         }
 

@@ -49,6 +49,7 @@ class FormationRepository extends EntityRepository
                 $query->andWhere('u.lieu = :codeLieu')->setParameter('codeLieu',$filter->getLieu()->getCodeLieu());
             };
 
+            $query->andWhere('u.archiver = false');
             //On retourne le résultat
             return $query->getQuery()->getResult();
         }else{

@@ -1,4 +1,10 @@
-/*
+<?php
+/**
+ * Created by PhpStorm.
+ * User: void
+ * Date: 07/09/2017
+ * Time: 17:02
+ *//*
 This file is part of Alterplan. 
  
 Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
@@ -8,27 +14,28 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 */
 
-.sous-groupe, .groupe{
-    padding-top: 15px !important;
-}
 
-.card.droite{
-    display: inline-block;
-}
+namespace AppBundle\Form\Type;
 
-.draggable-container.droite{
-    min-height: 44em;
-    max-height: 44em;
-    overflow: auto;
-}
 
-.draggable-container.centre{
-    padding-bottom: 15px;
-    min-height: 44em;
-}
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-.draggable-container > .groupe,
-.draggable-container > .sous-groupe,
-.draggable-container > .module{
-    cursor: move;
+class LieuType extends AbstractType
+{
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'class' => 'AppBundle:Lieu',
+            'placeholder' => 'Lieu',
+            'required' => false,
+            'choice_label' => 'libelle'
+        ));
+    }
+
+    public function getParent()
+    {
+        return EntityType::class;
+    }
 }
