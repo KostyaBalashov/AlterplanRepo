@@ -8,36 +8,47 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 */
 
-div.hoverable:hover{
+div.hoverable:hover {
     cursor: pointer;
 }
 
-div.fixed-action-btn > a.btn-large:hover{
+div.fixed-action-btn > a.btn-large:hover {
     cursor: default;
 }
 
-.modules-modale{
+.modules-modale {
     top: 0 !important;
     max-height: 100% !important;
     height: 99% !important;
     width: 90% !important;
 }
 
-.modules-modale > .modal-content{
+.modules-modale > .modal-content {
     padding: 0.5em 1em 0 1em !important;
 }
 
-.custom-padding{
+.custom-padding {
     padding-top: 1em !important;
     padding-bottom: 0.5em !important;
 }
 
-.bordered{
+.bordered {
     border-color: #e0e0e0;
     border-width: 1px;
     border-style: solid;
 }
 
-.indicateur{
+.indicateur {
     width: 1%;
+    height: 2em;
+}
+
+.tr {
+    width: 100%;
+    height: 2em;
+}
+
+.tr-body {
+    width: 99%;
+    height: 2em;
 }

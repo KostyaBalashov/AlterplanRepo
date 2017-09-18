@@ -123,17 +123,19 @@ class Cours implements \JsonSerializable
     public function jsonSerialize()
     {
         $result = [];
-        $result['idCours'] = $this->getIdCours();
+        $result['idCours'] = $this->idCours;
+        $result['libelle'] = $this->libelleCours;
 
-        if ($this->lieu != null){
+        if ($this->lieu != null) {
             $result['lieu'] = ['code' => $this->lieu->getCodeLieu(), 'libelle' => $this->lieu->getLibelle()];
         }
 
-        if ($this->salle != null){
+        if ($this->salle != null) {
             $result['salle'] = ['code' => $this->salle->getCodeSalle(),
                 'libelle' => $this->salle->getLibelle(), 'capacite' => $this->salle->getCapacite()];
         }
 
+        $result['dateDiff'] = date_diff($this->fin, $this->debut, true);
         $result['dateDebut'] = $this->debut;
         $result['dateFin'] = $this->fin;
         return $result;
