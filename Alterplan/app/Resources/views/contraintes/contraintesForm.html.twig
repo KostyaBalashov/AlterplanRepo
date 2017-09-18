@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License along w
         <table id="tbl">
             {% for contrainte in calendrier.contraintes %}
                 <tr>
-                    <td>
+                    <td id="tdContraintes">
                         <select onchange="changeSelect(this)" name="testInput" class="select">
                             {% for typecontrainte in typeContraintes %}
                                 <
@@ -31,7 +31,7 @@ You should have received a copy of the GNU Affero General Public License along w
                     </td>
                     <td>
                     </td>
-                    <td>
+                    <td id="tdDeleteccd">
                         <a onclick="deleteRow(this)"
                            class="deleteRow btn-floating waves-effect waves-light red right-align"><i
                                     class="material-icons">remove</i></a>
@@ -40,7 +40,8 @@ You should have received a copy of the GNU Affero General Public License along w
                 </tr>
             {% endfor %}
         </table>
-        <a class="add_another btn-floating btn-large waves-effect waves-light green right-align"><i
+        <a id="addBtn" class="add_another btn-floating btn-large waves-effect waves-light green right-align"><i
+                    id="addBtn"
                     class="material-icons">add</i></a>
 
     </div>
@@ -54,7 +55,7 @@ You should have received a copy of the GNU Affero General Public License along w
         $('select').material_select();
 
         $('.add_another').click(function () {
-            $("#tbl").append('<tr><td><select onchange="changeSelect(this)">{% for typecontrainte in typeContraintes %}<option value="{{ typecontrainte.codeTypeContrainte }}" data-nb-input="{{ typecontrainte.nbParametres }}">{{ typecontrainte.libelle }}</option>{% endfor %}</select></td> <td></td><td>  <a onClick="deleteRow(this   )" class="deleteRow btn-floating waves-effect waves-light red right-align"><i class="material-icons">remove</i></a></td> </tr>');
+            $("#tbl").append('<tr><td id="tdContraintes"><select onchange="changeSelect(this)">{% for typecontrainte in typeContraintes %}<option value="{{ typecontrainte.codeTypeContrainte }}" data-nb-input="{{ typecontrainte.nbParametres }}">{{ typecontrainte.libelle }}</option>{% endfor %}</select></td> <td></td><td id="tdDelete">  <a onClick="deleteRow(this   )" class="deleteRow btn-floating waves-effect waves-light red right-align"><i class="material-icons">remove</i></a></td> </tr>');
             $('select').material_select();
             $('.deleteRow').click(function () {
                 $(this).closest('tr').remove();
@@ -77,12 +78,13 @@ You should have received a copy of the GNU Affero General Public License along w
         var stagiaires = [];
 
         div_container.setAttribute("id", "divContainer");
-        div_container.setAttribute("class", "divContainer")
+        div_container.setAttribute("class", "divContainer valign-wrapper");
+
 
         $(td_container).empty();
         for (i = 0; i < number; i++) {
             var div_input = document.createElement("div");
-            div_input.setAttribute("class", "col s6")
+            div_input.setAttribute("class", "col s6 valign-wrapper")
             div_input.setAttribute("id", "divInput" + i)
             var input = document.createElement("input");
             var label = document.createElement("Label");
@@ -172,20 +174,26 @@ You should have received a copy of the GNU Affero General Public License along w
                     div_container.append(input);
                     break;
                 case '6':
-                    label.htmlFor = "rechercheStagiaire";
-                    label.innerHTML = "Stagiaire    ";
+                    div_container.setAttribute("class", "divContainer");
                     input.type = "text";
                     input.id = "rechercheStagiaire";
                     input.className = "inputContrainte autocomplete";
                     input.placeholder = "Nom du stagiaire";
-                    div_input.append(label);
+                    input.autocomplete = "off";
                     div_container.append(input);
                     $.ajax({
                         type: "GET",
                         url: '{{ path('all_Stagiaires') }}',
                         success: function (response) {
-                            console.log(response);
-                            stagiaires = r
+                            var countryArray = response;
+                            var dataCountry = {};
+                            for (var i = 0; i < countryArray.length; i++) {
+                                dataCountry[countryArray[i].nom + ' ' + countryArray[i].prenom] = null; //countryArray[i].flag or null
+                            }
+                            $('input.autocomplete').autocomplete({
+                                data: dataCountry,
+                                limit: 5, // The max amount of results that can be shown at once. Default: Infinity.
+                            });
                         },
                         error: function () {
                             console.log('an error occured');
@@ -194,14 +202,6 @@ You should have received a copy of the GNU Affero General Public License along w
                     });
 
 
-                    $('input.autocomplete').autocomplete({
-                        data: stagiaires,
-                        limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
-                        onAutocomplete: function (val) {
-                            // Callback function when value is autcompleted.
-                        },
-                        minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
-                    });
                     break;
 
             }

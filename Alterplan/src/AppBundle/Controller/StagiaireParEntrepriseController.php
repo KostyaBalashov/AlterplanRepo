@@ -107,7 +107,7 @@ class StagiaireParEntrepriseController extends Controller
             );
         }
         $repo = $this->getDoctrine()->getRepository(StagiaireParEntreprise::class);
-        $stagiaires = $repo->search();
-        return new Response($stagiaires);
+        $stagiaires = $repo->findAll();
+        return new JsonResponse($stagiaires);
     }
 }
