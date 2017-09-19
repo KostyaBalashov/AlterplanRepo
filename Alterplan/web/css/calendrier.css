@@ -40,15 +40,33 @@ div.fixed-action-btn > a.btn-large:hover {
 
 .indicateur {
     width: 1%;
-    height: 2em;
+    height: 4em;
 }
 
 .tr {
     width: 100%;
-    height: 2em;
+    height: 4em;
 }
 
 .tr-body {
     width: 99%;
-    height: 2em;
+    height: 4em;
+}
+
+.cours {
+    height: 4em;
+}
+
+.cours > div {
+    height: 100%;
+}
+
+.columnContent {
+    width: 100%;
+}
+
+.date {
+    border-right-color: #e0e0e0;
+    border-right-width: 1px;
+    border-right-style: solid;
 }

@@ -135,9 +135,14 @@ class Cours implements \JsonSerializable
                 'libelle' => $this->salle->getLibelle(), 'capacite' => $this->salle->getCapacite()];
         }
 
-        $result['dateDiff'] = date_diff($this->fin, $this->debut, true);
+        if ($this->promotion != null) {
+            $result['promotion'] = $this->promotion->getLibelle();
+        }
+
+        $result['fromToday'] = date_diff(new \DateTime(), $this->debut, false)->format('%R%a');;
         $result['dateDebut'] = $this->debut;
         $result['dateFin'] = $this->fin;
+        $result['nbHeures'] = $this->dureeReelleEnHeures;
         return $result;
     }
 

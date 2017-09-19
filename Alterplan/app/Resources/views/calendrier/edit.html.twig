@@ -75,26 +75,28 @@ You should have received a copy of the GNU Affero General Public License along w
                         </div>
                     </div>
                     <div id="calendar" class="row">
-                        <div id="calandar-hearder" class="row valign-wrapper bordered">
-                            <div class="tr valign-wrapper">
-                                <div class="indicateur">
+                        <div class="col s11">
+                            <div id="calandar-hearder" class="row valign-wrapper bordered">
+                                <div class="tr valign-wrapper">
+                                    <div class="indicateur">
 
-                                </div>
-                                <div class="tr-body">
-                                    <div class="col s3 center">
-                                        <span class="flow-text blue-text text-darken-2">Date</span>
                                     </div>
-                                    <div class="col s2 center">
-                                        <span class="flow-text blue-text text-darken-2">Lieu</span>
-                                    </div>
-                                    <div class="col s6 center">
-                                        <span class="flow-text blue-text text-darken-2">Programme</span>
+                                    <div class="tr-body valign-wrapper">
+                                        <div class="col s3 center">
+                                            <span class="flow-text blue-text text-darken-2">Date</span>
+                                        </div>
+                                        <div class="col s2 center">
+                                            <span class="flow-text blue-text text-darken-2">Lieu</span>
+                                        </div>
+                                        <div class="col s6 center">
+                                            <span class="flow-text blue-text text-darken-2">Programme</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div id="calnendar-body" class="row">
+                            <div id="calnendar-body" class="row">
 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,6 +155,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% block modal %}
     {{ parent() }}
+    {% include ':composants:modale.html.twig' with {'id' : 'contrainte', 'formId' : 'contrainte'} %}
     {% embed ':composants:modale.html.twig' with {'id' : 'gestion-modules',
     'customClass' : 'modules-modale'} %}
         {% block modal_action_buttons %}
@@ -168,6 +171,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 {% block customJS %}
     <script type="text/javascript" src="{{ asset('js/module.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/cours.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
     <script type="text/javascript">
 
@@ -185,6 +189,11 @@ You should have received a copy of the GNU Affero General Public License along w
                 renderModal('gestion-modules',
                     '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
                     true, undefined, modulesManager.onModaleOpen);
+            });
+
+            $('#editContraintes').click(function () {
+                var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
+                renderModal('contrainte', url, false);
             });
         });
 
