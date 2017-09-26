@@ -23,6 +23,7 @@ use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\CalendrierFiltre;
 use AppBundle\Form\Filtre\CalendrierFiltreType;
+use AppBundle\Service\ModuleAPlanifierService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,19 +37,38 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CalendrierController extends Controller
 {
+    private $moduleAPlanifierService;
+
+    public function __construct(ModuleAPlanifierService $moduleAPlanifierService)
+    {
+        $this->moduleAPlanifierService = $moduleAPlanifierService;
+    }
 
     /**
      * Affiche le calendrier créé ou a éditer
      * @Route("/edit/{codeCalendrier}", name="calendrier_edit")
      * @Method({"GET", "POST"})
      */
-    public function indexAction(Calendrier $calendrier) {
+    public function indexAction(Calendrier $calendrier, Request $request)
+    {
+        if ($request->getMethod() == 'POST' && $request->isXmlHttpRequest()) {
+            $removedModulesAPlacer = $request->get('removedModules');
+            $addedModulesAPlacer = $request->get('addedModules');
 
-        //TODO charger le reste des données
-        return $this->render(':calendrier:edit.html.twig', array(
-            'calendrier' => $calendrier,
-            'formationModules' => $calendrier->getFormation()->getAllModules()->toArray()
-        ));
+            if ($removedModulesAPlacer) {
+                $this->moduleAPlanifierService->delete($calendrier->getCodeCalendrier(), $removedModulesAPlacer);
+            }
+
+            if ($addedModulesAPlacer) {
+                $this->moduleAPlanifierService->insert($calendrier->getCodeCalendrier(), $addedModulesAPlacer);
+            }
+
+            return new Response('Ok');
+        } else {
+            return $this->render(':calendrier:edit.html.twig', array(
+                'calendrier' => $calendrier
+            ));
+        }
     }
 
     /**
@@ -57,24 +77,30 @@ class CalendrierController extends Controller
      * @Route("/new/{codeStagiaire}", name="calendrier_new")
      * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request, Stagiaire  $stagiaire)
-        {
-            $calendrier = new Calendrier();
-            $calendrier->setStagiaire($stagiaire);
-            $dt = new DateTime();
-            $calendrier->setDateCreation($dt);
-            $calendrier->setIsInscrit(false);
-            $calendrier->setIsModele(false);
+    public function newAction(Request $request, Stagiaire $stagiaire)
+    {
+        $calendrier = new Calendrier();
+        $calendrier->setStagiaire($stagiaire);
+        $dt = new DateTime();
+        $calendrier->setDateCreation($dt);
+        $calendrier->setIsInscrit(false);
+        $calendrier->setIsModele(false);
 
         //Création du formulaire de création du calendrier
         $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
             array('attr' => array('id' => 'calendrier'),
-                'action' => $this->generateUrl('calendrier_new',array('codeStagiaire'=>$stagiaire->getCodeStagiaire())),
+                'action' => $this->generateUrl('calendrier_new', array('codeStagiaire' => $stagiaire->getCodeStagiaire())),
                 'method' => 'POST'));
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            foreach ($calendrier->getFormation()->getAllModules() as $module) {
+                if (!$module->isArchiver()) {
+                    $calendrier->addModuleAPlacer($module);
+                }
+            }
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($calendrier);
@@ -100,7 +126,8 @@ class CalendrierController extends Controller
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function searchCalendrier(Request $request, $nameModal, Stagiaire $stagiaire){
+    public function searchCalendrier(Request $request, $nameModal, Stagiaire $stagiaire)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
@@ -110,7 +137,7 @@ class CalendrierController extends Controller
         //Création du formulaire de recherche
         $form = $this->createForm('AppBundle\Form\Filtre\CalendrierFiltreType', $filtre, array(
             'attr' => array('id' => 'calendrier_search'),
-            'action' => $this->generateUrl('calendrier_search', array('nameModal' => $nameModal , 'codeStagiaire' => $stagiaire->getCodeStagiaire())),
+            'action' => $this->generateUrl('calendrier_search', array('nameModal' => $nameModal, 'codeStagiaire' => $stagiaire->getCodeStagiaire())),
             'method' => 'POST'
         ));
 
@@ -119,10 +146,10 @@ class CalendrierController extends Controller
 
         // On récupère la modal qu'on a ouvert.
         // Si celle-ci est la modal pour la duplication d'un calendrier ou pour appliquer un thème
-        if($nameModal == "duplicate") {
+        if ($nameModal == "duplicate") {
             $filtre->setIsModele(0);
             $nameAction = "calendrier_duplicate";
-        } elseif($nameModal == "applyModel") {
+        } elseif ($nameModal == "applyModel") {
             $filtre->setIsModele(1);
             $nameAction = "apply_model";
         } else {
@@ -140,7 +167,7 @@ class CalendrierController extends Controller
 
             return $this->render(':calendrier:searchTableCalendrierForm.html.twig', array(
                 'nameAction' => $nameAction,
-                'stagiaire' =>$stagiaire,
+                'stagiaire' => $stagiaire,
                 'calendars' => $calendriers,
             ));
 
@@ -168,7 +195,8 @@ class CalendrierController extends Controller
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function duplicate(Calendrier $calendrier, Stagiaire $stagiaire) {
+    public function duplicate(Calendrier $calendrier, Stagiaire $stagiaire)
+    {
         // On crée un nouveau calendrier en reprenant les données du calendrier sélectionné
         $newCalendrier = clone $calendrier;
 
@@ -178,9 +206,9 @@ class CalendrierController extends Controller
         $em->persist($newCalendrier);
         $em->flush();
 
-            return $this->redirectToRoute('calendrier_edit', array(
-                'codeCalendrier' => $newCalendrier->getCodeCalendrier(),
-            ));
+        return $this->redirectToRoute('calendrier_edit', array(
+            'codeCalendrier' => $newCalendrier->getCodeCalendrier(),
+        ));
     }
 
     /**
@@ -192,7 +220,8 @@ class CalendrierController extends Controller
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function applyModel(Calendrier $calendrier, Stagiaire $stagiaire) {
+    public function applyModel(Calendrier $calendrier, Stagiaire $stagiaire)
+    {
         // On crée un nouveau calendrier en reprenant les données du calendrier sélectionné
         $newCalendrier = clone $calendrier;
 
@@ -223,7 +252,7 @@ class CalendrierController extends Controller
     public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise)
     {
 
-        if($calendar->isInscrit()) {
+        if ($calendar->isInscrit()) {
             return new Response('Le calendrier ' . $calendar->getTitre() . ' ne peut pas être supprimé car il est inscrit.', Response::HTTP_FORBIDDEN);
         } else {
             $em = $this->getDoctrine()->getManager();
@@ -233,8 +262,8 @@ class CalendrierController extends Controller
 
             // Affichage de la fiche du stagiaire avec la liste de ses calendrier
             $repo = $this->getDoctrine()->getRepository(Calendrier::class);
-            $calendrierNonInscrit = $repo->findBy(array('stagiaire' =>  $calendar->getStagiaire(), 'isInscrit' => 0));
-            $calendrierInscrit = $repo->findOneBy(array('stagiaire' =>  $calendar->getStagiaire(), 'isInscrit' => 1));
+            $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 0));
+            $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 1));
 
             return $this->render('stagiaire/tableCalendrier.html.twig', array(
                 'stagiaireParEntreprise' => $stagiaireParEntreprise,

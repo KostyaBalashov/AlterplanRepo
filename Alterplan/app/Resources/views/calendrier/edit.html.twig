@@ -159,10 +159,10 @@ You should have received a copy of the GNU Affero General Public License along w
     {% embed ':composants:modale.html.twig' with {'id' : 'gestion-modules',
     'customClass' : 'modules-modale'} %}
         {% block modal_action_buttons %}
-            <button type="button" onclick="closeModale()"
+            <button type="button" onclick="closeModaleGestionModules()"
                     class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
             </button>
-            <button type="button" onclick="valider()"
+            <button type="button" onclick="saveModulesAPlanifier()"
                     class="modal-action waves-effect waves-green btn">Valider
             </button>
         {% endblock %}
@@ -170,8 +170,8 @@ You should have received a copy of the GNU Affero General Public License along w
 {% endblock %}
 
 {% block customJS %}
-    <script type="text/javascript" src="{{ asset('js/module.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/cours.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
     <script type="text/javascript">
 
@@ -179,7 +179,7 @@ You should have received a copy of the GNU Affero General Public License along w
             'CodeFormation': '{{ calendrier.formation.codeFormation }}',
             'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
             'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
-        var calendrier = new Calendrier(jFormation, {{ formationModules|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
         var modulesManager = new ModulesManager(calendrier);
 
         $(document).ready(function () {
@@ -196,30 +196,5 @@ You should have received a copy of the GNU Affero General Public License along w
                 renderModal('contrainte', url, false);
             });
         });
-
-        function valider() {
-            showLoader();
-            closeModale();
-
-            for (removedKey in modulesManager.removedModules) {
-                if (calendrier.modules.hasOwnProperty(removedKey)
-                    && (removedKey in calendrier.modules)) {
-                    delete calendrier.modules[removedKey];
-                }
-            }
-
-            for (addedKey in modulesManager.addedModules) {
-                if (!calendrier.modules.hasOwnProperty(addedKey)) {
-                    calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
-                }
-            }
-
-            refreshModules(calendrier.modules);
-            dismissLoader();
-        }
-
-        function closeModale() {
-            $("div[data-target='gestion-modules']").modal('close');
-        }
     </script>
 {% endblock %}

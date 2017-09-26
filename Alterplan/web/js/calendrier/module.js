@@ -10,8 +10,8 @@
  */
 
 var boutonSelectors = [];
-boutonSelectors['add']='div[data-module-action=\'add\']';
-boutonSelectors['remove']='div[data-module-action=\'remove\']';
+boutonSelectors['add'] = 'div[data-module-action=\'add\']';
+boutonSelectors['remove'] = 'div[data-module-action=\'remove\']';
 
 var ModulesManager = function (caledrier) {
     this.addedModules = [];
@@ -21,19 +21,20 @@ var ModulesManager = function (caledrier) {
     var me = this;
 
     var add = function (module) {
-        if (!(module.idModule in me.addedModules)){
+        if (!(module.idModule in me.addedModules) &&
+            !(module.idModule in me.calendrier.modules)) {
             me.addedModules[module.idModule] = module;
         }
-        if (module.idModule in me.removedModules){
+        if (module.idModule in me.removedModules) {
             delete me.removedModules[module.idModule];
         }
     };
 
     var remove = function (module) {
-        if (!(module.idModule in me.removedModules)){
+        if (!(module.idModule in me.removedModules)) {
             me.removedModules[module.idModule] = module;
         }
-        if (module.idModule in me.addedModules){
+        if (module.idModule in me.addedModules) {
             delete me.addedModules[module.idModule];
         }
     };
@@ -41,13 +42,13 @@ var ModulesManager = function (caledrier) {
     this.onModaleOpen = function () {
         var modules = me.calendrier.modules;
         var tBody = $('#modules-a-planifier');
-        for (var key in modules){
-            if (modules.hasOwnProperty(key)){
+        for (var key in modules) {
+            if (modules.hasOwnProperty(key)) {
                 var tr = $(document.createElement('tr'));
                 tr.addClass('clickable');
                 tr.attr('id', key);
                 tr.data('activate-selector', "div[data-module-action='remove']");
-                tr.data('module',modules[key]);
+                tr.data('module', modules[key]);
                 tr.click(function () {
                     me.selectRow($(this));
                 });
@@ -62,18 +63,18 @@ var ModulesManager = function (caledrier) {
         }
     };
 
-    this.selectRow = function(row) {
+    this.selectRow = function (row) {
         var $row = $(row);
 
         var boutonSelector = $row.data('activate-selector');
-        if ($(boutonSelector).hasClass('disabled')){
+        if ($(boutonSelector).hasClass('disabled')) {
             me.toggleButton(boutonSelector);
         }
 
         var destinactionSelector = $(boutonSelector).data('module-table-destination');
         me.deselectRowOnTable(destinactionSelector);
 
-        if (!$row.hasClass('selected')){
+        if (!$row.hasClass('selected')) {
             $row.addClass('selected').siblings().removeClass('selected');
         }
     };
@@ -81,21 +82,21 @@ var ModulesManager = function (caledrier) {
     this.deselectRowOnTable = function (tableSelector) {
         var $tBody = $(tableSelector);
         var selectedRow = $tBody.find('tr.selected');
-        if (selectedRow.length > 0){
+        if (selectedRow.length > 0) {
             selectedRow.removeClass('selected');
             me.toggleButton(selectedRow.data('activate-selector'));
         }
     };
 
-     this.toggleButton = function(buttonSelector) {
-        if ($(buttonSelector).hasClass('disabled')){
+    this.toggleButton = function (buttonSelector) {
+        if ($(buttonSelector).hasClass('disabled')) {
             $(buttonSelector).removeClass('disabled');
-        }else {
+        } else {
             $(buttonSelector).addClass('disabled');
         }
     };
 
-    this.transferRow = function(clickedBouton) {
+    this.transferRow = function (clickedBouton) {
         var action = $(clickedBouton).data('module-action');
         var destinationSelector = $(clickedBouton).data('module-table-destination');
 
@@ -103,17 +104,17 @@ var ModulesManager = function (caledrier) {
         var module = $selectedRow.data('module');
         var $clone = $selectedRow.clone(true);
 
-        if ('add' === action){
+        if ('add' === action) {
             $clone.data('activate-selector', boutonSelectors['remove']);
             add(module);
-        }else {
+        } else {
             $clone.data('activate-selector', boutonSelectors['add']);
             remove(module);
         }
-        var destinationTrSelector = destinationSelector+' > tr[id="'+$clone.attr('id')+'"]';
-        if ($(destinationTrSelector).length > 0){
+        var destinationTrSelector = destinationSelector + ' > tr[id="' + $clone.attr('id') + '"]';
+        if ($(destinationTrSelector).length > 0) {
             $(destinationTrSelector).replaceWith($clone);
-        }else {
+        } else {
             $(destinationSelector).append($clone);
         }
         $selectedRow.remove();
@@ -124,7 +125,7 @@ var ModulesManager = function (caledrier) {
 };
 
 function createTd(content) {
-    var td  = $(document.createElement('td'));
+    var td = $(document.createElement('td'));
     td.addClass('col s4 truncate');
     td.attr('title', content);
     td.text(content);
@@ -133,7 +134,7 @@ function createTd(content) {
 
 function postFormSearchSubmit(data) {
     $('div.hoverable.btn').each(function (index) {
-        if (!$(this).hasClass('disabled')){
+        if (!$(this).hasClass('disabled')) {
             $(this).addClass('disabled');
         }
     });

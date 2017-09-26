@@ -8,6 +8,28 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 */
 
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../font/material-icons.woff) format('woff');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: 'liga';
+}
+
 body {
     display: flex;
     min-height: 100vh;
@@ -22,7 +44,7 @@ nav {
     background-color: #134a80;
 }
 
-.page-footer{
+.page-footer {
     padding-top: 0;
     background-color: #134a80;
     text-align: left;
@@ -32,7 +54,7 @@ nav {
     height: 64px;
 }
 
-.eni-logo{
+.eni-logo {
     zoom: 50%;
     margin-top: 12px;
 }
@@ -41,7 +63,7 @@ nav {
     z-index: 99;
 }
 
-.bordered .highlight td:hover{
+.bordered .highlight td:hover {
     cursor: pointer;
 }
 
@@ -49,7 +71,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(220,220,220,0.8);
+    background-color: rgba(220, 220, 220, 0.8);
 
     position: fixed;
     z-index: 1012;
@@ -59,16 +81,16 @@ nav {
     bottom: 0;
 }
 
-.clickable:hover{
+.clickable:hover {
     cursor: pointer;
 }
 
-tr.selected, tr.selected:hover{
+tr.selected, tr.selected:hover {
     background-color: rgba(41, 103, 182, 0.89) !important;
     color: #FFF !important;
 }
 
-div.selected{
+div.selected {
     background-color: #64b5f6;
     border-color: black;
     color: white;

@@ -105,10 +105,138 @@ class Calendrier
      */
     private $modulesCalendrier;
 
+    /**
+     * @var Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Module", inversedBy="calendriersEnAttente")
+     * @ORM\JoinTable(name="ModuleAPlanifier",
+     *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")})
+     */
+    private $modulesAPlanifier;
+
+    /**
+     * @var Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", inversedBy="calendriersEnAttente")
+     * @ORM\JoinTable(name="ModuleCalendrierAPlacer",
+     *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="CodeModuleCalendrier", referencedColumnName="CodeModuleCalendrier")})
+     */
+    private $modulesCalendrierAPlacer;
+
     public function __construct()
     {
         $this->contraintes = new ArrayCollection();
         $this->modulesCalendrier = new ArrayCollection();
+        $this->modulesAPlanifier = new ArrayCollection();
+        $this->modulesCalendrierAPlacer = new ArrayCollection();
+    }
+
+    /**
+     * Ajoute un module à la liste des modules à placer.
+     * @param Module $module module à placer.
+     */
+    public function addModuleAPlacer(Module $module)
+    {
+        if (!$this->modulesAPlanifier->contains($module)) {
+            $module->getCalendriersEnAttente()->add($this);
+            $this->modulesAPlanifier->add($module);
+        }
+    }
+
+    /**
+     * Supprime un module de la liste des modules à placer.
+     * @param Module $module
+     */
+    public function removeModuleAPlacer(Module $module)
+    {
+        if ($this->modulesAPlanifier->contains($module)) {
+            $this->modulesCalendrierAPlacer->removeElement($module);
+            $module->getCalendriersEnAttente()->removeElement($this);
+        }
+    }
+
+    /**
+     * Ajoute une semaine d'un module à la liste des semaine à placer.
+     * @param ModuleCalendrier $moduleCalendrier semaine d'un module.
+     */
+    public function addModuleCalendrierAPlacer(ModuleCalendrier $moduleCalendrier)
+    {
+        if (!$this->modulesCalendrierAPlacer->contains($moduleCalendrier)) {
+            $this->modulesCalendrierAPlacer->add($moduleCalendrier);
+            $moduleCalendrier->getCalendriersEnAttente()->add($this);
+        }
+    }
+
+    /**
+     * Supprime une semaine de la liste des semaines à placer.
+     * @param ModuleCalendrier $moduleCalendrier semaine à supprimer.
+     */
+    public function removeModuleCalendrierAPlacer(ModuleCalendrier $moduleCalendrier)
+    {
+        if ($this->modulesCalendrierAPlacer->contains($moduleCalendrier)) {
+            $this->modulesCalendrierAPlacer->removeElement($moduleCalendrier);
+            $moduleCalendrier->getCalendriersEnAttente()->removeElement($this);
+        }
+    }
+
+    /**
+     * Ajoute une semaine d'un module à laliste des semaines planifiées.
+     * @param ModuleCalendrier $moduleCalendrier semaine à ajouter.
+     */
+    public function addModuleCalendrier(ModuleCalendrier $moduleCalendrier)
+    {
+        $moduleCalendrier->setCalendrier($this);
+        if (!$this->modulesCalendrier->contains($moduleCalendrier)) {
+            $this->modulesCalendrier->add($moduleCalendrier);
+        }
+    }
+
+    /**
+     * Supprime une semaine de la liste des semaines planifiées.
+     * @param ModuleCalendrier $moduleCalendrier semaine à supprimer.
+     */
+    public function removeModuleCalendrier(ModuleCalendrier $moduleCalendrier)
+    {
+        $moduleCalendrier->setCalendrier(null);
+        if ($this->modulesCalendrier->contains($moduleCalendrier)) {
+            $this->modulesCalendrier->removeElement($moduleCalendrier);
+        }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getModulesAPlanifier()
+    {
+        return $this->modulesAPlanifier;
+    }
+
+    /**
+     * @param Collection $modulesAPlanifier
+     * @return Calendrier
+     */
+    public function setModulesAPlanifier($modulesAPlanifier)
+    {
+        $this->modulesAPlanifier = $modulesAPlanifier;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getModulesCalendrierAPlacer()
+    {
+        return $this->modulesCalendrierAPlacer;
+    }
+
+    /**
+     * @param Collection $modulesCalendrierAPlacer
+     * @return Calendrier
+     */
+    public function setModulesCalendrierAPlacer($modulesCalendrierAPlacer)
+    {
+        $this->modulesCalendrierAPlacer = $modulesCalendrierAPlacer;
+        return $this;
     }
 
     /**
@@ -125,8 +253,8 @@ class Calendrier
      */
     public function setDateDebut($dateDebut)
     {
-        if(is_string($dateDebut))
-            $this ->dateDebut = \DateTime::createFromFormat('Y/m/d', $dateDebut);
+        if (is_string($dateDebut))
+            $this->dateDebut = \DateTime::createFromFormat('Y/m/d', $dateDebut);
         else
             $this->dateDebut = $dateDebut;
         return $this;
@@ -182,8 +310,8 @@ class Calendrier
      */
     public function setDateCreation($dateCreation)
     {
-        if(is_string($dateCreation))
-            $this ->dateCreation = \DateTime::createFromFormat('Y/m/d', $dateCreation);
+        if (is_string($dateCreation))
+            $this->dateCreation = \DateTime::createFromFormat('Y/m/d', $dateCreation);
         else
             $this->dateCreation = $dateCreation;
         return $this;
@@ -203,8 +331,8 @@ class Calendrier
      */
     public function setDateFin($dateFin)
     {
-        if(is_string($dateFin))
-            $this ->dateFin = \DateTime::createFromFormat('Y/m/d', $dateFin);
+        if (is_string($dateFin))
+            $this->dateFin = \DateTime::createFromFormat('Y/m/d', $dateFin);
         else
             $this->dateFin = $dateFin;
         return $this;
@@ -215,10 +343,10 @@ class Calendrier
      */
     public function getDureeEnHeures()
     {
-        if (sizeof($this->modulesCalendrier) > 0){
+        if (sizeof($this->modulesCalendrier) > 0) {
 
             $result = 0;
-            foreach ($this->modulesCalendrier as $value){
+            foreach ($this->modulesCalendrier as $value) {
                 $result += $value->getNombreHeuresReel();
             }
 
@@ -348,8 +476,9 @@ class Calendrier
      * On Surcharge la fonction clone pour cloner toute la grappe du calendrier.
      * Contraintes - moduleCalendrier
      */
-    public function __clone() {
-        if($this->codeCalendrier) {
+    public function __clone()
+    {
+        if ($this->codeCalendrier) {
             // On crée une nouvelle liste de clone de moduleCalendrier
             $listModuleCalendrierClone = new ArrayCollection();
 

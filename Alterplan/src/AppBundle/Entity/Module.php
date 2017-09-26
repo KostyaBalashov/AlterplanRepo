@@ -86,9 +86,17 @@ class Module implements \JsonSerializable
      */
     private $modulesParUnite;
 
+    /**
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Calendrier", mappedBy="modulesAPlanifier")
+     */
+    private $calendriersEnAttente;
+
     public function __construct()
     {
         $this->modulesParUnite = new ArrayCollection();
+        $this->calendriersEnAttente = new ArrayCollection();
     }
 
     public function jsonSerialize()
@@ -96,9 +104,9 @@ class Module implements \JsonSerializable
         $result = array();
         $result['idModule'] = $this->idModule;
         $result['libelle'] = $this->libelle;
-        if ($this->getFormation() != null){
+        if ($this->getFormation() != null) {
             $result['formation'] = ['CodeFormation' => $this->getFormation()->getCodeFormation(),
-                'Libelle' => $this->getFormation()->getLibelleLong().' ('.$this->getFormation()->getLibelleCourt().')',
+                'Libelle' => $this->getFormation()->getLibelleLong() . ' (' . $this->getFormation()->getLibelleCourt() . ')',
                 'Lieu' => ($this->getFormation()->getLieu() != null ?
                     $this->getFormation()->getLieu()->getLibelle() : '-')];
         }
@@ -112,18 +120,36 @@ class Module implements \JsonSerializable
     {
         $formation = null;
 
-        foreach ($this->modulesParUnite as $item){
+        foreach ($this->modulesParUnite as $item) {
             $uf = $item->getUniteParFormation();
             $f = ($uf != null ? $uf->getFormation() : null);
 
-            if ($f){
-                if ($f->getAllModules()->contains($this)){
+            if ($f) {
+                if ($f->getAllModules()->contains($this)) {
                     $formation = $f;
                 }
             }
         }
 
         return $formation;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCalendriersEnAttente()
+    {
+        return $this->calendriersEnAttente;
+    }
+
+    /**
+     * @param Collection $calendriersEnAttente
+     * @return Module
+     */
+    public function setCalendriersEnAttente($calendriersEnAttente)
+    {
+        $this->calendriersEnAttente = $calendriersEnAttente;
+        return $this;
     }
 
     /**

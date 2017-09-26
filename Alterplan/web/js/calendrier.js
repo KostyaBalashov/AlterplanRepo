@@ -8,7 +8,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
-var Calendrier = function (jFormation, jModules) {
+var Calendrier = function (codeCalendrier, jFormation, jModules) {
+    this.codeCalendrier = codeCalendrier;
     this.formation = jFormation;
     this.modules = jModules.reduce(function (p1, p2) {
         p1[p2.idModule] = p2;
@@ -89,4 +90,38 @@ function renderCours(data) {
             coursManager.renderCour(coursManager.all[idCour], bodySelector);
         }
     }
+}
+
+function saveModulesAPlanifier() {
+    showLoader();
+    closeModaleGestionModules();
+
+    var added = [];
+    var removed = [];
+
+    for (removedKey in modulesManager.removedModules) {
+        if (calendrier.modules.hasOwnProperty(removedKey)
+            && (removedKey in calendrier.modules)) {
+            delete calendrier.modules[removedKey];
+            removed.push(removedKey);
+        }
+    }
+
+    for (addedKey in modulesManager.addedModules) {
+        if (!calendrier.modules.hasOwnProperty(addedKey)) {
+            calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
+            added.push(addedKey);
+        }
+    }
+
+    var data = {'addedModules': added, 'removedModules': removed};
+    var url = "/calendriers/edit/" + calendrier.codeCalendrier;
+    $.post(url, data);
+
+    refreshModules(calendrier.modules);
+    dismissLoader();
+}
+
+function closeModaleGestionModules() {
+    $("div[data-target='gestion-modules']").modal('close');
 }

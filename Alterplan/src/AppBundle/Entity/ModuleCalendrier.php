@@ -58,22 +58,66 @@ class ModuleCalendrier
      */
     private $dispenses;
 
+    /**
+     * @var Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Calendrier", mappedBy="modulesCalendrierAPlacer")
+     */
+    private $calendriersEnAttente;
+
     public function __construct()
     {
         $this->dispenses = new ArrayCollection();
+        $this->calendriersEnAttente = new ArrayCollection();
     }
 
-    public function getNombreHeuresReel(){
+    public function getNombreHeuresReel()
+    {
         $result = 35;
 
-        foreach ($this->dispenses as $dispense){
+        foreach ($this->dispenses as $dispense) {
             $interval = date_diff($dispense->getDateFin(), $dispense->getDateDebut(), true);
-            if ($interval){
+            if ($interval) {
                 $result = $result - ($interval->days + 1);
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDispenses()
+    {
+        return $this->dispenses;
+    }
+
+    /**
+     * @param Collection $dispenses
+     * @return ModuleCalendrier
+     */
+    public function setDispenses($dispenses)
+    {
+        $this->dispenses = $dispenses;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCalendriersEnAttente()
+    {
+        return $this->calendriersEnAttente;
+    }
+
+    /**
+     * @param Collection $calendriersEnAttente
+     * @return ModuleCalendrier
+     */
+    public function setCalendriersEnAttente($calendriersEnAttente)
+    {
+        $this->calendriersEnAttente = $calendriersEnAttente;
+        return $this;
     }
 
     /**
