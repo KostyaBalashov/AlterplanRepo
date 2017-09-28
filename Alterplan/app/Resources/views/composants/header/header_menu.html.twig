@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </li>
     {% if is_granted('ROLE_ADMIN') %}
         <li>
-            <a class="waves-effect waves-light btn">
+            <a href="{{ path('model_search', {'nameModal' : 'gestionModele'}) }}" class="waves-effect waves-light btn">
                 Gérer les modèles
             </a>
         </li>

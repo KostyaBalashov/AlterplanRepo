@@ -69,8 +69,9 @@ class CalendrierRepository extends EntityRepository
             //On retourne le résultat
             return $query->getQuery()->getResult();
         }else{
-            //S'il n'y a pas de filtre on retourne 50 stagiaires
-            $query = $this->createQueryBuilder('calendrier');
+            //S'il n'y a pas de filtre on retourne 50 calendriers
+            $query = $this->createQueryBuilder('calendrier')
+                ->setMaxResults(50);
 
             return $query->getQuery()->getResult();
         }

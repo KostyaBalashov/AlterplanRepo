@@ -9,7 +9,14 @@ You should have received a copy of the GNU Affero General Public License along w
 #}
 
 <div id="search_calendar_table" class="card-content bloc_calendrier" style="max-height: 19em;overflow-x: auto;">
-    <h5 class="card-title">Liste des calendriers ({{ calendars|length }})</h5>
+    <div class="col s6">
+        <h5 class="card-title">{{ titreTableau }} ({{ calendars|length }})</h5>
+    </div>
+    {% if (stagiaire is not defined) %}
+        <div class="col s2 offset-s4">
+            <a class='waves-green btn' href='#' id="btn_new_model">Créer</a>
+        </div>
+    {% endif %}
     <form method="post" action="" id="form_search_tab_calendar">
         <table class="centered highlight" id="table_calendars">
             <thead>
@@ -23,7 +30,11 @@ You should have received a copy of the GNU Affero General Public License along w
             <tbody class="calendrier_rows">
             {% if ( calendars != null ) %}
                 {% for calendar in calendars %}
-                    <tr class="clickable clickable-row-calendar" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier, 'codeStagiaire': stagiaire.codeStagiaire }) }}">
+                    {% if (stagiaire is defined) %}
+                        <tr class="clickable clickable-row-calendar" data-action="applyModel" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier, 'codeStagiaire': stagiaire.codeStagiaire }) }}">
+                    {% else %}
+                        <tr class="clickable clickable-row-calendar" data-action="gestionModel" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier}) }}">
+                    {% endif %}
                         <td>
                             {{ calendar.titre }}
                         </td>
@@ -58,8 +69,18 @@ You should have received a copy of the GNU Affero General Public License along w
             // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
             $(this).addClass('selected').siblings().removeClass("selected");
             var url = $(this).data("href");
+            var action = $(this).data("action");
 
-            $('#form_search_tab_calendar').attr('action', url);
+            if(action === 'applyModel' || action === 'duplicate') {
+                $('#form_search_tab_calendar').attr('action', url);
+            } else if (action === 'gestionModel') {
+                window.location = url;
+            }
+        });
+
+        $('#btn_new_model').click(function () {
+            var url = "{{ path('model_new') }}";
+            renderModal('model',url,false);
         });
     })
 </script>

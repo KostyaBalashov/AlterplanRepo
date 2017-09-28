@@ -32,18 +32,19 @@ class CalendrierFiltreType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('titre',  TextType::class, array(
+                'attr' => array('class'=> 'col s10'),
+                'required' => false,
+            ))->add('Formation',  FormationType::class, array(
+                'attr' => array('class'=> 'col s10',
+                    'trim' => false)))
             ->add('dateDebut',  TextType::class, array(
                 'attr' => array('class'=> 'col s10 datepicker'),
                 'required' => false,
             ))->add('dateFin',  TextType::class, array(
                 'attr' => array('class'=> 'col s10 datepicker'),
                 'required' => false,
-            ))->add('titre',  TextType::class, array(
-                'attr' => array('class'=> 'col s10'),
-                'required' => false,
-            ))->add('Formation',  FormationType::class, array(
-                'attr' => array('class'=> 'col s10',
-                    'trim' => false)));
+            ));
     }
 
     /**
@@ -52,7 +53,7 @@ class CalendrierFiltreType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Filtre\CalendrierFiltre'
+            'data_class' => 'AppBundle\Filtre\CalendrierFiltre',
         ));
     }
 }
