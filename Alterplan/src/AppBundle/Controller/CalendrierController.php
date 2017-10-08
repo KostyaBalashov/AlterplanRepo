@@ -28,6 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\Service\ModuleAPlanifierService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -73,6 +74,7 @@ class CalendrierController extends Controller
     /**
      * Créé un nouveau calendrier.
      *
+     * @Route("/new", name="model_new")
      * @Route("/new/{codeStagiaire}", name="calendrier_new")
      * @Method({"GET", "POST"})
      */
