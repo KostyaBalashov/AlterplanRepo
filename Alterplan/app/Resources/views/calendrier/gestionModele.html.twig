@@ -8,56 +8,66 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 #}
 {% extends 'consultationBase.html.twig' %}
-{% block body %}
-<link rel="stylesheet" href="{{ asset('css/calendrier.css') }}" />
 
-<div class="row">
-    <div class="card">
-        <div class="card-content" style="max-height: 20em;">
-            <h5 class="card-title">{{ titreModal }}</h5>
-            {% include ':calendrier:searchForm.html.twig' %}
-            <div class="card-action right-align">
-                <button type="submit" form="calendrier_search" class="waves-effect waves-light btn">Rechercher</button>
-                <button type="reset" form="calendrier_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+{% block title %} Modèles {% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="card">
+            <div class="card-content" style="max-height: 20em;">
+                <h5 class="card-title">{{ titreModal }}</h5>
+                {% include ':calendrier:searchForm.html.twig' %}
+                <div class="card-action right-align">
+                    <button type="submit" form="calendrier_search" class="waves-effect waves-light btn">Rechercher
+                    </button>
+                    <button type="reset" form="calendrier_search" class="waves-effect waves-light btn red lighten-3">
+                        Effacer les critères
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="card">
-        {% include ':calendrier:searchTableCalendrierForm.html.twig' %}
+    <div class="row">
+        <div class="card">
+            {% include ':calendrier:searchTableCalendrierForm.html.twig' %}
+        </div>
     </div>
-</div>
+{% endblock %}
 
 {% block modal %}
     {{ parent() }}
     {% include ':composants:modale.html.twig' with {'id' : 'model', 'formId' : 'calendrier'} %}
 {% endblock %}
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        //Récupération du formulaire de recherche
-        var frm = $('#calendrier_search');
+{% block searchJS %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Récupération du formulaire de recherche
+            var frm = $('#calendrier_search');
 
-        //Abonnement à l'événement submit du formulaire
-        frm.submit(function (event) {
-            showLoader();
-            event.preventDefault();
+            //Abonnement à l'événement submit du formulaire
+            frm.submit(function (event) {
+                showLoader();
+                event.preventDefault();
 
-            var url = frm.attr('action');
-            $.post(url, frm.serialize(), function (data) {
-                //En cas de succès on mets à jour le tabeau
-                var calendrierTableDiv = $('#search_calendar_table');
-                calendrierTableDiv.empty();
-                calendrierTableDiv.html(data);
-            }).fail(function () {
-                showToast('Erreur de recherche', 'error');
-            }).always(function () {
-                dismissLoader();
-            })
-        });
-    })
+                var url = frm.attr('action');
+                $.post(url, frm.serialize(), function (data) {
+                    //En cas de succès on mets à jour le tabeau
+                    var calendrierTableDiv = $('#search_calendar_table');
+                    calendrierTableDiv.empty();
+                    calendrierTableDiv.html(data);
+                }).fail(function () {
+                    showToast('Erreur de recherche', 'error');
+                }).always(function () {
+                    dismissLoader();
+                })
+            });
+        })
 
-</script>
+    </script>
 {% endblock %}

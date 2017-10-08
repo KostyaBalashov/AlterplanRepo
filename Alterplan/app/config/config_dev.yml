@@ -13,6 +13,42 @@ web_profiler:
 
 monolog:
     handlers:
+        security_errors:
+          level: error
+          type: stream
+          path: '%dev_logs%/security_errors.log'
+          channels: [security]
+
+        doctrine_errors:
+          level: error
+          type: stream
+          path: '%dev_logs%/doctrine_errors.log'
+          channels: [doctrine]
+
+        request_errors:
+          level: error
+          type: stream
+          path: '%dev_logs%/request_errors.log'
+          channels: [request]
+
+        request_info:
+          level: info
+          type: stream
+          path: '%dev_logs%/request_info.log'
+          channels: [request]
+
+        security_info:
+          level: info
+          type: stream
+          path: '%dev_logs%/security_debug.log'
+          channels: [security]
+
+        doctrine_info:
+          level: info
+          type: stream
+          path: '%dev_logs%/doctrine_debug.log'
+          channels: [doctrine]
+
         main:
             type: stream
             path: '%kernel.logs_dir%/%kernel.environment%.log'

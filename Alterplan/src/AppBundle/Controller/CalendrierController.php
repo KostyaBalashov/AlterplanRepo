@@ -22,13 +22,12 @@ use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\CalendrierFiltre;
-use AppBundle\Form\Filtre\CalendrierFiltreType;
+use AppBundle\Service\ModuleAPlanifierService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use AppBundle\Service\ModuleAPlanifierService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -78,36 +77,36 @@ class CalendrierController extends Controller
      * @Route("/new/{codeStagiaire}", name="calendrier_new")
      * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request, Stagiaire  $stagiaire = null)
-        {
-            $calendrier = new Calendrier();
-            $titre ='';
-            if($stagiaire != null) {
-                $calendrier->setStagiaire($stagiaire);
-                $calendrier->setIsModele(false);
-                $titre= 'Création d\'un calendrier';
-            } else {
-                $calendrier->setIsModele(true);
-                $titre= 'Création d\'un modèle';
-            }
-            $dt = new DateTime();
-            $calendrier->setDateCreation($dt);
-            $calendrier->setIsInscrit(false);
+    public function newAction(Request $request, Stagiaire $stagiaire = null)
+    {
+        $calendrier = new Calendrier();
+        $titre = '';
+        if ($stagiaire != null) {
+            $calendrier->setStagiaire($stagiaire);
+            $calendrier->setIsModele(false);
+            $titre = 'Création d\'un calendrier';
+        } else {
+            $calendrier->setIsModele(true);
+            $titre = 'Création d\'un modèle';
+        }
+        $dt = new DateTime();
+        $calendrier->setDateCreation($dt);
+        $calendrier->setIsInscrit(false);
 
         //Création du formulaire de création du calendrier
 
 
-            if($stagiaire != null) {
-                $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
-                    array('attr' => array('id' => 'calendrier'),
-                        'action' => $this->generateUrl('calendrier_new', array('codeStagiaire' => $stagiaire->getCodeStagiaire())),
-                        'method' => 'POST'));
-            } else {
-                $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
-                    array('attr' => array('id' => 'calendrier'),
-                        'action' => $this->generateUrl('model_new'),
-                        'method' => 'POST'));
-            }
+        if ($stagiaire != null) {
+            $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
+                array('attr' => array('id' => 'calendrier'),
+                    'action' => $this->generateUrl('calendrier_new', array('codeStagiaire' => $stagiaire->getCodeStagiaire())),
+                    'method' => 'POST'));
+        } else {
+            $form = $this->createForm('AppBundle\Form\CalendrierType', $calendrier,
+                array('attr' => array('id' => 'calendrier'),
+                    'action' => $this->generateUrl('model_new'),
+                    'method' => 'POST'));
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -143,7 +142,8 @@ class CalendrierController extends Controller
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function searchCalendrier(Request $request, $nameModal, Stagiaire $stagiaire = null){
+    public function searchCalendrier(Request $request, $nameModal, Stagiaire $stagiaire = null)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
@@ -157,12 +157,12 @@ class CalendrierController extends Controller
 
         // On récupère la modal qu'on a ouvert.
         // Si celle-ci est la modal pour la duplication d'un calendrier ou pour appliquer un modèle
-        if($nameModal == "duplicate") {
+        if ($nameModal == "duplicate") {
             $filtre->setIsModele(0);
             $nameAction = "calendrier_duplicate";
             $titreModal = "Recherche d'un calendrier à dupliquer";
             $titreTableau = "Liste des Calendriers";
-        } elseif($nameModal == "applyModel") {
+        } elseif ($nameModal == "applyModel") {
             $filtre->setIsModele(1);
             $nameAction = "apply_model";
             $titreModal = "Recherche d'un modèle à appliquer au nouveau calendrier";
@@ -175,7 +175,7 @@ class CalendrierController extends Controller
         }
 
         //Création du formulaire de recherche
-        if($nameModal == "duplicate" || $nameModal == "applyModel") {
+        if ($nameModal == "duplicate" || $nameModal == "applyModel") {
             $form = $this->createForm('AppBundle\Form\Filtre\CalendrierFiltreType', $filtre, array(
                 'attr' => array('id' => 'calendrier_search'),
                 'action' => $this->generateUrl('calendrier_search', array('nameModal' => $nameModal, 'codeStagiaire' => $stagiaire->getCodeStagiaire())),
@@ -197,10 +197,10 @@ class CalendrierController extends Controller
             $calendriers = $repo->search($filtre);
 
 
-            if($nameModal == "duplicate" || $nameModal == "applyModel") {
+            if ($nameModal == "duplicate" || $nameModal == "applyModel") {
                 return $this->render(':calendrier:searchTableCalendrierForm.html.twig', array(
                     'nameAction' => $nameAction,
-                    'stagiaire' =>$stagiaire,
+                    'stagiaire' => $stagiaire,
                     'calendars' => $calendriers,
                     'titreTableau' => $titreTableau,
                     'nameModal' => $nameModal
@@ -220,7 +220,7 @@ class CalendrierController extends Controller
             $newFiltre->setIsModele($filtre->isModele());
             $calendriers = $repo->search($newFiltre);
 
-            if($nameModal == "duplicate" || $nameModal == "applyModel") {
+            if ($nameModal == "duplicate" || $nameModal == "applyModel") {
                 return $this->render(':calendrier:modaleSearchCalendrier.html.twig', array(
                     'calendars' => $calendriers,
                     'nameAction' => $nameAction,

@@ -9,6 +9,24 @@ imports:
 
 monolog:
     handlers:
+        security_errors:
+          level: error
+          type: stream
+          path: '%prod_logs%/security_errors.log'
+          channels: [security]
+
+        doctrine_errors:
+          level: error
+          type: stream
+          path: '%prod_logs%/doctrine_errors.log'
+          channels: [doctrine]
+
+        request_errors:
+          level: error
+          type: stream
+          path: '%prod_logs%/request_errors.log'
+          channels: [request]
+
         main:
             type: fingers_crossed
             action_level: error
