@@ -172,6 +172,7 @@ You should have received a copy of the GNU Affero General Public License along w
 {% block customJS %}
     <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/contrainte.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
     <script type="text/javascript">
 
@@ -179,8 +180,10 @@ You should have received a copy of the GNU Affero General Public License along w
             'CodeFormation': '{{ calendrier.formation.codeFormation }}',
             'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
             'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
-        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        var contraintes = {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
+        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
         var modulesManager = new ModulesManager(calendrier);
+        var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
 
         $(document).ready(function () {
             initTitleInput('{{ calendrier.titre }}');
@@ -193,8 +196,52 @@ You should have received a copy of the GNU Affero General Public License along w
 
             $('#editContraintes').click(function () {
                 var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
-                renderModal('contrainte', url, false);
+                renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
             });
         });
+
+        function valider() {
+            showLoader();
+            closeModale();
+
+            for (removedKey in modulesManager.removedModules) {
+                if (calendrier.modules.hasOwnProperty(removedKey)
+                    && (removedKey in calendrier.modules)) {
+                    delete calendrier.modules[removedKey];
+                }
+            }
+
+            for (addedKey in modulesManager.addedModules) {
+                if (!calendrier.modules.hasOwnProperty(addedKey)) {
+                    calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
+                }
+            }
+
+            refreshModules(calendrier.modules);
+            dismissLoader();
+        }
+
+        function validerContraintes() {
+            var contraintes = [];
+
+            $('#tbl tr').each(function (i, row) {
+                var $row = $(row);
+                var typeContrainte = $row.find('select[id="typeContrainte"]').val();
+                var val1 = $row.find('input[name="val0"]').val();
+                var val2 = $row.find('input[name="val1"]').val();
+                console.log(typeContrainte);
+                console.log(val1);
+                console.log(val2);
+                var contrainte = {dateCreation: Date(), P1: val1, P2: val2, codeTypeContrainte: typeContrainte};
+                contraintes[contrainte];
+                i++;
+
+            })
+            calendrier.contraintes = contraintes;
+        }
+
+        function closeModale() {
+            $("div[data-target='gestion-modules']").modal('close');
+        }
     </script>
 {% endblock %}

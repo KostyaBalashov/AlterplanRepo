@@ -14,31 +14,36 @@ You should have received a copy of the GNU Affero General Public License along w
 <form>
     <div>
         <table id="tbl">
-            {% for contrainte in calendrier.contraintes %}
-                <tr>
-                    <td id="tdContraintes">
-                        <select onchange="changeSelect(this)" name="testInput" class="select">
-                            {% for typecontrainte in typeContraintes %}
-                                <
-                                <option
-                                        value="{{ typecontrainte.codeTypeContrainte }}"
-                                        data-nb-input="{{ typecontrainte.nbParametres }}"
-                                        {% if typecontrainte.codeTypeContrainte == contrainte.typeContrainte.codeTypeContrainte %} selected {% endif %}>{{ typecontrainte.libelle }}
-                                </option>
+            <tbody id="tableauContraintes">
 
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                    </td>
-                    <td id="tdDeleteccd">
-                        <a onclick="deleteRow(this)"
-                           class="deleteRow btn-floating waves-effect waves-light red right-align"><i
-                                    class="material-icons">remove</i></a>
+            </tbody>
+            {#            {% for contrainte in calendrier.contraintes %}
+                            <tr>
+                                <td id="tdContraintes">
+                                    <select onchange="changeSelect(this)" id="typeContrainte" class="select">
+                                        <option value="" disabled selected>Type de contrainte</option>
+                                        {% for typecontrainte in typeContraintes %}
+                                            <
+                                            <option
+                                                    value="{{ typecontrainte.codeTypeContrainte }}"
+                                                    data-nb-input="{{ typecontrainte.nbParametres }}"
+                                                    {% if typecontrainte.codeTypeContrainte == contrainte.typeContrainte.codeTypeContrainte %} selected {% endif %}>{{ typecontrainte.libelle }}
+                                            </option>
 
-                    </td>
-                </tr>
-            {% endfor %}
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                </td>
+                                <td id="tdDeleteccd">
+                                    <a onclick="deleteRow(this)"
+                                       class="deleteRow btn-floating waves-effect waves-light red right-align"><i
+                                                class="material-icons">remove</i></a>
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        #}
         </table>
         <a id="addBtn" class="add_another btn-floating btn-large waves-effect waves-light green right-align"><i
                     id="addBtn"
@@ -50,183 +55,194 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        //ajoute une nouvelle ligne au tableau
-        $('select').material_select();
+    /* $(document).ready(function () {
+     }
+     //ajoute une nouvelle ligne au tableau
 
-        $('.add_another').click(function () {
-            $("#tbl").append('<tr><td id="tdContraintes"><select onchange="changeSelect(this)">{% for typecontrainte in typeContraintes %}<option value="{{ typecontrainte.codeTypeContrainte }}" data-nb-input="{{ typecontrainte.nbParametres }}">{{ typecontrainte.libelle }}</option>{% endfor %}</select></td> <td></td><td id="tdDelete">  <a onClick="deleteRow(this   )" class="deleteRow btn-floating waves-effect waves-light red right-align"><i class="material-icons">remove</i></a></td> </tr>');
-            $('select').material_select();
-            $('.deleteRow').click(function () {
-                $(this).closest('tr').remove();
-                console.log('CEST PASSE PUTAIN')
-            });
-        });
+     $('.add_another').click(function () {
+     $('select').material_select();
+     $('.deleteRow').click(function () {
+     $(this).closest('tr').remove();
+     });
+     });
 
 
-    });
-    function deleteRow(e) {
-        $(e.target).closest('tr').remove();
-        console.log('CEST PASSE PUTAIN')
-    }
+     });
+     function deleteRow(e) {
+     $(e.target).closest('tr').remove();
+     console.log('CEST PASSE PUTAIN')
+     }
 
-    function changeSelect(e) {
-        var codeTypeContrainte = e.value;
-        var number = e.options[e.selectedIndex].getAttribute('data-nb-input');
-        var td_container = $(e).closest('td').next();
-        var div_container = document.createElement("div");
-        var stagiaires = [];
+     function changeSelect(e) {
+     var codeTypeContrainte = e.value;
+     var number = e.options[e.selectedIndex].getAttribute('data-nb-input');
+     var td_container = $(e).closest('td').next();
+     var div_container = document.createElement("div");
 
-        div_container.setAttribute("id", "divContainer");
-        div_container.setAttribute("class", "divContainer valign-wrapper");
-
-
-        $(td_container).empty();
-        for (i = 0; i < number; i++) {
-            var div_input = document.createElement("div");
-            div_input.setAttribute("class", "col s6 valign-wrapper")
-            div_input.setAttribute("id", "divInput" + i)
-            var input = document.createElement("input");
-            var label = document.createElement("Label");
-
-            switch (codeTypeContrainte) {
-                case '1':
-                    input.type = "text";
-                    if (i === 0) {
-                        label.htmlFor = "dateDebut";
-                        label.innerHTML = "Du ";
-                        input.className = "datepicker dateDebut inputContrainte";
-                        input.id = "dateDebut"
-                    } else {
-                        label.htmlFor = "dateFin";
-                        label.innerHTML = "Au ";
-                        input.className = "datepicker dateFin inputContrainte";
-                        input.id = "dateFin"
-                    }
-                    div_input.append(label);
-                    div_input.append(input);
-                    break;
-                case '2':
-
-                    input.type = "number";
-                    if (i === 0) {
-                        input.min = "0";
-                        label.htmlFor = "minVolume";
-                        label.innerHTML = "Min ";
-                        input.id = "minVolume";
-                        input.className = "inputContrainte";
-                    } else {
-                        var min = $("#minVolume").val()
-                        var minLimit = typeof min != "undefined" ? min : 0;
-                        input.min = minLimit;
-                        label.htmlFor = "maxVolume";
-                        label.innerHTML = "Max ";
-                        input.id = "maxVolume"
-                        input.className = "inputContrainte";
-                    }
-                    div_input.append(label);
-                    div_input.append(input);
-                    break;
-                case '3':
-                    input.type = "number";
-                    if (i === 0) {
-                        input.min = "0";
-                        label.htmlFor = "minEcartDebut";
-                        label.innerHTML = "Min ";
-                        input.id = "minEcartDebut";
-                        input.className = "inputContrainte";
-                    } else {
-                        var min = $("#minEcartDebut").val()
-                        var minEcart = typeof min != "undefined" ? min : 0;
-                        input.min = minEcart;
-                        label.htmlFor = "maxEcartDebut";
-                        label.innerHTML = "Max ";
-                        input.id = "maxEcartDebut";
-                        input.className = "inputContrainte";
-                    }
-                    div_input.append(label);
-                    div_input.append(input);
-                    break;
-                case '4':
-                    input.type = "number";
-                    if (i === 0) {
-                        input.min = "0";
-                        label.htmlFor = "minEcartFin";
-                        label.innerHTML = "Min ";
-                        input.id = "minEcartFin"
-                    } else {
-                        var min = $("#minEcartFin").val()
-                        var minEcart = typeof min != "undefined" ? min : 0;
-                        input.min = minEcart;
-                        label.htmlFor = "maxEcartFin";
-                        label.innerHTML = "Max ";
-                        input.id = "maxEcartFin";
-                        input.className = "inputContrainte";
-                    }
-                    div_input.append(label);
-                    div_input.append(input);
-                    break;
-                case '5':
-                    input.type = "number";
-                    input.min = "0";
-                    input.id = "maxSemaines";
-                    input.className = "inputContrainte";
-                    div_container.append(input);
-                    break;
-                case '6':
-                    div_container.setAttribute("class", "divContainer");
-                    input.type = "text";
-                    input.id = "rechercheStagiaire";
-                    input.className = "inputContrainte autocomplete";
-                    input.placeholder = "Nom du stagiaire";
-                    input.autocomplete = "off";
-                    div_container.append(input);
-                    $.ajax({
-                        type: "GET",
-                        url: '{{ path('all_Stagiaires') }}',
-                        success: function (response) {
-                            var countryArray = response;
-                            var dataCountry = {};
-                            for (var i = 0; i < countryArray.length; i++) {
-                                dataCountry[countryArray[i].nom + ' ' + countryArray[i].prenom] = null; //countryArray[i].flag or null
-                            }
-                            $('input.autocomplete').autocomplete({
-                                data: dataCountry,
-                                limit: 5, // The max amount of results that can be shown at once. Default: Infinity.
-                            });
-                        },
-                        error: function () {
-                            console.log('an error occured');
-                            console.log(arguments);//get debugging!
-                        }
-                    });
+     div_container.setAttribute("id", "divContainer");
+     div_container.setAttribute("class", "divContainer valign-wrapper");
 
 
-                    break;
+     $(td_container).empty();
+     for (i = 0; i < number; i++) {
+     var div_input = document.createElement("div");
+     div_input.setAttribute("class", "col s6 valign-wrapper")
+     div_input.setAttribute("id", "divInput" + i)
+     var type1;
+     var type2;
+     var input = document.createElement("input");
+     input.name = "val" + i;
+     input.required = "true";
+     var label = document.createElement("Label");
 
-            }
-            div_container.append(div_input);
-        }
-        td_container.append(div_container);
-        console.log('codetypecontrainte: ' + codeTypeContrainte);
-        if (codeTypeContrainte === '1') {
-            console.log('tamere');
-            initDatePicker('#dateDebut', onSetDateDebut);
-            initDatePicker('#dateFin', onSetDateFin);
+     switch (codeTypeContrainte) {
+     case '1':
+     type1 = 'Date';
+     type2 = 'Date';
 
-            var from_picker = getDateDebutPicker();
-            var to_picker = getDateFinPicker();
+     input.type = "text";
+     if (i === 0) {
+     label.htmlFor = "dateDebut";
+     label.innerHTML = "Du ";
+     input.className = "datepicker dateDebut inputContrainte";
+     input.id = "dateDebut"
+     } else {
+     label.htmlFor = "dateFin";
+     label.innerHTML = "Au ";
+     input.className = "datepicker dateFin inputContrainte";
+     input.id = "dateFin"
+     }
+     div_input.append(label);
+     div_input.append(input);
+     break;
+     case '2':
+     type1 = 'int';
+     type2 = 'int';
+     input.type = "number";
+     if (i === 0) {
+     input.min = "0";
+     label.htmlFor = "minVolume";
+     label.innerHTML = "Min ";
+     input.id = "minVolume";
+     input.className = "inputContrainte";
+     } else {
+     var min = $("#minVolume").val()
+     var minLimit = typeof min != "undefined" ? min : 0;
+     input.min = minLimit;
+     label.htmlFor = "maxVolume";
+     label.innerHTML = "Max ";
+     input.id = "maxVolume"
+     input.className = "inputContrainte";
+     }
+     div_input.append(label);
+     div_input.append(input);
+     break;
+     case '3':
+     type1 = 'int';
+     type2 = 'int';
+     input.type = "number";
+     if (i === 0) {
+     input.min = "0";
+     label.htmlFor = "minEcartDebut";
+     label.innerHTML = "Min ";
+     input.id = "minEcartDebut";
+     input.className = "inputContrainte";
+     } else {
+     var min = $("#minEcartDebut").val()
+     var minEcart = typeof min != "undefined" ? min : 0;
+     input.min = minEcart;
+     label.htmlFor = "maxEcartDebut";
+     label.innerHTML = "Max ";
+     input.id = "maxEcartDebut";
+     input.className = "inputContrainte";
+     }
+     div_input.append(label);
+     div_input.append(input);
+     break;
+     case '4':
+     type1 = 'int';
+     type2 = 'int';
+     input.type = "number";
+     if (i === 0) {
+     input.min = "0";
+     label.htmlFor = "minEcartFin";
+     label.innerHTML = "Min ";
+     input.id = "minEcartFin"
+     } else {
+     var min = $("#minEcartFin").val()
+     var minEcart = typeof min != "undefined" ? min : 0;
+     input.min = minEcart;
+     label.htmlFor = "maxEcartFin";
+     label.innerHTML = "Max ";
+     input.id = "maxEcartFin";
+     input.className = "inputContrainte";
+     }
+     div_input.append(label);
+     div_input.append(input);
+     break;
+     case '5':
+     type1 = 'int';
+     input.type = "number";
+     input.min = "0";
+     input.id = "maxSemaines";
+     input.className = "inputContrainte";
+     div_container.append(input);
+     break;
+     case '6':
+     type2 = 'int';
+     div_container.setAttribute("class", "divContainer");
+     input.type = "text";
+     input.id = "rechercheStagiaire";
+     input.className = "inputContrainte autocomplete";
+     input.placeholder = "Nom du stagiaire";
+     input.autocomplete = "off";
+     div_container.append(input);
+     $.ajax({
+     type: "GET",
+     url: '{{ path('all_Stagiaires') }}',
+     success: function (response) {
+     var countryArray = response;
+     var dataCountry = {};
+     for (var i = 0; i < countryArray.length; i++) {
+     dataCountry[countryArray[i].nom + ' ' + countryArray[i].prenom] = null; //countryArray[i].flag or null
+     }
+     $('input.autocomplete').autocomplete({
+     data: dataCountry,
+     limit: 5, // The max amount of results that can be shown at once. Default: Infinity.
+     });
+     },
+     error: function () {
+     console.log('an error occured');
+     console.log(arguments);//get debugging!
+     }
+     });
 
-            if (from_picker.get('value')) {
-                to_picker.set('min', from_picker.get('select'))
-            }
-            if (to_picker.get('value')) {
-                from_picker.set('max', to_picker.get('select'))
-            }
-        }
+
+     break;
+
+     }
+     div_container.append(div_input);
+     }
+     td_container.append(div_container);
+     console.log('codetypecontrainte: ' + codeTypeContrainte);
+     if (codeTypeContrainte === '1') {
+     console.log('tamere');
+     initDatePicker('#dateDebut', onSetDateDebut);
+     initDatePicker('#dateFin', onSetDateFin);
+
+     var from_picker = getDateDebutPicker();
+     var to_picker = getDateFinPicker();
+
+     if (from_picker.get('value')) {
+     to_picker.set('min', from_picker.get('select'))
+     }
+     if (to_picker.get('value')) {
+     from_picker.set('max', to_picker.get('select'))
+     }
+     }
 
 
-    }
-
+     }
+     */
 
 </script>

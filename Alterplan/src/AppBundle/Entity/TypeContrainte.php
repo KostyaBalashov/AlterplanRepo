@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="TypeContrainte")
  * @ORM\Entity
  */
-class TypeContrainte
+class TypeContrainte implements \JsonSerializable
 {
     /**
      * @var integer
@@ -89,5 +89,20 @@ class TypeContrainte
         return $this;
     }
 
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        $result = array();
+        $result['codeTypeContrainte'] = $this->codeTypeContrainte;
+        $result['libelle'] = $this->libelle;
+        $result['nbParametres'] = $this->nbParametres;
+        return $result;
+    }
 }
 

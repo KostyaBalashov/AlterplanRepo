@@ -22,6 +22,7 @@ use AppBundle\Entity\TypeContrainte;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Contrainte;
@@ -49,5 +50,17 @@ class ContrainteController extends Controller
             'typeContraintes' => $typecontrainteList,
             'titre' => $titre
         ));
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/contraintes/typeContrainte/{codeCalendrier}", name="all_typeContraintes")
+     * @Method({"GET", "POST"})
+     */
+    public function allTypeContraintes(Request $request)
+    {
+        $tcRepository = $this->getDoctrine()->getRepository(TypeContrainte::class);
+        $typecontrainteList = $tcRepository->findAll();
+        return new JsonResponse($typecontrainteList);
     }
 }

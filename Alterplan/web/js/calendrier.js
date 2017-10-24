@@ -8,13 +8,14 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
-var Calendrier = function (codeCalendrier, jFormation, jModules) {
+var Calendrier = function (codeCalendrier, jFormation, jModules,jContraintes) {
     this.codeCalendrier = codeCalendrier;
     this.formation = jFormation;
     this.modules = jModules.reduce(function (p1, p2) {
         p1[p2.idModule] = p2;
         return p1;
     }, []);
+    this.contraintes = jContraintes;
 };
 
 function refreshModules(modules) {
