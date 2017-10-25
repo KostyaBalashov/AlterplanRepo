@@ -96,7 +96,8 @@ class StagiaireParEntrepriseController extends Controller
     /**
      * Finds and display all entities
      *
-     * @Route("/all", name="all_Stagiaires")
+     * @Route("/all", options = { "expose" = true }, name="all_Stagiaires")
+     *
      * @Method("GET")
      */
     public function StagiairesAction(Request $request)
