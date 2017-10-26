@@ -95,3 +95,7 @@ div.selected {
     border-color: black;
     color: white;
 }
+
+.template {
+    display: none;
+}

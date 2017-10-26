@@ -27,40 +27,18 @@ var CoursManager = function (jCours) {
 
     this.renderCour = function (jCour, containerSelector) {
         var $body = $(containerSelector);
-        $body.append(getTr(jCour));
+
+        var courTemplate = $('#cours-template').children();
+        setDate(courTemplate, jCour);
+        setHeures(courTemplate, jCour);
+        setLieu(courTemplate, jCour);
+        setProgramme(courTemplate, jCour);
+        setPromotion(courTemplate, jCour);
+
+        $body.append(courTemplate.clone());
     };
 
-    var getIndicateurRendering = function () {
-        var div = $(document.createElement('div'));
-        div.addClass('indicateur amber lighten-4');
-        return div;
-    };
-
-    var getTr = function (jCour) {
-        var div = $(document.createElement('div'));
-        div.addClass('tr valign-wrapper bordered');
-        div.append(getIndicateurRendering());
-        div.append(getTrBody(jCour));
-
-        return div;
-    };
-
-    var getTrBody = function (jCour) {
-        var div = $(document.createElement('div'));
-        div.addClass('tr-body');
-        div.append(getCour(jCour));
-        return div;
-    };
-
-    var getCour = function (jCour) {
-        var cour = $(document.createElement('div'));
-        cour.addClass('cours center valign-wrapper');
-        var columns = getColumns(jCour);
-        cour.append(columns[0], columns[1]);
-        return cour;
-    };
-
-    var getColumns = function (jCour) {
+    var setDate = function ($template, jCour) {
         function pad(s) {
             return (s < 10) ? '0' + s : s;
         }
@@ -69,62 +47,33 @@ var CoursManager = function (jCours) {
         var strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
         var dateFin = new Date(jCour.dateFin.date);
         var strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
-
-        var columns = [];
         var date = strDateDebut + ' - ' + strDateFin;
-        columns[0] = getColumn(date, 's3 date valign-wrapper');
 
+        $template.find("span.date").text(date);
+    };
+
+    var setLieu = function ($template, jCour) {
         var lieu = ' - ';
         if (jCour.hasOwnProperty('lieu')) {
             lieu = jCour.lieu.libelle;
         }
-
-        var lieuDisplay = getColumn(lieu, 's12');
-        var nbHeure = getColumn(jCour.nbHeures + ' H', 's12');
-        var wrapper = $(document.createElement('div'));
-        wrapper.addClass('col s12');
-        wrapper.append(lieuDisplay, nbHeure);
-
-        var lieuColumn = $(document.createElement('div'));
-        lieuColumn.addClass('col s2 valign-wrapper');
-        lieuColumn.append(wrapper);
-
-        var programmeColumn = $(document.createElement('div'));
-        programmeColumn.addClass('col s6 programme valign-wrapper');
-
-        var titreSize = 12;
-
-        var salleSize = null;
-        if (jCour.hasOwnProperty('salle')) {
-            titreSize -= 2;
-            salleSize = getCour(jCour.salle.capacite, 's2 valign-wrapper');
-        }
-
-        var promotionColumn = null;
-        if (jCour.hasOwnProperty('promotion')) {
-            titreSize -= 2;
-            promotionColumn = getColumn(jCour.promotion, 's2 valign-wrapper');
-        }
-
-        var titreColumn = getColumn(jCour.libelle, 's' + titreSize + ' center');
-
-        programmeColumn.append(promotionColumn, [titreColumn, salleSize]);
-        columns[1] = [lieuColumn, programmeColumn];
-
-        return columns;
+        $template.find("span.lieu").text(lieu);
     };
 
-    var getColumn = function (spanContent, columnClasses) {
-        var div = $(document.createElement('div'));
-        var span = $(document.createElement('span'));
-        span.addClass('center-align');
-        span.addClass('columnContent');
-        span.text(spanContent);
+    var setHeures = function ($template, jCour) {
+        $template.find("span.lieu").text(jCour.nbHeures + ' H');
+    };
 
-        div.addClass('col ' + columnClasses);
-        div.append(span);
+    var setPromotion = function ($template, jCour) {
+        var promotion = ' - ';
+        if (jCour.hasOwnProperty('promotion')) {
+            promotion = jCour.promotion;
+        }
+        $template.find("span.promotion").text(promotion);
+    };
 
-        return div;
-    }
+    var setProgramme = function ($template, jCour) {
+        $template.find("span.programme").text(jCour.libelle);
+    };
 };
  
