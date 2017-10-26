@@ -61,7 +61,7 @@ class Calendrier
     /**
      * @var \AppBundle\Entity\Formation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Formation", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeFormation", referencedColumnName="CodeFormation")
      * })
@@ -101,13 +101,13 @@ class Calendrier
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", mappedBy="calendrier", cascade={"persist", "remove" })
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", mappedBy="calendrier", cascade={"persist", "remove" }, fetch="EAGER")
      */
     private $modulesCalendrier;
 
     /**
      * @var Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Module", inversedBy="calendriersEnAttente")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Module", inversedBy="calendriersEnAttente", fetch="EAGER")
      * @ORM\JoinTable(name="ModuleAPlanifier",
      *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")})
@@ -116,7 +116,7 @@ class Calendrier
 
     /**
      * @var Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", inversedBy="calendriersEnAttente")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", inversedBy="calendriersEnAttente", fetch="EAGER")
      * @ORM\JoinTable(name="ModuleCalendrierAPlacer",
      *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="CodeModuleCalendrier", referencedColumnName="CodeModuleCalendrier")})

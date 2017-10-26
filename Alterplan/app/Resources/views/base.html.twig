@@ -13,27 +13,16 @@ You should have received a copy of the GNU Affero General Public License along w
     <meta charset="UTF-8"/>
     <title>{% block title %}Bienvenue{% endblock %}</title>
     <link href='{{ asset('logo-eni.png') }}' rel="icon">
-    {% block stylesheets %}
-        {% stylesheets
-        'assets/normalize-css/normalize.css'
-        'assets/materialize/dist/css/materialize.css'
-        'css/commun.css'
-        filter='cssrewrite' output='css/compiled/app.css' %}
-        <link rel="stylesheet" href="{{ asset_url }}"/>
-        {% block customCSS %}{% endblock %}
-        {% endstylesheets %}
-    {% endblock %}
+    <link rel="stylesheet" href="{{ asset('assets/normalize-css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/materialize/dist/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/commun.css') }}">
+    {% block customCSS %}{% endblock %}
 
-    {% javascripts
-    'assets/jquery/jquery.js'
-    'assets/materialize/dist/js/materialize.js'
-    'js/commun.js'
-    'js/dragula/3.7.2/dragula.min.js'
-    output='js/compiled/app.js' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-    {% block javascripts %}
-    {% endblock %}
+    <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/materialize/dist/js/materialize.min.js') }}"></script>
+    <script src="{{ asset('js/commun.js') }}"></script>
+    <script src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+    {% block javascripts %}{% endblock %}
 </head>
 
 <body>
