@@ -14,4 +14,4 @@ Alterplan/var/logs/*
 Alterplan/var/sessions/*
 !Alterplan/var/sessions/.gitkeep
 !Alterplan/var/SymfonyRequirements.php
-Alterplan/web/bundles/
+
