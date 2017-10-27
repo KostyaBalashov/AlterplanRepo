@@ -8,7 +8,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
-var Calendrier = function (codeCalendrier, jFormation, jModules,jContraintes) {
+var Calendrier = function (codeCalendrier, jFormation, jModules, jContraintes) {
     this.codeCalendrier = codeCalendrier;
     this.formation = jFormation;
     this.modules = jModules.reduce(function (p1, p2) {
@@ -125,4 +125,59 @@ function saveModulesAPlanifier() {
 
 function closeModaleGestionModules() {
     $("div[data-target='gestion-modules']").modal('close');
+}
+
+
+function saveContraintes() {
+    showLoader();
+    closeModaleGestionContraintes();
+    //plusieurs étapes:
+    //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
+    //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
+    var finalContraintes = [];
+
+    $('#tbl tr').each(function (i, row) {
+        var $row = $(row);
+        var codeContrainte = parseInt(this.id);
+        var inputP1 = $row.find('input[name=val0]')[0];
+        var rowP1 = inputP1.value;
+        var inputP2 = $row.find('input[name=val1]')[0];
+        var rowP2 = null;
+        if (inputP2 != undefined) {
+            rowP2 = inputP2.value;
+        }
+        contraintesManager.contraintes.forEach(function (c) {
+                if (c.codeContrainte === codeContrainte) {
+                    c.P1 = rowP1;
+                    if (rowP2 != null) {
+                        c.P2 = rowP2;
+                    }
+                }
+            }
+        );
+        i++;
+    })
+
+    contraintesManager.addedContraintes.forEach(function (newC) {
+        //pour toutes les nouvelles contraintes on cherche l'équivalent dans la liste complète
+        contraintesManager.contraintes.forEach(function (c) {
+            if (newC === c.codeContrainte) {
+                c.codeContrainte = null;
+                return;
+            }
+        });
+    });
+
+    var data = {
+        'updatedContraintes': contraintesManager.contraintes,
+        'removedContraintes': contraintesManager.removedContraintes
+    };
+    var url = Routing.generate('contraintes_edit', {codeCalendrier: calendrier.codeCalendrier});
+    $.post(url, data);
+    calendrier.contraintes = contraintesManager.contraintes;
+    dismissLoader();
+}
+
+function closeModaleGestionContraintes() {
+    $("div[data-target='contrainte']").modal('close');
 }

@@ -102,7 +102,7 @@ class Contrainte implements \JsonSerializable
     /**
      * @var \AppBundle\Entity\Calendrier
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier", inversedBy="contraintes", cascade={"persist", "remove" })
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendrier", inversedBy="contraintes", cascade={"persist" })
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")
      * })
@@ -332,24 +332,6 @@ class Contrainte implements \JsonSerializable
     public function setTypeP5($typeP5)
     {
         $this->typeP5 = $typeP5;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCodeCalendrier()
-    {
-        return $this->codeCalendrier;
-    }
-
-    /**
-     * @param int $codeCalendrier
-     * @return Contrainte
-     */
-    public function setCodeCalendrier($codeCalendrier)
-    {
-        $this->codeCalendrier = $codeCalendrier;
         return $this;
     }
 

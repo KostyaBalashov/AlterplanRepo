@@ -15,6 +15,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
     this.addedContraintes = [];
     this.removedContraintes = [];
     this.calendrier = calendrier;
+    this.contraintes = [];
     var me = this;
     //endregion
 
@@ -49,14 +50,18 @@ var ContraintesManager = function (calendrier, urlAllTC) {
         // A chaque fois qu'on supprime une contrainte on l'ajoute dans la liste des contraintes à supprimer
         //A chaque fois qu'on ajoute une contrainte on l'ajoute dans la liste des contraintes en plus
 
-        var contraintes = me.calendrier.contraintes;
+        //me.calendrier.contraintes;
+        for (var cle in me.calendrier.contraintes) {
+            var contrainte = calendrier.contraintes[cle]
+            me.contraintes[contrainte.codeContrainte] = contrainte;
+        }
         var typeContraintes = getAllTypeContraintes(urlAllTC);
         var tBody = $('#tableauContraintes');
         var x = 1;
-        for (var key in contraintes) {
+        for (var key in me.contraintes) {
+            contrainte = me.contraintes[key];
             var tr = document.createElement("tr");
-            tr.id = "tr" + x;
-            var contrainte = contraintes[key];
+            tr.id = contrainte.codeContrainte;
             var tdTypeContrainte = document.createElement("td");
             var div_input = document.createElement('div');
             div_input.id = 'div_input';
@@ -74,7 +79,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     var option = document.createElement("option");
                     option.value = typeContraintes.indexOf(typeContrainte);
                     option.setAttribute('data-nb-input', typeContrainte.nbParametres);
-                    option.setAttribute('data-nb-contraintes', contraintes.indexOf(contrainte));
+                    option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(contrainte));
                     option.innerHTML = typeContrainte.libelle;
                     selectList.append(option);
                     if (contrainte) {
@@ -92,11 +97,19 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             ChargementContraintes(contrainte, div_input);
 
 
+            //gestion td avec bouton delete
+            var tdDelete = document.createElement('td')
+            var deleteButton = document.createElement('a');
+            deleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
+            deleteButton.innerHTML = '<i class="material-icons">remove</i>';
+            tdDelete.append(deleteButton);
+
             // on place tous les éléments dans le tbody
             tdTypeContrainte.append(selectList);
             tdData.append(div_input);
             tr.append(tdTypeContrainte);
             tr.append(tdData);
+            tr.append(tdDelete)
             tBody.append(tr);
             x++;
         }
@@ -106,7 +119,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             //ce qu'on veut récupérer, c'est la div input du même tr et la contrainte
             var optionSelected = $("option:selected", this);
             var i = optionSelected.attr('data-nb-contraintes');
-            var selectedContrainte = contraintes[i];
+            var selectedContrainte = me.contraintes[i];
 
             //on doit changer le typeContrainte à celui de maintenant
             selectedContrainte.typeContrainte = typeContraintes[this.value];
@@ -116,18 +129,138 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             //on veut maintenant récupérer la div
             div_input = $this.closest('tr').find('div.div_input')[0];
             ChargementContraintes(selectedContrainte, div_input);
-            /* var test = this;
-             var optionSelected = $("option:selected", this);
-             var i = optionSelected.attr('data-nb-contraintes');
-             var selectedContrainte = contraintes[i];
-             var listdivInput = document.getElementById("div_input");
-             var sameDivInput = this.closest("div", listdivInput);
-             var idtc = optionSelected.attr('data-nb-input');
-             selectedContrainte.typeContrainte = typeContraintes[idtc - 1];
-             selectedContrainte.P1 = null;
-             selectedContrainte.P2 = null;
-             ChargementContraintes(selectedContrainte, sameDivInput);*/
         });
+
+        $('.deleteRow').click(function () {
+            var codeContrainteToRemove = parseInt($(this).closest('tr').attr('id'));
+            me.contraintes.forEach(function (element) {
+                if (element.codeContrainte === codeContrainteToRemove) {
+                    me.removedContraintes[element.codeContrainte] = element.codeContrainte;
+                    delete me.contraintes[codeContrainteToRemove];
+                }
+            });
+            me.addedContraintes.forEach(function (element) {
+                if (element.codeContrainte = codeContrainteToRemove) {
+                    delete me.addedContraintes[codeContrainteToRemove];
+                }
+            });
+            $(this).closest('tr').remove();
+        });
+
+
+        $('.add_another').click(function () {
+            var date = new Date();
+            var newId = 0;
+            for (var kc in me.contraintes) {
+                var c = me.contraintes[kc];
+                if (newId <= c.codeContrainte) {
+                    newId = parseInt(c.codeContrainte) + 1;
+                }
+            }
+
+            var newContrainte = {
+                DateCreation: date,
+                P1: null,
+                P2: null,
+                codeCalendrier: calendrier.codeCalendrier,
+                codeContrainte: newId,
+                typeContrainte: typeContraintes[0]
+            };
+            me.addedContraintes[newContrainte.codeContrainte] = newContrainte.codeContrainte;
+            me.contraintes[newContrainte.codeContrainte] = newContrainte;
+            var newTr = document.createElement("tr");
+            newTr.id = newContrainte.codeContrainte;
+            var newTd = document.createElement("td");
+            var newDiv_input = document.createElement('div');
+            newDiv_input.id = 'div_input';
+            var newSelectList = document.createElement("select");
+            newSelectList.id = "typeContrainte";
+            newSelectList.className = "select typeContrainte";
+            //Récuperation de tous les typeContraintes
+            if (typeContraintes != null) {
+                for (var k in typeContraintes) {
+                    var typeContrainte = typeContraintes[k];
+                    var option = document.createElement("option");
+                    option.value = typeContraintes.indexOf(typeContrainte);
+                    option.setAttribute('data-nb-input', typeContrainte.nbParametres);
+                    option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(newContrainte));
+                    option.innerHTML = typeContrainte.libelle;
+                    newSelectList.append(option);
+                    if (newContrainte) {
+                        if (typeContrainte.codeTypeContrainte === newContrainte.typeContrainte.codeTypeContrainte) {
+                            option.setAttribute('selected', 'true');
+                        }
+                    }
+                }
+            }
+            //gestion du td contenant les champs: au lancement, on lance la fonction
+            var newTdData = document.createElement('td');
+            ChargementContraintes(newContrainte, newDiv_input);
+
+            //gestion td avec bouton delete
+            var newTdDelete = document.createElement('td')
+            var newDeleteButton = document.createElement('a');
+            newDeleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
+            newDeleteButton.innerHTML = '<i class="material-icons">remove</i>';
+            newTdDelete.append(newDeleteButton); //gestion td avec bouton delete
+
+
+            newTd.append(newSelectList);
+            newTdData.append(newDiv_input);
+            newTr.append(newTd);
+            newTr.append(newTdData);
+            newTr.append(newTdDelete);
+            tBody.append(newTr);
+            initDatePicker('#dateDebut', onSetDateDebut);
+            initDatePicker('#dateFin', onSetDateFin);
+
+            var from_picker = getDateDebutPicker();
+            var to_picker = getDateFinPicker();
+            if (from_picker != undefined) {
+                if (from_picker.get('value')) {
+                    to_picker.set('min', from_picker.get('select'))
+                }
+                if (to_picker != undefined) {
+                    if (to_picker.get('value')) {
+                        from_picker.set('max', to_picker.get('select'))
+                    }
+                }
+            }
+            $('select').material_select();
+
+            $('.deleteRow').click(function () {
+                var codeContrainteToRemove = parseInt($(this).closest('tr').attr('id'));
+                me.contraintes.forEach(function (element) {
+                    if (element.codeContrainte === codeContrainteToRemove) {
+                        me.removedContraintes[element.codeContrainte] = element.codeContrainte;
+                        delete me.contraintes[codeContrainteToRemove];
+                    }
+                });
+                me.addedContraintes.forEach(function (element) {
+                    if (element.codeContrainte = codeContrainteToRemove) {
+                        delete me.contraintes[codeContrainteToRemove];
+                    }
+                });
+                $(this).closest('tr').remove();
+            });
+
+        });
+        initDatePicker('#dateDebut', onSetDateDebut);
+        initDatePicker('#dateFin', onSetDateFin);
+
+        var from_picker = getDateDebutPicker();
+        var to_picker = getDateFinPicker();
+        if (from_picker != undefined) {
+            if (from_picker.get('value')) {
+                to_picker.set('min', from_picker.get('select'))
+            }
+            if (to_picker != undefined) {
+                if (to_picker.get('value')) {
+                    from_picker.set('max', to_picker.get('select'))
+                }
+            }
+        }
+
         $('select').material_select();
 
     }
@@ -261,15 +394,17 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     break;
                 //cas 6 1 string Non recouvrement stagiaire
                 case 6:
+                    var div = document.createElement('div');
+                    div.style.width = 'auto';
                     type2 = 'int';
-                    div_input.setAttribute("class", "divContainer");
                     input.type = "text";
                     input.id = "rechercheStagiaire";
                     input.className = "inputContrainte autocomplete";
                     input.placeholder = "Nom du stagiaire";
                     input.autocomplete = "off";
                     input.value = contrainte.P1;
-                    div_input.append(input);
+                    div_input.append(div);
+                    div.append(input);
                     $.ajax({
                             type: "GET",
                             url: Routing.generate('all_Stagiaires', true),
