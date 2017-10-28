@@ -17,6 +17,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
     this.calendrier = calendrier;
     this.contraintes = [];
     var me = this;
+    this.stagiaires = [];
     //endregion
 
     //region récupération des contraintes
@@ -62,6 +63,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             contrainte = me.contraintes[key];
             var tr = document.createElement("tr");
             tr.id = contrainte.codeContrainte;
+            tr.className = "trTable";
             var tdTypeContrainte = document.createElement("td");
             var div_input = document.createElement('div');
             div_input.id = 'div_input';
@@ -112,6 +114,18 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             tr.append(tdDelete)
             tBody.append(tr);
             x++;
+
+            $('select').change(function () {
+
+                var value = $(this).val();
+
+                $(this).siblings('select').children('option').each(function () {
+                    if ($(this).val() === value) {
+                        $(this).attr('disabled', true).siblings().removeAttr('disabled');
+                    }
+                });
+
+            });
         }
         // à chaque changement d'option, on rafraichi la td et on remet les valeurs à vide
         $(document).on('change', '#typeContrainte', function () {
@@ -170,6 +184,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             me.contraintes[newContrainte.codeContrainte] = newContrainte;
             var newTr = document.createElement("tr");
             newTr.id = newContrainte.codeContrainte;
+            newTr.className = "trTable";
             var newTd = document.createElement("td");
             var newDiv_input = document.createElement('div');
             newDiv_input.id = 'div_input';
@@ -262,9 +277,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
         }
 
         $('select').material_select();
-
-    }
-
+    };
 
     function ChargementContraintes(contrainte, div_input) {
 
@@ -281,6 +294,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             input.name = "val" + i;
             input.required = "true";
             var label = document.createElement("Label");
+            label.style.width = 'auto';
             console.log("TYPE:")
             //selon le typecontrainte, on va avoir un input différent
             switch (contrainte.typeContrainte.codeTypeContrainte) {
@@ -295,7 +309,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "dateDebut";
                         label.innerHTML = "Du ";
                         input.className = "datepicker dateDebut inputContrainte";
-                        input.id = "dateDebut"
+                        input.id = "dateDebut";
                         input.value = contrainte.P1;
                     } else {
                         label.htmlFor = "dateFin";
@@ -318,7 +332,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "minVolume";
                         label.innerHTML = "Min ";
                         input.id = "minVolume";
-                        input.className = "inputContrainte";
+                        input.className = "inputContrainte int validate";
                         input.value = contrainte.P1;
                     } else {
                         var min = $("#minVolume").val()
@@ -327,7 +341,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "maxVolume";
                         label.innerHTML = "Max ";
                         input.id = "maxVolume"
-                        input.className = "inputContrainte";
+                        input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
                     div_input.append(label);
@@ -343,7 +357,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "minEcartDebut";
                         label.innerHTML = "Min ";
                         input.id = "minEcartDebut";
-                        input.className = "inputContrainte";
+                        input.className = "inputContrainte int validate";
                         input.value = contrainte.P1;
                     } else {
                         var min = $("#minEcartDebut").val()
@@ -352,7 +366,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "maxEcartDebut";
                         label.innerHTML = "Max ";
                         input.id = "maxEcartDebut";
-                        input.className = "inputContrainte";
+                        input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
                     div_input.append(label);
@@ -369,6 +383,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.innerHTML = "Min ";
                         input.id = "minEcartFin"
                         input.value = contrainte.P1;
+                        input.className = "inputContrainte int validate";
                     } else {
                         var min = $("#minEcartFin").val()
                         var minEcart = typeof min != "undefined" ? min : 0;
@@ -376,7 +391,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.htmlFor = "maxEcartFin";
                         label.innerHTML = "Max ";
                         input.id = "maxEcartFin";
-                        input.className = "inputContrainte";
+                        input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
                     div_input.append(label);
@@ -388,18 +403,20 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     input.type = "number";
                     input.min = "0";
                     input.id = "maxSemaines";
-                    input.className = "inputContrainte";
+                    input.className = "inputContrainte int validate";
+                    input.placeholder = "Nb. de semaines successives max. en formation";
                     input.value = contrainte.P1;
                     div_input.append(input);
                     break;
                 //cas 6 1 string Non recouvrement stagiaire
                 case 6:
+
                     var div = document.createElement('div');
                     div.style.width = 'auto';
                     type2 = 'int';
                     input.type = "text";
                     input.id = "rechercheStagiaire";
-                    input.className = "inputContrainte autocomplete";
+                    input.className = "inputContrainte autocomplete validate";
                     input.placeholder = "Nom du stagiaire";
                     input.autocomplete = "off";
                     input.value = contrainte.P1;
@@ -410,6 +427,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                             url: Routing.generate('all_Stagiaires', true),
                             success: function (response) {
                                 var stagaireArray = response;
+                                me.stagiaires = stagaireArray;
                                 var dataStagiaire = {};
                                 for (var i = 0; i < stagaireArray.length; i++) {
                                     dataStagiaire[stagaireArray[i].nom + ' ' + stagaireArray[i].prenom] = null;
@@ -433,6 +451,23 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     break;
             }
         }
+        $('input.int').on('change', function () {
+            alert('yo');
+            if (this.getAttribute('name') === 'val0') {
+                var input1 = $(this).closest('tr').find('input[name=val1]')[0];
+                input1.setAttribute('min', this.value);
+                if (this.value > input1.value) {
+                    showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                }
+            }
+            else if (this.getAttribute('name') === 'val1') {
+                var input0 = $(this).closest('tr').find('input[name=val0]')[0];
+                input0.setAttribute('max', this.value);
+                if (this.value < input0.value) {
+                    showToast('Le maximum ne peut pas être inferieur au minimum', 'error');
+                }
+            }
+        });
 
     }
 

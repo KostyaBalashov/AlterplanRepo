@@ -130,13 +130,13 @@ function closeModaleGestionModules() {
 
 function saveContraintes() {
     showLoader();
-    closeModaleGestionContraintes();
+
     //plusieurs étapes:
     //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
     //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
-    var finalContraintes = [];
 
-    $('#tbl tr').each(function (i, row) {
+    var invalidInputs = [];
+    $('#tbl tr.trTable').each(function (i, row) {
         var $row = $(row);
         var codeContrainte = parseInt(this.id);
         var inputP1 = $row.find('input[name=val0]')[0];
@@ -145,6 +145,30 @@ function saveContraintes() {
         var rowP2 = null;
         if (inputP2 != undefined) {
             rowP2 = inputP2.value;
+        }
+        if (rowP1 === "") {
+            invalidInputs.push(inputP1);
+        }
+        if (rowP2 != null) {
+            if (rowP2 === "") {
+                invalidInputs.push(inputP2);
+            }
+        }
+        if (rowP2 != null && inputP1.classList.contains('int')) {
+            if (rowP1 > rowP2) {
+                invalidInputs.push(inputP1);
+                invalidInputs.push(inputP2);
+            }
+        }
+
+        if (inputP1.id === 'rechercheStagiaire') {
+            var nomPrenom = rowP1.split(" ");
+            contraintesManager.stagiaires.forEach(function (stagiaire) {
+                if (stagiaire.nom === nomPrenom[0] && stagiaire.prenom === nomPrenom[1]) {
+                    rowP1 = stagiaire.codeStagiaire;
+                }
+            });
+
         }
         contraintesManager.contraintes.forEach(function (c) {
                 if (c.codeContrainte === codeContrainte) {
@@ -156,7 +180,15 @@ function saveContraintes() {
             }
         );
         i++;
-    })
+    });
+    if (invalidInputs.length != 0) {
+        invalidInputs.forEach(function (input) {
+            input.setCustomValidity("champ invalide (champ vide ou valeur erronée)")
+            input.className += ' invalid';
+        });
+        dismissLoader();
+        return;
+    }
 
     contraintesManager.addedContraintes.forEach(function (newC) {
         //pour toutes les nouvelles contraintes on cherche l'équivalent dans la liste complète
@@ -175,6 +207,7 @@ function saveContraintes() {
     var url = Routing.generate('contraintes_edit', {codeCalendrier: calendrier.codeCalendrier});
     $.post(url, data);
     calendrier.contraintes = contraintesManager.contraintes;
+    closeModaleGestionContraintes();
     dismissLoader();
 }
 
