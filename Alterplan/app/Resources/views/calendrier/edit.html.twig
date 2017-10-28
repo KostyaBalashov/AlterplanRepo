@@ -12,13 +12,14 @@ You should have received a copy of the GNU Affero General Public License along w
 {% block title %} Calendrier {% endblock %}
 
 {% block customCSS %}
+    <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}"/>
     <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}"/>
 {% endblock %}
 
 {% block body %}
     <div class="row center blue lighten-1">
         <div class="col s6 offset-s3">
-            <div class="hoverable">
+            <div class="hoverable clickable">
                 <span class="center-align flow-text white-text">{{ calendrier.titre }}</span>
             </div>
             <input class="clickedit white" type="text" style="margin: 7px 0 7px 0"/>
@@ -95,7 +96,6 @@ You should have received a copy of the GNU Affero General Public License along w
                                 </div>
                             </div>
                             <div id="calnendar-body" class="row">
-
                             </div>
                         </div>
                     </div>
@@ -152,6 +152,8 @@ You should have received a copy of the GNU Affero General Public License along w
         </ul>
     </div>
     {% include ':composants/templates:cours.html.twig' %}
+    {% include ':composants/templates:module.html.twig' %}
+    {% include ':composants/templates:entreprise.html.twig' %}
 {% endblock %}
 
 {% block modal %}
@@ -183,81 +185,96 @@ You should have received a copy of the GNU Affero General Public License along w
     {% endembed %}
 {% endblock %}
 
-        {% block customJS %}
-            <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('js/contrainte.js') }}"></script>
-            <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
-            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-            <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-            <script type="text/javascript">
+{% block customJS %}
+    <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier/dragger.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/contrainte.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script type="text/javascript">
+
+        var placementManager = new PlacementManager();
+
+        var jFormation = {
+            'CodeFormation': '{{ calendrier.formation.codeFormation }}',
+            'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
+            'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
+        var contraintes = {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
+        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        var modulesManager = new ModulesManager(calendrier);
+        var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
+
+        $(document).ready(function () {
+            initTitleInput('{{ calendrier.titre }}');
+            refreshModules(calendrier.modules);
+            $('#modules_search').click(function () {
+                renderModal('gestion-modules',
+                    '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
+                    true, undefined, modulesManager.onModaleOpen);
+            });
+
+            $('#editContraintes').click(function () {
+                var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
+                renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
+            });
+
+            var drake = new dragula({
+                isContainer: placementManager.isContainer,
+                moves: placementManager.moves,
+                accepts: placementManager.accepts,
+                revertOnSpill: false,
+                delay: 1000
+            });
+
+            drake.on('over', placementManager.onOver);
+            drake.on('drop', placementManager.onDrop);
+        });
+
+        /*
+         function valider() {
+         showLoader();
+         closeModale();
+
+         for (removedKey in modulesManager.removedModules) {
+         if (calendrier.modules.hasOwnProperty(removedKey)
+         && (removedKey in calendrier.modules)) {
+         delete calendrier.modules[removedKey];
+         }
+         }
+
+         for (addedKey in modulesManager.addedModules) {
+         if (!calendrier.modules.hasOwnProperty(addedKey)) {
+         calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
+         }
+         }
+
+         refreshModules(calendrier.modules);
+         dismissLoader();
+         }
+
+         function validerContraintes() {
+         //plusieurs étapes:
+         //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
+         //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
+         var contraintes = [];
+
+         $('#tbl tr').each(function (i, row) {
+         var $row = $(row);
+         var codeContrainte = row.attr(id);
+         alert(codeContrainte);
+         i++;
 
 
-                var jFormation = {
-                    'CodeFormation': '{{ calendrier.formation.codeFormation }}',
-                    'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
-                    'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
-                var contraintes = {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
-                var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
-                var modulesManager = new ModulesManager(calendrier);
-                var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
+         })
+         calendrier.contraintes = contraintes;
+         }
 
-                $(document).ready(function () {
-                    initTitleInput('{{ calendrier.titre }}');
-                    refreshModules(calendrier.modules);
-                    $('#modules_search').click(function () {
-                        renderModal('gestion-modules',
-                            '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
-                            true, undefined, modulesManager.onModaleOpen);
-                    });
-
-                    $('#editContraintes').click(function () {
-                        var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
-                        renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
-                    });
-                });
-                /*
-                 function valider() {
-                 showLoader();
-                 closeModale();
-
-                 for (removedKey in modulesManager.removedModules) {
-                 if (calendrier.modules.hasOwnProperty(removedKey)
-                 && (removedKey in calendrier.modules)) {
-                 delete calendrier.modules[removedKey];
-                 }
-                 }
-
-                 for (addedKey in modulesManager.addedModules) {
-                 if (!calendrier.modules.hasOwnProperty(addedKey)) {
-                 calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
-                 }
-                 }
-
-                 refreshModules(calendrier.modules);
-                 dismissLoader();
-                 }
-
-                 function validerContraintes() {
-                 //plusieurs étapes:
-                 //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
-                 //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
-                 var contraintes = [];
-
-                 $('#tbl tr').each(function (i, row) {
-                 var $row = $(row);
-                 var codeContrainte = row.attr(id);
-                 alert(codeContrainte);
-                 i++;
-
-
-                 })
-                 calendrier.contraintes = contraintes;
-                 }
-
-                 function closeModale() {
-                 $("div[data-target='gestion-modules']").modal('close');
-                 }
-                 */
-            </script>
-        {% endblock %}
+         function closeModale() {
+         $("div[data-target='gestion-modules']").modal('close');
+         }
+         */
+    </script>
+{% endblock %}

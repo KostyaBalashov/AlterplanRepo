@@ -452,7 +452,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             }
         }
         $('input.int').on('change', function () {
-            alert('yo');
+            // alert('yo');
             if (this.getAttribute('name') === 'val0') {
                 var input1 = $(this).closest('tr').find('input[name=val1]')[0];
                 input1.setAttribute('min', this.value);

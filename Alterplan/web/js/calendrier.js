@@ -31,7 +31,6 @@ function refreshModules(modules) {
             });
 
             var span = $(document.createElement('span'));
-            span.addClass('card-title');
             span.text(modules[cle].libelle);
             div.append(span);
             $container.append(div);
@@ -70,9 +69,15 @@ function initTitleInput(defaultText) {
 
 function selectModule(clickedModule) {
     var $module = $(clickedModule);
+    if ($module.hasClass('module-place')) {
+        $module.parent().toggleClass('module-container');
+    }
     if (!$module.hasClass('selected')) {
         showLoader();
-        $module.addClass('selected').siblings().removeClass('selected');
+        $('.module.selected').removeClass('selected').addClass('clickable');
+        $('.module-place.selected').removeClass('selected').addClass('clickable').parent().toggleClass('module-container');
+
+        $module.removeClass('clickable').addClass('selected');
         var url = "/cours/" + $module.attr('id');
         $.get(url, function (data) {
             renderCours(data);
@@ -84,7 +89,7 @@ function selectModule(clickedModule) {
 
 function renderCours(data) {
     var bodySelector = '#calnendar-body';
-    $(bodySelector).empty();
+    $(bodySelector).find('.tr').not('.no-remove').remove();
     var coursManager = new CoursManager(data);
     for (idCour in coursManager.all) {
         if (coursManager.all.hasOwnProperty(idCour)) {

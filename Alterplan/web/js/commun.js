@@ -90,7 +90,7 @@ function postForm(form, postSubmitCallback) {
     $.post(action, form.serialize()).done(function (data) {
         //si le post réussit
         //appelle de la méthode postSubmit
-        if (postSubmitCallback !== undefined){
+        if (postSubmitCallback !== undefined) {
             postSubmitCallback(data);
         }
     }).fail(function () {
@@ -127,8 +127,8 @@ function initDatePicker(selector, onSetCallBack) {
     });
 }
 
-function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax){
-    if ( event.select ) {
+function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax) {
+    if (event.select) {
         pickerToSet.set(minOrMax, pickerContainingValue.get('select'))
     }
     else if ('clear' in event) {
@@ -137,7 +137,7 @@ function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContaini
 }
 
 function getDateDebutPicker() {
-        var from_$input = $("input[id*='dateDebut']").pickadate();
+    var from_$input = $("input[id*='dateDebut']").pickadate();
     return from_$input.pickadate('picker');
 }
 
