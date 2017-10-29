@@ -189,7 +189,7 @@ class Stagiaire
     /**
      * @var stagiaireParEntreprise
      *
-     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="stagiaire")
+     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="stagiaire", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CodeStagiaire", referencedColumnName="CodeStagiaire")
      * })

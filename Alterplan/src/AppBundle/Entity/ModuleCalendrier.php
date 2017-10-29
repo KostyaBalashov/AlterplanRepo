@@ -46,7 +46,7 @@ class ModuleCalendrier
     /**
      * @var Cours
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cours", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cours", fetch="EAGER")
      * @ORM\JoinColumn(name="IdCours", referencedColumnName="IdCours", nullable=true)
      */
     private $cours;
@@ -54,7 +54,7 @@ class ModuleCalendrier
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Dispense", mappedBy="moduleCalendrier")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Dispense", mappedBy="moduleCalendrier",  fetch="EAGER")
      */
     private $dispenses;
 
@@ -191,7 +191,6 @@ class ModuleCalendrier
         $this->cours = $cours;
         return $this;
     }
-
 
 }
 

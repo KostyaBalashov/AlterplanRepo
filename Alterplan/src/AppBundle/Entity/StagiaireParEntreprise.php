@@ -427,7 +427,7 @@ class StagiaireParEntreprise implements \JsonSerializable
     }
 
     /**
-     * @return stagiaire
+     * @return Entreprise
      */
     public function getEntreprise()
     {

@@ -157,7 +157,7 @@ class Entreprise
     /**
      * @var stagiaireParEntreprise
      *
-     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="entreprise")
+     * @ORM\OneToMany(targetEntity="StagiaireParEntreprise", mappedBy="entreprise", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="codeEntreprise", referencedColumnName="codeEntreprise")
      * })

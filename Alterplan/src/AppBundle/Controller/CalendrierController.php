@@ -19,16 +19,21 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Calendrier;
+use AppBundle\Entity\ModuleCalendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\CalendrierFiltre;
 use AppBundle\Service\ModuleAPlanifierService;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
+use Dompdf\Dompdf;
+use AppBundle\Entity\Cours;
 
 /**
  * Class CalendrierController
@@ -327,5 +332,168 @@ class CalendrierController extends Controller
                 'calendarRegistered' => $calendrierInscrit,
             ));
         }
+    }
+
+    /**
+     * Export pdd
+     *
+     * @param $calendrier calendrier
+     * @Route("/exportPDF/{codeCalendrier}", name="calendar_export")
+     * @Method({"GET", "POST"})
+     */
+    public function exportPDF(Calendrier $calendrier){
+
+        $repoCalendrier = $this->getDoctrine()->getRepository(Calendrier::class);
+        // Récupération du calendrier concerné.
+        $calendrier = $repoCalendrier->find($calendrier);
+
+        // On trie la liste des modulesCalendrier par la date de début du cours
+        $collection = $this->sortModulesCalendrier($calendrier);
+        $calendrier->setModulesCalendrier($collection);
+
+        $tableauCalendrier = $this->getPlanning($calendrier);
+
+        $options = new Options();
+        $options->set('defaultFont', 'Calibri');
+        $options->set('isRemoteEnabled', TRUE);
+        $dompdf = new Dompdf($options);
+
+
+        $html =  $this->renderView('calendrier/calendrierPDF.html.twig', array('calendrier' => $calendrier, 'tableauDonnee'=>$tableauCalendrier));
+        $dompdf->loadHtml($html);
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'landscape');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($calendrier->getTitre().".pdf");
+    }
+
+    public function getPlanning($calendrier) {
+
+        $tableauCalendrier = array();
+
+        // Pour gérer le temps en entreprise on va devoir fair des comparaisons de date.
+        // On prend dans un premier temps le début de la formation
+        $previousModuleDate = $calendrier->getDateDebut();
+
+        // On parcourt la liste des modulesCalendrier;
+        foreach ($calendrier->getModulesCalendrier() as $moduleCalendrier ) {
+            // On prend la date de début du cours
+            $currentModuleDate = $moduleCalendrier->getCours()->getDebut();
+
+            // On calcule le nombre de jour d'intervale qui sépare
+            // la fin d'un module (ou dans un premier cas, la date de début de formation) et la date de début d'un
+            // nouveau module
+            $nbJourDiff = $this->getDiffDate($currentModuleDate, $previousModuleDate);
+
+            // Si le nombre de jour est supérieur à trois c'est que le stagiaire est en entreprise entre ces deux
+            // cours. Sinon c'est qui a 2 semaines de cours à la suite
+            if($nbJourDiff > 3) {
+                //
+                $debutEntreprise = $this->getDateDebutEntreprise($previousModuleDate);
+                $FinEntreprise = $this->getDateFinEntreprise($currentModuleDate);
+                array_push($tableauCalendrier, array(
+                    "entreprise"=> array(
+                        "debut"=> $debutEntreprise->format('d/m/Y'),
+                        "fin"=>$FinEntreprise->format('d/m/Y'),
+                        "libelle"=>"ENTREPRISE")));
+                array_push($tableauCalendrier,array("cours"=>$moduleCalendrier));
+            } else {
+                array_push($tableauCalendrier,array("cours"=> $moduleCalendrier));
+            }
+            $previousModuleDate = $moduleCalendrier->getCours()->getFin();
+        }
+
+        // On regarde s'il y a une periode d'entreprise avant la fin de la formation
+        // $previousModuleDate contient la date de fin du dernier module
+        $nbJourDiff = $this->getDiffDate($calendrier->getDateFin(), $previousModuleDate);
+        if($nbJourDiff > 3) {
+            $debutEntreprise = $this->getDateDebutEntreprise($previousModuleDate);
+            array_push($tableauCalendrier, array(
+                "entreprise"=> array(
+                    "debut"=> $debutEntreprise->format('d/m/Y'),
+                    "fin"=>$calendrier->getDateFin()->format('d/m/Y'),
+                    "libelle"=>"ENTREPRISE")));
+        }
+
+        return $tableauCalendrier;
+    }
+    /**
+     * Fonction permettant de rechercher la date de début en entreprise
+     * @param $date date précédente concerné par la fin d'un module ou le début de la formation
+     * @return DateTime date de début d'entreprise
+     */
+    public function getDateDebutEntreprise($date) {
+        // Récupère le jour de la semaine 1..7
+        $jourSemaine = date('N',  strtotime($date->format('Y-m-d')));
+        $dateDebutEntreprise = $date;
+
+        // Tant que la date de début d'entreprise n'est pas un lundi, on incrémente la date d'une journée
+        while ($jourSemaine != 1 ){
+            $dateString = $dateDebutEntreprise->format('Y-m-d');
+            $dateDebutEntreprise = new DateTime($dateString);
+            $dateDebutEntreprise->modify('+1 day');
+            $jourSemaine = date('N', strtotime($dateDebutEntreprise->format('Y-m-d')));
+        }
+
+        return $dateDebutEntreprise;
+    }
+
+    /**
+     * Fonction permettant de rechercher la date de début en entreprise
+     * @param $date date du prochain module concerné ou date de fin de contrat
+     * @return DateTime date de début d'entreprise
+     */
+    public function getDateFinEntreprise($date) {
+        // Récupère le jour de la semaine 1..7
+        $jourSemaine = date('N',  strtotime($date->format('Y-m-d')));
+        $dateFinEntreprise = $date;
+
+        // Tant que la date de fin d'entreprise n'est pas un vendredi, on décrémente la date d'une journée
+        while ($jourSemaine != 5 ){
+            $dateString = $dateFinEntreprise->format('Y-m-d');
+            $dateFinEntreprise = new DateTime($dateString);
+            $dateFinEntreprise->modify('-1 day');
+            $jourSemaine = date('N', strtotime($dateFinEntreprise->format('Y-m-d')));
+        }
+
+        return $dateFinEntreprise ;
+    }
+
+    /**
+     * Permet de définir le nombre de jour d'intervale entre deux dates
+     * @param $date1 date de fin d'un module
+     * @param $date2 date de début d'un module
+     * @return int nb jours d'intervale
+     */
+    public function getDiffDate($date1, $date2)
+    {
+        if ($date1 > $date2) {
+            $nbJoursTimestamp = $date1->diff($date2);
+        } else {
+            return 0;
+        }
+
+        return $nbJoursTimestamp->format('%a');
+    }
+
+    /**
+     * Permet de trier la liste des modules calendrier par la date de début d'un cours
+     * @param $calendrier calendrier concerné
+     * @return ArrayCollection tableau trié
+     */
+    public function sortModulesCalendrier($calendrier) {
+        $arrayModulesCalendrier = $calendrier->getModulesCalendrier();
+
+        $iterator = $arrayModulesCalendrier->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getCours()->getDebut() < $b->getCours()->getDebut()) ? -1 : 1;
+        });
+        $collection = new ArrayCollection(iterator_to_array($iterator));
+        return $collection;
     }
 }

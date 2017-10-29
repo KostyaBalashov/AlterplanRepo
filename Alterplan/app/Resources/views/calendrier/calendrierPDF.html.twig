@@ -1,0 +1,180 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+<style type="text/css">
+    .titrePDF {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .sousTitrePDF {
+        text-align: center;
+    }
+    table thead{
+        border-color: black;
+        border-width: 1px;
+        background-color: yellow;
+    }
+
+    table, th, td, tr {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        text-align: center;
+    }
+
+    table
+    {
+        margin: auto;
+        margin-top: 20px;
+        width: 85%;
+    }
+    td
+    {
+        text-align :center;
+        padding: 7px;
+    }
+    .heures {
+        background-color: #00ffff;
+    }
+
+    th {
+        font-size: 24px;
+    }
+
+    .debutFormation, .entreprise{
+        width:50%;
+        text-align: left;
+    }
+
+    .finFormation,  .salarie{
+        width:50%;
+        text-align: right;
+    }
+
+    .column {
+        float:left;
+    }
+
+    .nbHeureTotal {
+        text-align: center;
+    }
+
+    .row {
+        display: block;
+        margin: auto;
+        width: 85%;
+    }
+
+    .textBold {
+        font-weight: bold;
+    }
+
+    .libelleModule {
+        text-align: left;
+    }
+
+    .blocTitre{
+        margin:auto;
+        width: 85%;
+        margin-bottom: 20px;
+    }
+    .blocFormation {
+        margin-bottom: 15px;
+    }
+</style>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ asset('css/calendrier.css') }}"/>
+</head>
+<body>
+
+<div class="blocLogo row">
+    <img src="logo-eni.png" width="80" height="80"/>
+</div>
+
+<div class="blocTitre">
+    <div class="titrePDF" >
+        {{ calendrier.formation.libelleLong }}
+    </div>
+    <div class="sousTitrePDF" >
+        Préparation au titre <br>
+        «{{ calendrier.formation.libelleLong }}» <br>
+            Niveau 1
+    </div>
+</div>
+<div class="blocFormation">
+    <div class="row">
+        <div class="column debutFormation textBold" >
+            Date de début (Formation) : {{ calendrier.dateDebut.format('d/m/Y') }}
+        </div>
+
+        <div class="column finFormation textBold" >
+            Date de fin (Formation) : {{ calendrier.dateFin.format('d/m/Y') }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="nbHeureTotal textBold" >
+            Formation en centre : 590 heures
+        </div>
+    </div>
+    <div class="row">
+        <div class="column entreprise textBold" >
+            Entreprise : {{ calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale }}
+        </div>
+        <div class="column salarie textBold" >
+            Salarié : {{ calendrier.stagiaire.nom }} {{ calendrier.stagiaire.prenom }}
+        </div>
+    </div>
+</div>
+<div class="blocCalendrier">
+    <div class="tableau">
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    Début
+                </th>
+                <th>
+                    Fin
+                </th>
+                <th>
+                    Lieu
+                </th>
+                <th>
+                    Programme
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key,value in tableauDonnee %}
+                {% for key,val in value %}
+                    <tr>
+                        {% if(key=="entreprise") %}
+                            <td class="textBold">{{ val["debut"] }}</td>
+                            <td class="textBold">{{ val["fin"] }}</td>
+                            <td colspan="2" class="libelleEntreprise textBold" >{{ val["libelle"] }}</td>
+                        {% else %}
+                            {% for module in value %}
+                                <td class="textBold">{{ module.cours.debut.format('d/m/Y') }}</td>
+                                <td class="textBold">{{ module.cours.fin.format('d/m/Y') }}</td>
+                                <td class="heures textBold">{{ module.cours.dureePrevueEnHeures }} heures </td>
+                                <td class="libelleModule">{{ module.module.libelle }}</td>
+                            {% endfor %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+
