@@ -16,30 +16,9 @@ var ContraintesManager = function (calendrier, urlAllTC) {
     this.removedContraintes = [];
     this.calendrier = calendrier;
     this.contraintes = [];
+    this.typeContraintes = getAllTypeContraintes(urlAllTC);
     var me = this;
     this.stagiaires = [];
-    //endregion
-
-    //region récupération des contraintes
-    function getAllTypeContraintes(url) {
-        var result = null;
-        $.ajax({
-                type: "GET",
-                url: url,
-                async: false,
-                success: function (response) {
-                    result = response;
-                }
-                ,
-                error: function () {
-                    console.log('an error occured');
-                    console.log(arguments);//get debugging!
-                }
-            }
-        );
-        return result;
-    }
-
     //endregion
 
 
@@ -56,7 +35,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             var contrainte = calendrier.contraintes[cle]
             me.contraintes[contrainte.codeContrainte] = contrainte;
         }
-        var typeContraintes = getAllTypeContraintes(urlAllTC);
+        var typeContraintes = me.typeContraintes;
         var tBody = $('#tableauContraintes');
         var x = 1;
         for (var key in me.contraintes) {
@@ -91,6 +70,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     }
                 }
             }
+            refreshAllSelect();
             // endregion
 
             //gestion du td contenant les champs: au lancement, on lance la fonction
@@ -124,7 +104,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         $(this).attr('disabled', true).siblings().removeAttr('disabled');
                     }
                 });
-
+                refreshAllSelect();
             });
         }
         // à chaque changement d'option, on rafraichi la td et on remet les valeurs à vide
@@ -159,6 +139,10 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 }
             });
             $(this).closest('tr').remove();
+            refreshAllSelect();
+            if ($('select.typeContrainte').length === 6) {
+                $('.add_another').attr('disabled', 'disabled');
+            }
         });
 
 
@@ -171,15 +155,15 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     newId = parseInt(c.codeContrainte) + 1;
                 }
             }
-
             var newContrainte = {
-                DateCreation: date,
-                P1: null,
-                P2: null,
-                codeCalendrier: calendrier.codeCalendrier,
-                codeContrainte: newId,
-                typeContrainte: typeContraintes[0]
-            };
+                    DateCreation: date,
+                    P1: null,
+                    P2: null,
+                    codeCalendrier: calendrier.codeCalendrier,
+                    codeContrainte: newId,
+                    typeContrainte: checkForFreeTC(me.typeContraintes)
+                }
+            ;
             me.addedContraintes[newContrainte.codeContrainte] = newContrainte.codeContrainte;
             me.contraintes[newContrainte.codeContrainte] = newContrainte;
             var newTr = document.createElement("tr");
@@ -208,6 +192,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     }
                 }
             }
+
             //gestion du td contenant les champs: au lancement, on lance la fonction
             var newTdData = document.createElement('td');
             ChargementContraintes(newContrainte, newDiv_input);
@@ -257,8 +242,25 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     }
                 });
                 $(this).closest('tr').remove();
+                refreshAllSelect();
             });
 
+            $('select').change(function () {
+
+                var value = $(this).val();
+
+                $(this).siblings('select').children('option').each(function () {
+                    if ($(this).val() === value) {
+                        $(this).attr('disabled', true).siblings().removeAttr('disabled');
+                    }
+                });
+                refreshAllSelect();
+            });
+
+            if ($('select.typeContrainte').length === 6) {
+                $('.add_another').attr('disabled', 'disabled');
+            }
+            refreshAllSelect();
         });
         initDatePicker('#dateDebut', onSetDateDebut);
         initDatePicker('#dateFin', onSetDateFin);
@@ -295,7 +297,6 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             input.required = "true";
             var label = document.createElement("Label");
             label.style.width = 'auto';
-            console.log("TYPE:")
             //selon le typecontrainte, on va avoir un input différent
             switch (contrainte.typeContrainte.codeTypeContrainte) {
 
@@ -452,12 +453,13 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             }
         }
         $('input.int').on('change', function () {
-            // alert('yo');
             if (this.getAttribute('name') === 'val0') {
                 var input1 = $(this).closest('tr').find('input[name=val1]')[0];
-                input1.setAttribute('min', this.value);
-                if (this.value > input1.value) {
-                    showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                if (input1 != undefined) {
+                    input1.setAttribute('min', this.value);
+                    if (this.value > input1.value) {
+                        showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                    }
                 }
             }
             else if (this.getAttribute('name') === 'val1') {
@@ -467,8 +469,72 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     showToast('Le maximum ne peut pas être inferieur au minimum', 'error');
                 }
             }
+            refreshAllSelect();
         });
 
     }
+};
 
+//region récupération des contraintes
+function getAllTypeContraintes(url) {
+    var result = null;
+    $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            success: function (response) {
+                result = response;
+            }
+            ,
+            error: function () {
+                console.log('an error occured');
+                console.log(arguments);//get debugging!
+            }
+        }
+    );
+    return result;
+}
+
+function refreshAllSelect() {
+    $('select.typeContrainte').each(function () {
+        for (i = 0; i < this.length; i++) {
+            this.options[i].disabled = false;
+        }
+    });
+
+    $('select.typeContrainte').each(function () {
+        for (i = 0; i < this.length; i++) {
+            if (this.selectedIndex === i) {
+                var thisSelect = this;
+                $('select.typeContrainte').each(function () {
+                    if (this != thisSelect) {
+                        for (j = 0; j < this.length; j++) {
+                            if (j === i) {
+                                this.options[i].disabled = true;
+                                $(this.options[i]).attr('disabled', 'disabled');
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    });
+    $('select').material_select();
+}
+
+function checkForFreeTC(typeContraintes) {
+    for (i = 0; i < typeContraintes.length; i++) {
+        {
+            var is_set = false;
+            $('select.typeContrainte').each(function () {
+                if (this.selectedIndex === i) {
+                    is_set = true;
+                    return;
+                }
+            });
+            if (is_set === false)
+                return typeContraintes[i];
+        }
+    }
+    return typeContraintes[0]
 }

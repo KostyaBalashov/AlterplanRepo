@@ -188,6 +188,10 @@ function saveContraintes() {
     });
     if (invalidInputs.length != 0) {
         invalidInputs.forEach(function (input) {
+            if (input.type.includes('hidden')) {
+                var inputPicker = $(this).parent().find('input');
+                inputPicker.className += 'invalid'
+            }
             input.setCustomValidity("champ invalide (champ vide ou valeur erronée)")
             input.className += ' invalid';
         });
@@ -219,3 +223,4 @@ function saveContraintes() {
 function closeModaleGestionContraintes() {
     $("div[data-target='contrainte']").modal('close');
 }
+
