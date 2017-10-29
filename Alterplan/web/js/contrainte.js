@@ -140,9 +140,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
             });
             $(this).closest('tr').remove();
             refreshAllSelect();
-            if ($('select.typeContrainte').length === 6) {
-                $('.add_another').attr('disabled', 'disabled');
-            }
+            $('.add_another').attr('disabled', false);
         });
 
 
@@ -243,6 +241,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 });
                 $(this).closest('tr').remove();
                 refreshAllSelect();
+                $('.add_another').attr('disabled', false);
             });
 
             $('select').change(function () {
