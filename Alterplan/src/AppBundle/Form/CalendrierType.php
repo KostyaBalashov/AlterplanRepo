@@ -29,6 +29,7 @@ class CalendrierType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('titre', TextType::class, array(
+            'required' => false,
             'label' => 'Titre',
             'label_attr' => array(
                 'class' => 'col s2'
@@ -43,16 +44,18 @@ class CalendrierType extends AbstractType
             ))
             ->add('dateDebut', TextType::class, array(
                 "attr" => array(
-                    "class" => "datepicker",
+                    "class" => "datepicker dateDebut",
                 ),
+                'label' => 'Date de début du contrat',
                 'label_attr' => array(
                     'class' => 'col s2'
                 )
             ))
             ->add('dateFin', TextType::class, array(
                 "attr" => array(
-                    "class" => "datepicker",
+                    "class" => "datepicker dateFin",
                 ),
+                'label' => 'Date de fin du contrat',
                 'label_attr' => array(
                     'class' => 'col s2'
                 )

@@ -64,4 +64,32 @@ You should have received a copy of the GNU Affero General Public License along w
             from_picker.set('max', to_picker.get('select'))
         }
     });
+
+    function checkDate() {
+        if ($('.dateDebut').val() == '') {
+            $('.dateDebut').addClass('invalid')
+        } else {
+            $('.dateDebut').removeClass('invalid')
+        }
+        if ($('.dateFin').val() == '') {
+            $('.dateFin').addClass('invalid')
+        } else {
+            $('.dateFin').removeClass('invalid')
+        }
+    }
+
+    $('form').submit(function() {
+        checkDate();
+        if ($('.dateDebut').val() == '' || $('.dateFin').val()== ''  ) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+
+    $('#buildDate').change(function() {
+        checkDate();
+    });
+
+
 </script>

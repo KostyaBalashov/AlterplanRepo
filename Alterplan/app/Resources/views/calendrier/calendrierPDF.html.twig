@@ -121,12 +121,22 @@ You should have received a copy of the GNU Affero General Public License along w
     </div>
     <div class="row">
         <div class="nbHeureTotal textBold" >
-            Formation en centre : 590 heures
+            Formation en centre :
+            {% if(calendrier.dureeEnHeures != null) %}
+                {{ calendrier.dureeEnHeures }} heures
+            {% endif %}
         </div>
     </div>
     <div class="row">
         <div class="column entreprise textBold" >
-            Entreprise : {{ calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale }}
+            Entreprise :
+            {% if(calendrier.stagiaire != null
+                and calendrier.stagiaire.stagiaireParEntreprise != null
+                and calendrier.stagiaire.stagiaireParEntreprise|length  > 0)
+                and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise != null
+                and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale != null %}
+                {{ calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale }}
+            {% endif %}
         </div>
         <div class="column salarie textBold" >
             Salarié : {{ calendrier.stagiaire.nom }} {{ calendrier.stagiaire.prenom }}
