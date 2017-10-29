@@ -164,7 +164,11 @@ You should have received a copy of the GNU Affero General Public License along w
                             {% for module in value %}
                                 <td class="textBold">{{ module.cours.debut.format('d/m/Y') }}</td>
                                 <td class="textBold">{{ module.cours.fin.format('d/m/Y') }}</td>
-                                <td class="heures textBold">{{ module.cours.dureePrevueEnHeures }} heures </td>
+                                <td class="heures textBold">
+                                    {% if(module.cours.lieu!=null) %}
+                                        ENI ({{ module.cours.lieu.libelle }}) <br>
+                                    {% endif %}
+                                    {{ module.cours.dureePrevueEnHeures }} heures </td>
                                 <td class="libelleModule">{{ module.module.libelle }}</td>
                             {% endfor %}
                         {% endif %}
