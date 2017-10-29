@@ -16,6 +16,16 @@ var Calendrier = function (codeCalendrier, jFormation, jModules, jContraintes) {
         return p1;
     }, []);
     this.contraintes = jContraintes;
+
+    this.addModule = function (jModule) {
+        this.modules[jModule.idModule] = jModule;
+    };
+
+    this.removeModule = function (idModule) {
+        if (this.modules.hasOwnProperty(idModule)) {
+            delete this.modules[idModule];
+        }
+    };
 };
 
 function refreshModules(modules) {
@@ -25,6 +35,7 @@ function refreshModules(modules) {
         if (modules.hasOwnProperty(cle)) {
             var div = $(document.createElement('div'));
             div.attr('id', cle);
+            div.data('module', modules[cle]);
             div.addClass('flow-text card-panel module clickable');
             div.click(function () {
                 selectModule($(this));
@@ -69,16 +80,21 @@ function initTitleInput(defaultText) {
 
 function selectModule(clickedModule) {
     var $module = $(clickedModule);
-    if ($module.hasClass('module-place')) {
-        $module.parent().toggleClass('module-container');
-    }
     if (!$module.hasClass('selected')) {
         showLoader();
+        if ($module.hasClass('module-place')) {
+            $module.parent().toggleClass('module-container');
+        }
+
         $('.module.selected').removeClass('selected').addClass('clickable');
         $('.module-place.selected').removeClass('selected').addClass('clickable').parent().toggleClass('module-container');
 
         $module.removeClass('clickable').addClass('selected');
-        var url = "/cours/" + $module.attr('id');
+        var url = Routing.generate('cours_search', {
+            idModule: $module.attr('id'),
+            codeCalendrier: calendrier.codeCalendrier
+        });
+
         $.get(url, function (data) {
             renderCours(data);
         }).always(function () {
@@ -121,7 +137,7 @@ function saveModulesAPlanifier() {
     }
 
     var data = {'addedModules': added, 'removedModules': removed};
-    var url = "/calendriers/edit/" + calendrier.codeCalendrier;
+    var url = Routing.generate('calendrier_edit', {codeCalendrier: calendrier.codeCalendrier});
     $.post(url, data);
 
     refreshModules(calendrier.modules);

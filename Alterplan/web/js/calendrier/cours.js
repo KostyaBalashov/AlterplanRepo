@@ -35,7 +35,11 @@ var CoursManager = function (jCours) {
         setProgramme(courTemplate, jCour);
         setPromotion(courTemplate, jCour);
 
-        $body.append(courTemplate.clone());
+        var clone = courTemplate.clone();
+        clone.removeClass('no-remove');
+        clone.data('cours', jCour);
+
+        $body.append(clone);
     };
 
     var setDate = function ($template, jCour) {

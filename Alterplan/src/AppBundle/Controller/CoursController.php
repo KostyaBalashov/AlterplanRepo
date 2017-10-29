@@ -18,6 +18,7 @@ You should have received a copy of the GNU Affero General Public License along w
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Module;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -35,12 +36,13 @@ class CoursController extends Controller
 {
     /**
      * @param Module $module
-     * @Route("/{idModule}")
+     * @Route("/{idModule}/{codeCalendrier}", options={"expose"=true}, name="cours_search")
      * @Method("GET")
      */
-    function searchAction(Module $module){
+    function searchAction(Module $module, Calendrier $calendrier)
+    {
         $repo = $this->getDoctrine()->getRepository(Cours::class);
-        $cours = $repo->findBy(array('module' => $module));
+        $cours = $repo->search($module, $calendrier);
         return new JsonResponse($cours);
     }
 }

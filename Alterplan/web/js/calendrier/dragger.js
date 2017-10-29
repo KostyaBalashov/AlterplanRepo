@@ -9,12 +9,16 @@
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var PlacementManager = function () {
+var PlacementManager = function (calendrier) {
 
     var oldModuleClasses = 'flow-text card-panel module';
     var newModuleClasses = 'module-place center valign-wrapper hoverable bordered';
     var spanClasses = 'center-align col s12';
     var containerClasse = 'valign-wrapper';
+
+    var me = this;
+    this.calendar = calendrier;
+    this.modulesPlaces = [];
 
     this.isContainer = function (el) {
         return ($(el).attr('id') === 'modules-planifiables-container') || $(el).hasClass('module-container');
@@ -49,22 +53,40 @@ var PlacementManager = function () {
     this.onDrop = function (el, target, source, sibling) {
         if (target !== source) {
             if ($(target).hasClass('module-container')) {
-                transformerContainer(target);
+                moduleDroped(el, target);
+            } else {
+                me.calendar.addModule($(el).data('module'));
             }
 
             if ($(source).hasClass('module-container')) {
                 transformerContainer(source);
+                delete me.modulesPlaces[$(source).parents('.tr').data('cours').idCours];
             }
         }
     };
 
     var transformerContainer = function (container) {
         //TODO prendre en charge la bonne coloration
-        // $(container).toggleClass('module-container');
         $(container).parents('.tr').toggleClass('no-remove');
         $(container).parents('.tr').find('.indicateur').toggleClass('amber lighten-4');
         $(container).parent().toggleClass('cours');
         $(container).parent().toggleClass('module-planifie');
+    };
+
+    var moduleDroped = function (module, container) {
+        transformerContainer(container);
+        me.calendar.removeModule(parseInt(module.id));
+        var cours = $(container).parents('.tr').data('cours');
+        var placedElement = {
+            'dateDebut': cours.dateDebut,
+            'dateFin': cours.dateFin,
+            'ligne': $(container).parents('.tr')
+        };
+        me.modulesPlaces[cours.idCours] = placedElement;
+
+        $('.tr').not('.no-remove').remove();
+        $(module).removeClass('selected').addClass('clickable');
+        $(module).parent().removeClass('module-container');
     };
 };
 
