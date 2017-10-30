@@ -78,7 +78,7 @@ You should have received a copy of the GNU Affero General Public License along w
                     <div id="calendar" class="row">
                         <div class="col s11">
                             <div id="calandar-hearder" class="row valign-wrapper bordered">
-                                <div class="tr valign-wrapper">
+                                <div class="tr valign-wrapper no-remove">
                                     <div class="indicateur">
 
                                     </div>
@@ -138,7 +138,7 @@ You should have received a copy of the GNU Affero General Public License along w
                    data-position="left"
                    data-delay="50"
                    data-tooltip="Exporter"
-                   href="{{ path('calendar_export', {'codeCalendrier': calendrier.codeCalendrier})}}">
+                   href="{{ path('calendar_export', {'codeCalendrier': calendrier.codeCalendrier}) }}">
                     <i class="material-icons">file_download</i>
                 </a>
             </li>
@@ -200,8 +200,14 @@ You should have received a copy of the GNU Affero General Public License along w
             'CodeFormation': '{{ calendrier.formation.codeFormation }}',
             'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
             'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
+
+        var periodeCalendrier = {
+            'debut': {{ calendrier.dateDebut|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
+            'fin': {{ calendrier.dateFin|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+        };
+
         var contraintes = {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
-        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, periodeCalendrier);
         var modulesManager = new ModulesManager(calendrier);
         var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
         var placementManager = new PlacementManager(calendrier);

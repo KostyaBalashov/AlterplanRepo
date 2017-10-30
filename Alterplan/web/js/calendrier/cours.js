@@ -39,7 +39,25 @@ var CoursManager = function (jCours) {
         clone.removeClass('no-remove');
         clone.data('cours', jCour);
 
-        $body.append(clone);
+        var added = false;
+        $('.tr-module').each(function (index, item) {
+            if ($(item).data('cours').idCours !== jCour.idCours) {
+                var dateFin = new Date(jCour.dateFin.date);
+                var dateDebut = new Date($(item).data('cours').dateDebut.date);
+                if (dateFin < dateDebut) {
+                    clone.insertBefore(item);
+                    added = true;
+                    return false;
+                }
+            } else {
+                added = true;
+                return false;
+            }
+        });
+
+        if (!added) {
+            $body.append(clone);
+        }
     };
 
     var setDate = function ($template, jCour) {

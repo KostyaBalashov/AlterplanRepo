@@ -66,8 +66,11 @@ var PlacementManager = function (calendrier) {
     };
 
     var transformerContainer = function (container) {
-        //TODO prendre en charge la bonne coloration
         $(container).parents('.tr').toggleClass('no-remove');
+        $(container).parents('.tr').toggleClass('tr-cours');
+        $(container).parents('.tr').toggleClass('tr-module');
+
+        //TODO prendre en charge la bonne coloration
         $(container).parents('.tr').find('.indicateur').toggleClass('amber lighten-4');
         $(container).parent().toggleClass('cours');
         $(container).parent().toggleClass('module-planifie');
@@ -76,17 +79,69 @@ var PlacementManager = function (calendrier) {
     var moduleDroped = function (module, container) {
         transformerContainer(container);
         me.calendar.removeModule(parseInt(module.id));
+
         var cours = $(container).parents('.tr').data('cours');
-        var placedElement = {
+
+        me.modulesPlaces[cours.idCours] = {
             'dateDebut': cours.dateDebut,
             'dateFin': cours.dateFin,
             'ligne': $(container).parents('.tr')
         };
-        me.modulesPlaces[cours.idCours] = placedElement;
 
-        $('.tr').not('.no-remove').remove();
+        $('.tr-cours').not('.no-remove').remove();
         $(module).removeClass('selected').addClass('clickable');
         $(module).parent().removeClass('module-container');
+
+        insertEntreprise($(container).parents('.tr'));
+    };
+
+    var insertEntreprise = function (ligneModule) {
+        function pad(s) {
+            return (s < 10) ? '0' + s : s;
+        }
+
+        function getEntreprise(periode, semaines) {
+            var entrepriseTemplate = $('#entreprise-template').children();
+            entrepriseTemplate.find("span.date").text(periode);
+            entrepriseTemplate.find("span.semaines").text(semaines);
+            return entrepriseTemplate.clone().removeClass('no-remove');
+        }
+
+        $('.tr-module').each(function (index, item) {
+            var dateDebut = null;
+            var dateFin = null;
+            var strDateDebut;
+            var strDateFin;
+            var semaines;
+
+            var prev = $(item).prev();
+            if (prev.length > 0) {
+                dateDebut = new Date($(prev).data('cours').dateFin.date);
+                dateFin = new Date($(item).data('cours').dateDebut.date);
+            } else {
+                dateDebut = new Date(me.calendar.periode.debut.date);
+                dateFin = new Date($(item).data('cours').dateDebut.date);
+            }
+
+            strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
+            strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
+            semaines = Math.round((dateFin - dateDebut) / 604800000);
+            if (semaines > 0) {
+                $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertBefore(item);
+            }
+
+            var next = $(item).next();
+            if (next.length === 0) {
+                dateDebut = new Date($(item).data('cours').dateFin.date);
+                dateFin = new Date(me.calendar.periode.fin.date);
+                strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
+                strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
+                semaines = Math.round((dateFin - dateDebut) / 604800000);
+                if (semaines > 0) {
+                    $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertAfter(item);
+                }
+            }
+        });
     };
 };
 
