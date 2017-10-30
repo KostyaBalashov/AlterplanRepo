@@ -165,7 +165,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 for (var kc in me.contraintes) {
                     var c = me.contraintes[kc];
                     if (newId <= c.codeContrainte) {
-                        newId = parseInt(c.codeContrainte) + 1;
+                        newId = parseInt(kc) + 1;
                     }
                 }
                 var newContrainte = {
