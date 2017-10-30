@@ -121,7 +121,14 @@ class CalendrierController extends Controller
                     $calendrier->addModuleAPlacer($module);
                 }
             }
-
+            $today = date("d/m/Y");
+            if($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
+                $newTitre = $today."-"
+                    .$calendrier->getFormation()->getLibelleCourt()."-"
+                    .$calendrier->getStagiaire()->getNom()." "
+                    .$calendrier->getStagiaire()->getPrenom();
+                $calendrier->setTitre($newTitre);
+            }
             $em = $this->getDoctrine()->getManager();
             $em->persist($calendrier);
             $em->flush();

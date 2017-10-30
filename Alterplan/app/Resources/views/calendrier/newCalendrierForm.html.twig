@@ -87,7 +87,11 @@ You should have received a copy of the GNU Affero General Public License along w
         }
     });
 
-    $('#buildDate').change(function() {
+    $('.dateDebut').change(function() {
+        checkDate();
+    });
+
+    $('.dateFin').change(function() {
         checkDate();
     });
 
