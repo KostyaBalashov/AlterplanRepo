@@ -196,18 +196,7 @@ You should have received a copy of the GNU Affero General Public License along w
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <script type="text/javascript">
 
-        var jFormation = {
-            'CodeFormation': '{{ calendrier.formation.codeFormation }}',
-            'Libelle': '{{ calendrier.formation.libelleLong }} ({{ calendrier.formation.libelleCourt }})',
-            'Lieu': {% if calendrier.formation.lieu %}{{ calendrier.formation.lieu.libelle }}{% else %}'-'{% endif %}};
-
-        var periodeCalendrier = {
-            'debut': {{ calendrier.dateDebut|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},
-            'fin': {{ calendrier.dateFin|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
-        };
-
-        var contraintes = {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
-        var calendrier = new Calendrier({{ calendrier.codeCalendrier }}, jFormation, {{ calendrier.modulesAPlanifier.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, {{ calendrier.contraintes.toArray|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}, periodeCalendrier);
+        var calendrier = new Calendrier({{ calendrier|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
         var modulesManager = new ModulesManager(calendrier);
         var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
         var placementManager = new PlacementManager(calendrier);
@@ -237,49 +226,5 @@ You should have received a copy of the GNU Affero General Public License along w
             drake.on('over', placementManager.onOver);
             drake.on('drop', placementManager.onDrop);
         });
-
-        /*
-         function valider() {
-         showLoader();
-         closeModale();
-
-         for (removedKey in modulesManager.removedModules) {
-         if (calendrier.modules.hasOwnProperty(removedKey)
-         && (removedKey in calendrier.modules)) {
-         delete calendrier.modules[removedKey];
-         }
-         }
-
-         for (addedKey in modulesManager.addedModules) {
-         if (!calendrier.modules.hasOwnProperty(addedKey)) {
-         calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
-         }
-         }
-
-         refreshModules(calendrier.modules);
-         dismissLoader();
-         }
-
-         function validerContraintes() {
-         //plusieurs étapes:
-         //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
-         //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
-         var contraintes = [];
-
-         $('#tbl tr').each(function (i, row) {
-         var $row = $(row);
-         var codeContrainte = row.attr(id);
-         alert(codeContrainte);
-         i++;
-
-
-         })
-         calendrier.contraintes = contraintes;
-         }
-
-         function closeModale() {
-         $("div[data-target='gestion-modules']").modal('close');
-         }
-         */
     </script>
 {% endblock %}

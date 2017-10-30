@@ -71,6 +71,6 @@ div.fixed-action-btn > a.btn-large:hover {
     border-right-style: solid;
 }
 
-.selected:hover {
+.module-place.selected:hover, .module.selected:hover {
     cursor: move;
 }

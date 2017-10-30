@@ -104,6 +104,8 @@ class Module implements \JsonSerializable
         $result = array();
         $result['idModule'] = $this->idModule;
         $result['libelle'] = $this->libelle;
+        $result['nbHeures'] = $this->dureeEnHeures;
+        $result['nbSemaines'] = $this->dureeEnSemaines;
         if ($this->getFormation() != null) {
             $result['formation'] = ['CodeFormation' => $this->getFormation()->getCodeFormation(),
                 'Libelle' => $this->getFormation()->getLibelleLong() . ' (' . $this->getFormation()->getLibelleCourt() . ')',

@@ -8,15 +8,16 @@
  *
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
-var Calendrier = function (codeCalendrier, jFormation, jModules, jContraintes, jPeriode) {
-    this.codeCalendrier = codeCalendrier;
-    this.periode = jPeriode;
-    this.formation = jFormation;
-    this.modules = jModules.reduce(function (p1, p2) {
+var Calendrier = function (jCalendrier) {
+    var parsedPeriode = JSON.parse(jCalendrier.periode);
+    this.codeCalendrier = jCalendrier.codeCalendrier;
+    this.periode = {'debut': JSON.parse(parsedPeriode.debut), 'fin': JSON.parse(parsedPeriode.fin)};
+    this.formation = JSON.parse(jCalendrier.formation);
+    this.modules = JSON.parse(jCalendrier.modulesAPlanifier).reduce(function (p1, p2) {
         p1[p2.idModule] = p2;
         return p1;
     }, []);
-    this.contraintes = jContraintes;
+    this.contraintes = JSON.parse(jCalendrier.contraintes);
 
     this.addModule = function (jModule) {
         this.modules[jModule.idModule] = jModule;
@@ -34,20 +35,24 @@ function refreshModules(modules) {
     $container.empty();
     for (cle in modules) {
         if (modules.hasOwnProperty(cle)) {
-            var div = $(document.createElement('div'));
-            div.attr('id', cle);
-            div.data('module', modules[cle]);
-            div.addClass('flow-text card-panel module clickable');
-            div.click(function () {
-                selectModule($(this));
-            });
-
-            var span = $(document.createElement('span'));
-            span.text(modules[cle].libelle);
-            div.append(span);
-            $container.append(div);
+            $container.append(getModuleRendering(modules[cle]));
         }
     }
+}
+
+function getModuleRendering(jModule) {
+    var div = $(document.createElement('div'));
+    div.data('module', jModule);
+    div.addClass('flow-text card-panel module clickable');
+    div.click(function () {
+        selectModule($(this));
+    });
+
+    var span = $(document.createElement('span'));
+    span.text(jModule.libelle);
+    div.append(span);
+
+    return div;
 }
 
 function endEdit(e, defaultText) {

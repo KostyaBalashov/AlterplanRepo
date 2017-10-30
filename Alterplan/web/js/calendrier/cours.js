@@ -83,7 +83,7 @@ var CoursManager = function (jCours) {
     };
 
     var setHeures = function ($template, jCour) {
-        $template.find("span.lieu").text(jCour.nbHeures + ' H');
+        $template.find("span.heures").text(jCour.nbHeures + ' H');
     };
 
     var setPromotion = function ($template, jCour) {

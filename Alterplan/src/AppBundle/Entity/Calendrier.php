@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Calendrier")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CalendrierRepository")
  */
-class Calendrier
+class Calendrier implements \JsonSerializable
 {
     /**
      * @var integer
@@ -129,6 +129,30 @@ class Calendrier
         $this->modulesCalendrier = new ArrayCollection();
         $this->modulesAPlanifier = new ArrayCollection();
         $this->modulesCalendrierAPlacer = new ArrayCollection();
+    }
+
+    public function jsonSerialize()
+    {
+        $result = [];
+        $result['codeCalendrier'] = $this->codeCalendrier;
+
+        $result['formation'] = json_encode([
+                'CodeFormation' => $this->formation->getCodeFormation(),
+                'Libelle' => $this->formation->getLibelleLong() . ' (' . $this->formation->getLibelleCourt() . ' )',
+                'Lieu' => $this->formation->getLieu() ? $this->formation->getLieu()->getLibelle() : ' - ']
+            , JSON_FORCE_OBJECT);
+
+        $result['periode'] = json_encode([
+            'debut' => json_encode($this->dateDebut),
+            'fin' => json_encode($this->dateFin)
+        ], JSON_FORCE_OBJECT);
+
+        $result['contraintes'] = json_encode($this->contraintes->toArray());
+        $result['modulesAPlanifier'] = json_encode($this->modulesAPlanifier->toArray());
+        $result['modulesCalendrier'] = json_encode($this->modulesCalendrier->toArray());
+        $result['modulesCalendrierAPlanifier'] = json_encode($this->modulesCalendrierAPlacer->toArray());
+
+        return $result;
     }
 
     /**

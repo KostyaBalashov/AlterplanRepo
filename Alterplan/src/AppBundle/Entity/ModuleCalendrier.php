@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="ModuleCalendrier")
  * @ORM\Entity
  */
-class ModuleCalendrier
+class ModuleCalendrier implements \JsonSerializable
 {
     /**
      * @var integer
@@ -80,6 +80,20 @@ class ModuleCalendrier
                 $result = $result - ($interval->days + 1);
             }
         }
+
+        return $result;
+    }
+
+    public function jsonSerialize()
+    {
+        $result = [];
+
+        $result['codeModuleCalendrier'] = $this->codeModuleCalendrier;
+        $result['codeCalendrier'] = $this->calendrier->getCodeCalendrier();
+        $result['module'] = $this->module->jsonSerialize();
+        $result['cours'] = $this->cours->jsonSerialize();
+        $result['nbHeures'] = $this->getNombreHeuresReel();
+        $result['dispenses'] = json_encode($this->dispenses->toArray());
 
         return $result;
     }

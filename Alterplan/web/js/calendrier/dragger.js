@@ -18,7 +18,6 @@ var PlacementManager = function (calendrier) {
 
     var me = this;
     this.calendar = calendrier;
-    this.modulesPlaces = [];
 
     this.isContainer = function (el) {
         return ($(el).attr('id') === 'modules-planifiables-container') || $(el).hasClass('module-container');
@@ -80,22 +79,14 @@ var PlacementManager = function (calendrier) {
         transformerContainer(container);
         me.calendar.removeModule(parseInt(module.id));
 
-        var cours = $(container).parents('.tr').data('cours');
-
-        me.modulesPlaces[cours.idCours] = {
-            'dateDebut': cours.dateDebut,
-            'dateFin': cours.dateFin,
-            'ligne': $(container).parents('.tr')
-        };
-
         $('.tr-cours').not('.no-remove').remove();
         $(module).removeClass('selected').addClass('clickable');
         $(module).parent().removeClass('module-container');
 
-        insertEntreprise($(container).parents('.tr'));
+        insertEntreprise();
     };
 
-    var insertEntreprise = function (ligneModule) {
+    var insertEntreprise = function () {
         function pad(s) {
             return (s < 10) ? '0' + s : s;
         }

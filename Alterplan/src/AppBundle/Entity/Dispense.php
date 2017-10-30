@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Dispense")
  * @ORM\Entity
  */
-class Dispense
+class Dispense implements \JsonSerializable
 {
     /**
      * @var integer
@@ -44,6 +44,15 @@ class Dispense
      * })
      */
     private $moduleCalendrier;
+
+    public function jsonSerialize()
+    {
+        $result = [];
+        $result['codeDispense'] = $this->codeDispense;
+        $result['dateDebut'] = json_encode($this->dateDebut);
+        $result['dateFin'] = json_encode($this->dateFin);
+        return $result;
+    }
 
     /**
      * @return int
@@ -116,6 +125,6 @@ class Dispense
         $this->moduleCalendrier = $moduleCalendrier;
         return $this;
     }
-    
+
 }
 
