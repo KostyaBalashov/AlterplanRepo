@@ -29,6 +29,7 @@ use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Contrainte;
 use AppBundle\Form\Filtre\FormationFiltreType;
 use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
 
 class ContrainteController extends Controller
 {
@@ -110,7 +111,7 @@ class ContrainteController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/contraintes/typeContrainte/{codeCalendrier}", name="all_typeContraintes")
+     * @Route("/contraintes/typeContrainte/{codeCalendrier}", name="all_typeContraintes", options = { "expose" = true })
      * @Method({"GET", "POST"})
      */
     public function allTypeContraintes(Request $request)
@@ -118,5 +119,21 @@ class ContrainteController extends Controller
         $tcRepository = $this->getDoctrine()->getRepository(TypeContrainte::class);
         $typecontrainteList = $tcRepository->findAll();
         return new JsonResponse($typecontrainteList);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param Calendrier $calendrier
+     * @Route("/contraintesCalendrier/{codeCalendrier}", name="calendrier_contraintes", options = { "expose" = true })
+     * @Method({"GET", "POST"})
+     */
+    public
+    function ContraintesCalendrier(Request $request, Calendrier $calendrier)
+    {
+        //var_dump($calendrier);
+        $tcRepository = $this->getDoctrine()->getRepository(Contrainte::class);
+        $contrainteList = $tcRepository->findBy(array('calendrier' => $calendrier->getCodeCalendrier()));
+        return new JsonResponse($contrainteList);
     }
 }

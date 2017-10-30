@@ -35,8 +35,8 @@ class CoursRepository extends EntityRepository
         if ($calendrier != null) {
             $qb->andWhere('c.debut BETWEEN :dateDebut AND :dateFin')
                 ->andWhere('c.fin <= :dateFin')
-                ->setParameter('dateDebut', $calendrier->getDateDebut()->format('Y-m-d'))
-                ->setParameter('dateFin', $calendrier->getDateFin()->format('Y-m-d'));
+                ->setParameter('dateDebut', $calendrier->getDateDebut()->format('d-m-Y'))
+                ->setParameter('dateFin', $calendrier->getDateFin()->format('d-m-Y'));
         }
 
         return $qb->getQuery()->getResult();

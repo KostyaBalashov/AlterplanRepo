@@ -153,6 +153,7 @@ function closeModaleGestionModules() {
 function saveContraintes() {
     showLoader();
 
+
     //plusieurs étapes:
     //1 : Pour chaque TR, on cherche la contrainte avec la même id et on lui passe les valeurs P1 et P2
     //2: pour chaque contrainte qui est nouvelle (présente dans addedContrainte) on passe l'id à null
@@ -187,7 +188,7 @@ function saveContraintes() {
             var nomPrenom = rowP1.split(" ");
             contraintesManager.stagiaires.forEach(function (stagiaire) {
                 if (stagiaire.nom === nomPrenom[0] && stagiaire.prenom === nomPrenom[1]) {
-                    rowP1 = stagiaire.codeStagiaire;
+                    rowP2 = stagiaire.codeStagiaire;
                 }
             });
 
@@ -215,19 +216,22 @@ function saveContraintes() {
         dismissLoader();
         return;
     }
-
+    var contraintesToSave = JSON.parse(JSON.stringify(contraintesManager.contraintes));
     contraintesManager.addedContraintes.forEach(function (newC) {
         //pour toutes les nouvelles contraintes on cherche l'équivalent dans la liste complète
-        contraintesManager.contraintes.forEach(function (c) {
-            if (newC === c.codeContrainte) {
-                c.codeContrainte = null;
-                return;
+        contraintesToSave.forEach(function (c) {
+            if (c != null) {
+                if (newC === c.codeContrainte) {
+                    c.codeContrainte = null;
+                    return;
+                }
             }
         });
     });
+    //dernière vérification pour empécher le bug de  la contrainte stagiaire
 
     var data = {
-        'updatedContraintes': contraintesManager.contraintes,
+        'updatedContraintes': contraintesToSave,
         'removedContraintes': contraintesManager.removedContraintes
     };
     var url = Routing.generate('contraintes_edit', {codeCalendrier: calendrier.codeCalendrier});

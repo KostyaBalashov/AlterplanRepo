@@ -433,15 +433,15 @@ class CalendrierController extends Controller
     public function getDateDebutEntreprise($date)
     {
         // Récupère le jour de la semaine 1..7
-        $jourSemaine = date('N', strtotime($date->format('Y-m-d')));
+        $jourSemaine = date('N', strtotime($date->format('d-m-Y')));
         $dateDebutEntreprise = $date;
 
         // Tant que la date de début d'entreprise n'est pas un lundi, on incrémente la date d'une journée
         while ($jourSemaine != 1) {
-            $dateString = $dateDebutEntreprise->format('Y-m-d');
+            $dateString = $dateDebutEntreprise->format('d-m-Y');
             $dateDebutEntreprise = new DateTime($dateString);
             $dateDebutEntreprise->modify('+1 day');
-            $jourSemaine = date('N', strtotime($dateDebutEntreprise->format('Y-m-d')));
+            $jourSemaine = date('N', strtotime($dateDebutEntreprise->format('d-m-Y')));
         }
 
         return $dateDebutEntreprise;
@@ -455,15 +455,15 @@ class CalendrierController extends Controller
     public function getDateFinEntreprise($date)
     {
         // Récupère le jour de la semaine 1..7
-        $jourSemaine = date('N', strtotime($date->format('Y-m-d')));
+        $jourSemaine = date('N', strtotime($date->format('d-m-Y')));
         $dateFinEntreprise = $date;
 
         // Tant que la date de fin d'entreprise n'est pas un vendredi, on décrémente la date d'une journée
         while ($jourSemaine != 5) {
-            $dateString = $dateFinEntreprise->format('Y-m-d');
+            $dateString = $dateFinEntreprise->format('d-m-Y');
             $dateFinEntreprise = new DateTime($dateString);
             $dateFinEntreprise->modify('-1 day');
-            $jourSemaine = date('N', strtotime($dateFinEntreprise->format('Y-m-d')));
+            $jourSemaine = date('N', strtotime($dateFinEntreprise->format('d-m-Y')));
         }
 
         return $dateFinEntreprise;

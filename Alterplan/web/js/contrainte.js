@@ -23,208 +23,122 @@ var ContraintesManager = function (calendrier, urlAllTC) {
 
 
     this.onModaleOpen = function () {
+        showLoader();
+        //bug index null, on supprime
+        //me.contraintes.splice(null, 1);
+
 
         //Pour chaque contrainte on créé un TR
         //Dans ce TR on place un td avec un select qui a pour option par defait le tc de la contrainte
         //Dans un deuxième td on place le/les champs correspondant au tc et on les remplis si on a les infos
         // A chaque fois qu'on supprime une contrainte on l'ajoute dans la liste des contraintes à supprimer
         //A chaque fois qu'on ajoute une contrainte on l'ajoute dans la liste des contraintes en plus
+        $.when(getContraintesCalendrier(me.calendrier.codeCalendrier)).then(function (result) {
+            dismissLoader();
+            if (result != undefined) {
+                me.calendrier.contraintes = result;
 
-        //me.calendrier.contraintes;
-        for (var cle in me.calendrier.contraintes) {
-            var contrainte = calendrier.contraintes[cle]
-            me.contraintes[contrainte.codeContrainte] = contrainte;
-        }
-        var typeContraintes = me.typeContraintes;
-        var tBody = $('#tableauContraintes');
-        var x = 1;
-        for (var key in me.contraintes) {
-            contrainte = me.contraintes[key];
-            var tr = document.createElement("tr");
-            tr.id = contrainte.codeContrainte;
-            tr.className = "trTable";
-            var tdTypeContrainte = document.createElement("td");
-            var div_input = document.createElement('div');
-            div_input.id = 'div_input';
+            }
+            me.contraintes = [];
+            for (var cle in me.calendrier.contraintes) {
+                var contrainte = calendrier.contraintes[cle]
+                me.contraintes[cle] = contrainte;
+            }
+            var typeContraintes = me.typeContraintes;
+            var tBody = $('#tableauContraintes');
+            var x = 1;
+            for (var key in me.contraintes) {
+                contrainte = me.contraintes[key];
+                var tr = document.createElement("tr");
+                tr.id = contrainte.codeContrainte;
+                tr.className = "trTable";
+                var tdTypeContrainte = document.createElement("td");
+                var div_input = document.createElement('div');
+                div_input.id = 'div_input';
 
 
-            //region tdTypeContrainte
-            var selectList = document.createElement("select");
-            selectList.id = "typeContrainte";
-            selectList.className = "select typeContrainte";
-            //selectList.style.display = "block";
-            //Récuperation de tous les typeContraintes
-            if (typeContraintes != null) {
-                for (var k in typeContraintes) {
-                    var typeContrainte = typeContraintes[k];
-                    var option = document.createElement("option");
-                    option.value = typeContraintes.indexOf(typeContrainte);
-                    option.setAttribute('data-nb-input', typeContrainte.nbParametres);
-                    option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(contrainte));
-                    option.innerHTML = typeContrainte.libelle;
-                    selectList.append(option);
-                    if (contrainte) {
-                        if (typeContrainte.codeTypeContrainte === contrainte.typeContrainte.codeTypeContrainte) {
-                            option.setAttribute('selected', 'true');
+                //region tdTypeContrainte
+                var selectList = document.createElement("select");
+                selectList.id = "typeContrainte";
+                selectList.className = "select typeContrainte";
+                //selectList.style.display = "block";
+                //Récuperation de tous les typeContraintes
+                if (typeContraintes != null) {
+                    for (var k in typeContraintes) {
+                        var typeContrainte = typeContraintes[k];
+                        var option = document.createElement("option");
+                        option.value = typeContraintes.indexOf(typeContrainte);
+                        option.setAttribute('data-nb-input', typeContrainte.nbParametres);
+                        option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(contrainte));
+                        option.innerHTML = typeContrainte.libelle;
+                        selectList.append(option);
+                        if (contrainte) {
+                            if (typeContrainte.codeTypeContrainte === contrainte.typeContrainte.codeTypeContrainte) {
+                                option.setAttribute('selected', 'true');
+                            }
                         }
                     }
                 }
-            }
-            refreshAllSelect();
-            // endregion
-
-            //gestion du td contenant les champs: au lancement, on lance la fonction
-            tdData = document.createElement('td');
-            var typeContrainte = $('option:selected', this).val();
-            ChargementContraintes(contrainte, div_input);
-
-
-            //gestion td avec bouton delete
-            var tdDelete = document.createElement('td')
-            var deleteButton = document.createElement('a');
-            deleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
-            deleteButton.innerHTML = '<i class="material-icons">remove</i>';
-            tdDelete.append(deleteButton);
-
-            // on place tous les éléments dans le tbody
-            tdTypeContrainte.append(selectList);
-            tdData.append(div_input);
-            tr.append(tdTypeContrainte);
-            tr.append(tdData);
-            tr.append(tdDelete)
-            tBody.append(tr);
-            x++;
-
-            $('select').change(function () {
-
-                var value = $(this).val();
-
-                $(this).siblings('select').children('option').each(function () {
-                    if ($(this).val() === value) {
-                        $(this).attr('disabled', true).siblings().removeAttr('disabled');
-                    }
-                });
                 refreshAllSelect();
-            });
-        }
-        // à chaque changement d'option, on rafraichi la td et on remet les valeurs à vide
-        $(document).on('change', '#typeContrainte', function () {
-            var $this = $(this);
-            //ce qu'on veut récupérer, c'est la div input du même tr et la contrainte
-            var optionSelected = $("option:selected", this);
-            var i = optionSelected.attr('data-nb-contraintes');
-            var selectedContrainte = me.contraintes[i];
+                // endregion
 
-            //on doit changer le typeContrainte à celui de maintenant
-            selectedContrainte.typeContrainte = typeContraintes[this.value];
-            //on vide les données de la contrainte
-            selectedContrainte.P1 = null;
-            selectedContrainte.P2 = null;
-            //on veut maintenant récupérer la div
-            div_input = $this.closest('tr').find('div.div_input')[0];
-            ChargementContraintes(selectedContrainte, div_input);
-        });
-
-        $('.deleteRow').click(function () {
-            var codeContrainteToRemove = parseInt($(this).closest('tr').attr('id'));
-            me.contraintes.forEach(function (element) {
-                if (element.codeContrainte === codeContrainteToRemove) {
-                    me.removedContraintes[element.codeContrainte] = element.codeContrainte;
-                    delete me.contraintes[codeContrainteToRemove];
-                }
-            });
-            me.addedContraintes.forEach(function (element) {
-                if (element.codeContrainte = codeContrainteToRemove) {
-                    delete me.addedContraintes[codeContrainteToRemove];
-                }
-            });
-            $(this).closest('tr').remove();
-            refreshAllSelect();
-            $('.add_another').attr('disabled', false);
-        });
+                //gestion du td contenant les champs: au lancement, on lance la fonction
+                tdData = document.createElement('td');
+                var typeContrainte = $('option:selected', this).val();
+                ChargementContraintes(contrainte, div_input);
 
 
-        $('.add_another').click(function () {
-            var date = new Date();
-            var newId = 0;
-            for (var kc in me.contraintes) {
-                var c = me.contraintes[kc];
-                if (newId <= c.codeContrainte) {
-                    newId = parseInt(c.codeContrainte) + 1;
-                }
-            }
-            var newContrainte = {
-                    DateCreation: date,
-                    P1: null,
-                    P2: null,
-                    codeCalendrier: calendrier.codeCalendrier,
-                    codeContrainte: newId,
-                    typeContrainte: checkForFreeTC(me.typeContraintes)
-                }
-            ;
-            me.addedContraintes[newContrainte.codeContrainte] = newContrainte.codeContrainte;
-            me.contraintes[newContrainte.codeContrainte] = newContrainte;
-            var newTr = document.createElement("tr");
-            newTr.id = newContrainte.codeContrainte;
-            newTr.className = "trTable";
-            var newTd = document.createElement("td");
-            var newDiv_input = document.createElement('div');
-            newDiv_input.id = 'div_input';
-            var newSelectList = document.createElement("select");
-            newSelectList.id = "typeContrainte";
-            newSelectList.className = "select typeContrainte";
-            //Récuperation de tous les typeContraintes
-            if (typeContraintes != null) {
-                for (var k in typeContraintes) {
-                    var typeContrainte = typeContraintes[k];
-                    var option = document.createElement("option");
-                    option.value = typeContraintes.indexOf(typeContrainte);
-                    option.setAttribute('data-nb-input', typeContrainte.nbParametres);
-                    option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(newContrainte));
-                    option.innerHTML = typeContrainte.libelle;
-                    newSelectList.append(option);
-                    if (newContrainte) {
-                        if (typeContrainte.codeTypeContrainte === newContrainte.typeContrainte.codeTypeContrainte) {
-                            option.setAttribute('selected', 'true');
+                //gestion td avec bouton delete
+                var tdDelete = document.createElement('td')
+                var deleteButton = document.createElement('a');
+                deleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
+                deleteButton.innerHTML = '<i class="material-icons">remove</i>';
+                tdDelete.append(deleteButton);
+
+                // on place tous les éléments dans le tbody
+                tdTypeContrainte.append(selectList);
+                tdData.append(div_input);
+                tr.append(tdTypeContrainte);
+                tr.append(tdData);
+                tr.append(tdDelete)
+                tBody.append(tr);
+                x++;
+                initDP();
+
+
+                $('select').change(function () {
+
+                    var value = $(this).val();
+
+                    $(this).siblings('select').children('option').each(function () {
+                        if ($(this).val() === value) {
+                            $(this).attr('disabled', true).siblings().removeAttr('disabled');
                         }
-                    }
-                }
+                    });
+                    refreshAllSelect();
+                });
+            }
+            if ($('select.typeContrainte').length >= 6) {
+                $('.add_another').attr('disabled', 'disabled');
             }
 
-            //gestion du td contenant les champs: au lancement, on lance la fonction
-            var newTdData = document.createElement('td');
-            ChargementContraintes(newContrainte, newDiv_input);
+            // à chaque changement d'option, on rafraichi la td et on remet les valeurs à vide
+            $(document).on('change', '#typeContrainte', function () {
+                var $this = $(this);
+                //ce qu'on veut récupérer, c'est la div input du même tr et la contrainte
+                var optionSelected = $("option:selected", this);
+                var i = optionSelected.attr('data-nb-contraintes');
+                var selectedContrainte = me.contraintes[i];
 
-            //gestion td avec bouton delete
-            var newTdDelete = document.createElement('td')
-            var newDeleteButton = document.createElement('a');
-            newDeleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
-            newDeleteButton.innerHTML = '<i class="material-icons">remove</i>';
-            newTdDelete.append(newDeleteButton); //gestion td avec bouton delete
-
-
-            newTd.append(newSelectList);
-            newTdData.append(newDiv_input);
-            newTr.append(newTd);
-            newTr.append(newTdData);
-            newTr.append(newTdDelete);
-            tBody.append(newTr);
-            initDatePicker('#dateDebut', onSetDateDebut);
-            initDatePicker('#dateFin', onSetDateFin);
-
-            var from_picker = getDateDebutPicker();
-            var to_picker = getDateFinPicker();
-            if (from_picker != undefined) {
-                if (from_picker.get('value')) {
-                    to_picker.set('min', from_picker.get('select'))
-                }
-                if (to_picker != undefined) {
-                    if (to_picker.get('value')) {
-                        from_picker.set('max', to_picker.get('select'))
-                    }
-                }
-            }
-            $('select').material_select();
+                //on doit changer le typeContrainte à celui de maintenant
+                selectedContrainte.typeContrainte = typeContraintes[this.value];
+                //on vide les données de la contrainte
+                selectedContrainte.P1 = null;
+                selectedContrainte.P2 = null;
+                //on veut maintenant récupérer la div
+                div_input = $this.closest('tr').find('div.div_input')[0];
+                ChargementContraintes(selectedContrainte, div_input);
+            });
 
             $('.deleteRow').click(function () {
                 var codeContrainteToRemove = parseInt($(this).closest('tr').attr('id'));
@@ -236,7 +150,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 });
                 me.addedContraintes.forEach(function (element) {
                     if (element.codeContrainte = codeContrainteToRemove) {
-                        delete me.contraintes[codeContrainteToRemove];
+                        delete me.addedContraintes[codeContrainteToRemove];
                     }
                 });
                 $(this).closest('tr').remove();
@@ -244,40 +158,147 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 $('.add_another').attr('disabled', false);
             });
 
-            $('select').change(function () {
 
-                var value = $(this).val();
-
-                $(this).siblings('select').children('option').each(function () {
-                    if ($(this).val() === value) {
-                        $(this).attr('disabled', true).siblings().removeAttr('disabled');
+            $('.add_another').click(function () {
+                var date = new Date();
+                var newId = 0;
+                for (var kc in me.contraintes) {
+                    var c = me.contraintes[kc];
+                    if (newId <= c.codeContrainte) {
+                        newId = parseInt(c.codeContrainte) + 1;
                     }
+                }
+                var newContrainte = {
+                        DateCreation: date,
+                        P1: null,
+                        P2: null,
+                        codeCalendrier: calendrier.codeCalendrier,
+                        codeContrainte: newId,
+                        typeContrainte: checkForFreeTC(me.typeContraintes)
+                    }
+                ;
+                me.addedContraintes[newContrainte.codeContrainte] = newContrainte.codeContrainte;
+                me.contraintes[newContrainte.codeContrainte] = newContrainte;
+                var newTr = document.createElement("tr");
+                newTr.id = newContrainte.codeContrainte;
+                newTr.className = "trTable";
+                var newTd = document.createElement("td");
+                var newDiv_input = document.createElement('div');
+                newDiv_input.id = 'div_input';
+                var newSelectList = document.createElement("select");
+                newSelectList.id = "typeContrainte";
+                newSelectList.className = "select typeContrainte";
+                //Récuperation de tous les typeContraintes
+                if (typeContraintes != null) {
+                    for (var k in typeContraintes) {
+                        var typeContrainte = typeContraintes[k];
+                        var option = document.createElement("option");
+                        option.value = typeContraintes.indexOf(typeContrainte);
+                        option.setAttribute('data-nb-input', typeContrainte.nbParametres);
+                        option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(newContrainte));
+                        option.innerHTML = typeContrainte.libelle;
+                        newSelectList.append(option);
+                        if (newContrainte) {
+                            if (typeContrainte.codeTypeContrainte === newContrainte.typeContrainte.codeTypeContrainte) {
+                                option.setAttribute('selected', 'true');
+                            }
+                        }
+                    }
+                }
+
+                //gestion du td contenant les champs: au lancement, on lance la fonction
+                var newTdData = document.createElement('td');
+                ChargementContraintes(newContrainte, newDiv_input);
+
+                //gestion td avec bouton delete
+                var newTdDelete = document.createElement('td')
+                var newDeleteButton = document.createElement('a');
+                newDeleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
+                newDeleteButton.innerHTML = '<i class="material-icons">remove</i>';
+                newTdDelete.append(newDeleteButton); //gestion td avec bouton delete
+
+
+                newTd.append(newSelectList);
+                newTdData.append(newDiv_input);
+                newTr.append(newTd);
+                newTr.append(newTdData);
+                newTr.append(newTdDelete);
+                tBody.append(newTr);
+
+                initDP();
+                $('select').material_select();
+
+                $('.deleteRow').click(function () {
+                    var codeContrainteToRemove = parseInt($(this).closest('tr').attr('id'));
+                    me.contraintes.forEach(function (element) {
+                        if (element.codeContrainte === codeContrainteToRemove) {
+                            me.removedContraintes[element.codeContrainte] = element.codeContrainte;
+                            delete me.contraintes[codeContrainteToRemove];
+                        }
+                    });
+                    me.addedContraintes.forEach(function (element) {
+                        if (element.codeContrainte = codeContrainteToRemove) {
+                            delete me.contraintes[codeContrainteToRemove];
+                        }
+                    });
+                    $(this).closest('tr').remove();
+                    refreshAllSelect();
+                    $('.add_another').attr('disabled', false);
                 });
+
+                $('select').change(function () {
+
+                    var value = $(this).val();
+
+                    $(this).siblings('select').children('option').each(function () {
+                        if ($(this).val() === value) {
+                            $(this).attr('disabled', true).siblings().removeAttr('disabled');
+                        }
+                    });
+                    refreshAllSelect();
+                });
+
+                if ($('select.typeContrainte').length === 6) {
+                    $('.add_another').attr('disabled', 'disabled');
+                }
                 refreshAllSelect();
             });
 
-            if ($('select.typeContrainte').length === 6) {
-                $('.add_another').attr('disabled', 'disabled');
-            }
-            refreshAllSelect();
-        });
-        initDatePicker('#dateDebut', onSetDateDebut);
-        initDatePicker('#dateFin', onSetDateFin);
-
-        var from_picker = getDateDebutPicker();
-        var to_picker = getDateFinPicker();
-        if (from_picker != undefined) {
-            if (from_picker.get('value')) {
-                to_picker.set('min', from_picker.get('select'))
-            }
-            if (to_picker != undefined) {
-                if (to_picker.get('value')) {
-                    from_picker.set('max', to_picker.get('select'))
+            $('input.int').on('change keyup', function () {
+                if (this.getAttribute('name') === 'val0') {
+                    var input1 = $(this).closest('tr').find('input[name=val1]')[0];
+                    if (input1 != undefined) {
+                        input1.setAttribute('min', this.value);
+                        if (input1.value != "" && this.value > input1.value && !$(this).hasClass('invalid')) {
+                            //showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                            $(this).attr('max', input1.value);
+                            $(this).removeClass('valid');
+                            $(this).addClass('invalid');
+                        } else if (!$(this).hasClass('invalid')) {
+                            $(this).removeClass('invalid');
+                            $(this).addClass('valid');
+                        }
+                    }
                 }
-            }
-        }
-
-        $('select').material_select();
+                else if (this.getAttribute('name') === 'val1') {
+                    var input0 = $(this).closest('tr').find('input[name=val0]')[0];
+                    input0.setAttribute('max', this.value);
+                    if (input0.value != "" && this.value > input0.value && !$(this).hasClass('invalid')) {
+                        //showToast('Le maximum ne peut pas être inferieur au minimum', 'error');
+                        $(this).attr('min', input0.value);
+                        $(this).removeClass('valid');
+                        $(this).addClass('invalid');
+                    } else if (!$(this).hasClass('invalid')) {
+                        $(this).removeClass('invalid');
+                        $(this).addClass('valid');
+                    }
+                }
+                refreshAllSelect();
+            });
+            initDP();
+        }, function () {
+            dismissLoader();
+        });
     };
 
     function ChargementContraintes(contrainte, div_input) {
@@ -320,6 +341,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     }
                     div_input.append(label);
                     div_input.append(input);
+                    initDP();
                     break;
 
                 //cas 2 : deux int Volume horaire
@@ -451,21 +473,33 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     break;
             }
         }
-        $('input.int').on('change', function () {
+        $('input.int').on(' change keyup', function () {
             if (this.getAttribute('name') === 'val0') {
                 var input1 = $(this).closest('tr').find('input[name=val1]')[0];
                 if (input1 != undefined) {
                     input1.setAttribute('min', this.value);
-                    if (this.value > input1.value) {
-                        showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                    if (input1.value != "" && this.value > input1.value && !$(this).hasClass('invalid')) {
+                        //showToast('Le minimum ne peut pas être superieur au maximum', 'error');
+                        $(this).attr('min', input1.value);
+                        $(this).removeClass('valid');
+                        $(this).addClass('invalid');
+                    } else if (!$(this).hasClass('invalid')) {
+                        $(this).removeClass('invalid');
+                        $(this).addClass('valid');
                     }
                 }
             }
             else if (this.getAttribute('name') === 'val1') {
                 var input0 = $(this).closest('tr').find('input[name=val0]')[0];
                 input0.setAttribute('max', this.value);
-                if (this.value < input0.value) {
-                    showToast('Le maximum ne peut pas être inferieur au minimum', 'error');
+                if (input0.value != "" && this.value > input0.value && !$(this).hasClass('invalid')) {
+                    //showToast('Le maximum ne peut pas être inferieur au minimum', 'error');3
+                    $(this).attr('min', input0.value);
+                    $(this).removeClass('valid');
+                    $(this).addClass('invalid');
+                } else if (!$(this).hasClass('invalid')) {
+                    $(this).removeClass('invalid');
+                    $(this).addClass('valid');
                 }
             }
             refreshAllSelect();
@@ -473,6 +507,33 @@ var ContraintesManager = function (calendrier, urlAllTC) {
 
     }
 };
+function initDP() {
+    initDatePicker('#dateDebut', onSetDateDebut);
+    initDatePicker('#dateFin', onSetDateFin);
+
+    var from_picker = getDateDebutPicker();
+    var to_picker = getDateFinPicker();
+    if (from_picker != undefined) {
+        if (from_picker.get('value')) {
+            to_picker.set('min', from_picker.get('select'))
+        }
+        if (to_picker != undefined) {
+            if (to_picker.get('value')) {
+                from_picker.set('max', to_picker.get('select'))
+            }
+        }
+    }
+
+    $('select').material_select();
+}
+
+//region récupération des contraintes
+function getContraintesCalendrier(calendrier) {
+    return $.get(Routing.generate('calendrier_contraintes', {"codeCalendrier": calendrier}), function (data) {
+
+    });
+}
+
 
 //region récupération des contraintes
 function getAllTypeContraintes(url) {
