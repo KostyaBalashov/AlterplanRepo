@@ -131,9 +131,8 @@ class ContrainteController extends Controller
     public
     function ContraintesCalendrier(Request $request, Calendrier $calendrier)
     {
-        //var_dump($calendrier);
-        $tcRepository = $this->getDoctrine()->getRepository(Contrainte::class);
-        $contrainteList = $tcRepository->findBy(array('calendrier' => $calendrier->getCodeCalendrier()));
+        $Repository = $this->getDoctrine()->getRepository(Contrainte::class);
+        $contrainteList = $Repository->findBy(array('calendrier' => $calendrier->getCodeCalendrier()));
         return new JsonResponse($contrainteList);
     }
 }

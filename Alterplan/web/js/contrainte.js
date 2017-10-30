@@ -93,6 +93,9 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 var deleteButton = document.createElement('a');
                 deleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
                 deleteButton.innerHTML = '<i class="material-icons">remove</i>';
+                if (selectList.selectedIndex === 0) {
+                    $(deleteButton).addClass('disabled');
+                }
                 tdDelete.append(deleteButton);
 
                 // on place tous les éléments dans le tbody
@@ -215,6 +218,10 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 var newDeleteButton = document.createElement('a');
                 newDeleteButton.className = "deleteRow btn-floating waves-effect waves-light red right-align";
                 newDeleteButton.innerHTML = '<i class="material-icons">remove</i>';
+                if (newSelectList != undefined && newSelectList != null)
+                    if (newSelectList.selectedIndex === 0) {
+                        $(newDeleteButton).addClass('disabled');
+                    }
                 newTdDelete.append(newDeleteButton); //gestion td avec bouton delete
 
 

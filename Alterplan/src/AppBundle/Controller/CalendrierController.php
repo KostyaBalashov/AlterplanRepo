@@ -19,6 +19,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Calendrier;
+use AppBundle\Entity\Contrainte;
 use AppBundle\Entity\ModuleCalendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
@@ -27,6 +28,7 @@ use AppBundle\Service\ModuleAPlanifierService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Dompdf\Options;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -34,6 +36,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Dompdf\Dompdf;
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\TypeContrainte;
 
 /**
  * Class CalendrierController
@@ -122,13 +125,31 @@ class CalendrierController extends Controller
                 }
             }
             $today = date("d/m/Y");
-            if($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
-                $newTitre = $today."-"
-                    .$calendrier->getFormation()->getLibelleCourt()."-"
-                    .$calendrier->getStagiaire()->getNom()." "
-                    .$calendrier->getStagiaire()->getPrenom();
+            if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
+                $newTitre = $today . "-"
+                    . $calendrier->getFormation()->getLibelleCourt() . "-"
+                    . $calendrier->getStagiaire()->getNom() . " "
+                    . $calendrier->getStagiaire()->getPrenom();
                 $calendrier->setTitre($newTitre);
             }
+
+            //region gestion de la contrainte periode contractuelle
+            $contrainte = new Contrainte();
+            $contrainte->setCalendrier($calendrier);
+            $dateContrainte = new \DateTime("now");
+            $contrainte->setDateCreation($dateContrainte);
+            $contrainte->setP1($calendrier->getDateDebut()->format('d-m-Y'));
+            $contrainte->setTypeP1('date');
+            $contrainte->setP2($calendrier->getDateFin()->format('d-m-Y'));
+            $contrainte->setTypeP2('date');
+            $tcRepository = $this->getDoctrine()->getRepository(TypeContrainte::class);
+            $typecontrainte = $tcRepository->findOneBy(array('codeTypeContrainte' => 1));
+            $contrainte->setTypeContrainte($typecontrainte);
+            $contraintes = [$contrainte];
+            $calendrier->setContraintes($contraintes);
+            //endregion
+
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($calendrier);
             $em->flush();
@@ -509,4 +530,32 @@ class CalendrierController extends Controller
         $collection = new ArrayCollection(iterator_to_array($iterator));
         return $collection;
     }
+
+
+    /**
+     * Permet de modifier les dates de contrat d'un calendrier
+     * @param $calendrier calendrier concerné
+     * @Route("/saveCalendrierDate/{codeCalendrier}", name="saveCalendrierDate", options = { "expose" = true })
+     * @return réponse vide
+     * @Method({"POST"})
+     */
+
+    public function saveCalendrier(Request $request, Calendrier $calendrier)
+    {
+        $dateDebut = $request->get('dateDebut');
+        $dateFin = $request->get('dateFin');
+        $codeCalendrier = $request->get('codeCalendrier');
+        dump($codeCalendrier);
+        $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+        $calendrier = $repo->findOneBy(array('codeCalendrier' => $codeCalendrier));
+        if ($calendrier != null) {
+            $calendrier->setDateDebut($dateDebut);
+            $calendrier->setDateFin($dateFin);
+            $em = $this->getDoctrine()->getManager();
+            $em->merge($calendrier);
+            $em->flush();
+        }
+        return new JsonResponse($calendrier);
+    }
+
 }

@@ -233,7 +233,22 @@ function saveContraintes() {
             }
         });
     });
-    //dernière vérification pour empécher le bug de  la contrainte stagiaire
+    //modification de la date et enregistrement du calendrier.
+    contraintesToSave.forEach(function (contrainte) {
+        if (contrainte.typeContrainte.codeTypeContrainte === 1) {
+            calendrier.dateDebut = contrainte.P1;
+            calendrier.dateFin = contrainte.P2;
+            var saveUrl = Routing.generate('saveCalendrierDate', {codeCalendrier: calendrier.codeCalendrier});
+            var saveData = {
+                'dateDebut': calendrier.dateDebut,
+                'dateFin': calendrier.dateFin,
+                'codeCalendrier': calendrier.codeCalendrier
+            };
+            $.post(saveUrl, saveData);
+            return;
+        }
+    })
+
 
     var data = {
         'updatedContraintes': contraintesToSave,
