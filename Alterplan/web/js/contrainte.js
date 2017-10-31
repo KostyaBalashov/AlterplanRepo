@@ -329,6 +329,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
 
                 //cas 1 : deux dates Période contractuelle
                 case 1:
+                    initDP();
                     type1 = 'Date';
                     type2 = 'Date';
 
@@ -338,17 +339,21 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.innerHTML = "Du ";
                         input.className = "datepicker dateDebut inputContrainte";
                         input.id = "dateDebut";
+                        div_input.append(label);
+                        div_input.append(input);
+                        initDP();
                         input.value = contrainte.P1;
                     } else {
                         label.htmlFor = "dateFin";
                         label.innerHTML = "Au ";
                         input.className = "datepicker dateFin inputContrainte";
                         input.id = "dateFin"
+                        initDP();
                         input.value = contrainte.P2;
                     }
+
                     div_input.append(label);
                     div_input.append(input);
-                    initDP();
                     break;
 
                 //cas 2 : deux int Volume horaire

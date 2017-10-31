@@ -120,6 +120,7 @@ function initDatePicker(selector, onSetCallBack) {
         clear: 'Annuler',
         close: 'Fermer',
         formatSubmit: 'yyyy/mm/dd',
+        format: 'dd/mm/yyyy',
         hiddenName: true,
         selectYears: true,
         selectMonths: true,
