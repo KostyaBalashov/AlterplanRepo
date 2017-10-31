@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -105,30 +106,10 @@ class Calendrier implements \JsonSerializable
      */
     private $modulesCalendrier;
 
-    /**
-     * @var Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Module", inversedBy="calendriersEnAttente", fetch="EAGER")
-     * @ORM\JoinTable(name="ModuleAPlanifier",
-     *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="IdModule", referencedColumnName="IdModule")})
-     */
-    private $modulesAPlanifier;
-
-    /**
-     * @var Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuleCalendrier", inversedBy="calendriersEnAttente", fetch="EAGER")
-     * @ORM\JoinTable(name="ModuleCalendrierAPlacer",
-     *     joinColumns={@ORM\JoinColumn(name="CodeCalendrier", referencedColumnName="CodeCalendrier")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="CodeModuleCalendrier", referencedColumnName="CodeModuleCalendrier")})
-     */
-    private $modulesCalendrierAPlacer;
-
     public function __construct()
     {
         $this->contraintes = new ArrayCollection();
         $this->modulesCalendrier = new ArrayCollection();
-        $this->modulesAPlanifier = new ArrayCollection();
-        $this->modulesCalendrierAPlacer = new ArrayCollection();
     }
 
     public function jsonSerialize()
@@ -148,119 +129,21 @@ class Calendrier implements \JsonSerializable
         ], JSON_FORCE_OBJECT);
 
         $result['contraintes'] = json_encode($this->contraintes->toArray());
-        $result['modulesAPlanifier'] = json_encode($this->modulesAPlanifier->toArray());
-        $result['modulesCalendrier'] = json_encode($this->modulesCalendrier->toArray());
-        $result['modulesCalendrierAPlanifier'] = json_encode($this->modulesCalendrierAPlacer->toArray());
+
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->isNull('dateDebut'))->andWhere(Criteria::expr()->isNull('dateFin'));
+        $result['modulesCalendrierAPlacer'] = json_encode($this->modulesCalendrier->matching($criteria)->toArray());
+
+        $result['modulesCalendrierPlaces'] = json_encode($this->getModuleCalendrierPlaces()->toArray());
 
         return $result;
     }
 
-    /**
-     * Ajoute un module à la liste des modules à placer.
-     * @param Module $module module à placer.
-     */
-    public function addModuleAPlacer(Module $module)
+    public function getModuleCalendrierPlaces()
     {
-        if (!$this->modulesAPlanifier->contains($module)) {
-            $module->getCalendriersEnAttente()->add($this);
-            $this->modulesAPlanifier->add($module);
-        }
-    }
-
-    /**
-     * Supprime un module de la liste des modules à placer.
-     * @param Module $module
-     */
-    public function removeModuleAPlacer(Module $module)
-    {
-        if ($this->modulesAPlanifier->contains($module)) {
-            $this->modulesCalendrierAPlacer->removeElement($module);
-            $module->getCalendriersEnAttente()->removeElement($this);
-        }
-    }
-
-    /**
-     * Ajoute une semaine d'un module à la liste des semaine à placer.
-     * @param ModuleCalendrier $moduleCalendrier semaine d'un module.
-     */
-    public function addModuleCalendrierAPlacer(ModuleCalendrier $moduleCalendrier)
-    {
-        if (!$this->modulesCalendrierAPlacer->contains($moduleCalendrier)) {
-            $this->modulesCalendrierAPlacer->add($moduleCalendrier);
-            $moduleCalendrier->getCalendriersEnAttente()->add($this);
-        }
-    }
-
-    /**
-     * Supprime une semaine de la liste des semaines à placer.
-     * @param ModuleCalendrier $moduleCalendrier semaine à supprimer.
-     */
-    public function removeModuleCalendrierAPlacer(ModuleCalendrier $moduleCalendrier)
-    {
-        if ($this->modulesCalendrierAPlacer->contains($moduleCalendrier)) {
-            $this->modulesCalendrierAPlacer->removeElement($moduleCalendrier);
-            $moduleCalendrier->getCalendriersEnAttente()->removeElement($this);
-        }
-    }
-
-    /**
-     * Ajoute une semaine d'un module à laliste des semaines planifiées.
-     * @param ModuleCalendrier $moduleCalendrier semaine à ajouter.
-     */
-    public function addModuleCalendrier(ModuleCalendrier $moduleCalendrier)
-    {
-        $moduleCalendrier->setCalendrier($this);
-        if (!$this->modulesCalendrier->contains($moduleCalendrier)) {
-            $this->modulesCalendrier->add($moduleCalendrier);
-        }
-    }
-
-    /**
-     * Supprime une semaine de la liste des semaines planifiées.
-     * @param ModuleCalendrier $moduleCalendrier semaine à supprimer.
-     */
-    public function removeModuleCalendrier(ModuleCalendrier $moduleCalendrier)
-    {
-        $moduleCalendrier->setCalendrier(null);
-        if ($this->modulesCalendrier->contains($moduleCalendrier)) {
-            $this->modulesCalendrier->removeElement($moduleCalendrier);
-        }
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getModulesAPlanifier()
-    {
-        return $this->modulesAPlanifier;
-    }
-
-    /**
-     * @param Collection $modulesAPlanifier
-     * @return Calendrier
-     */
-    public function setModulesAPlanifier($modulesAPlanifier)
-    {
-        $this->modulesAPlanifier = $modulesAPlanifier;
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getModulesCalendrierAPlacer()
-    {
-        return $this->modulesCalendrierAPlacer;
-    }
-
-    /**
-     * @param Collection $modulesCalendrierAPlacer
-     * @return Calendrier
-     */
-    public function setModulesCalendrierAPlacer($modulesCalendrierAPlacer)
-    {
-        $this->modulesCalendrierAPlacer = $modulesCalendrierAPlacer;
-        return $this;
+        return $this->modulesCalendrier->filter(function ($mc) {
+            return $mc->getDateDebut() != null && $mc->getDateFin() != null;
+        });
     }
 
     /**

@@ -52,9 +52,13 @@ var PlacementManager = function (calendrier) {
     this.onDrop = function (el, target, source, sibling) {
         if (target !== source) {
             if ($(target).hasClass('module-container')) {
-                moduleDroped(el, target);
+                elementDroped(el, target);
             } else {
-                me.calendar.addModule($(el).data('module'));
+                if ($(el).hasClass('semaine-module')) {
+                    me.calendar.addSemaine($(el).data('semaine'));
+                } else {
+                    me.calendar.addModule($(el).data('module'));
+                }
             }
 
             if ($(source).hasClass('module-container')) {
@@ -62,6 +66,45 @@ var PlacementManager = function (calendrier) {
                 delete me.modulesPlaces[$(source).parents('.tr').data('cours').idCours];
             }
         }
+    };
+
+    var elementDroped = function (element, container) {
+        transformerContainer(container);
+
+        if ($(element).hasClass('semaine-module')) {
+            me.calendar.removeSemaine(parseInt($(element).data('semaine').codeModuleCalendrier));
+        } else {
+            me.calendar.removeModule(parseInt($(element).data('module').idModule));
+
+            var module = $(element).data('module');
+            var cours = $(container).parents('.tr').data('cours');
+            var nbTotalSemaines = module.nbSemaines;
+            var nbSemainesRestantes = Math.round((module.nbHeures - cours.nbHeures) / 35);
+            if (nbSemainesRestantes > 0) {
+                $(element).addClass('semaine-module');
+                for (var i = 0; i < nbSemainesRestantes; i++) {
+                    var semaine = {
+                        codeModuleCalendrier: 0,
+                        codeCalendrier: me.calendar.codeCalendrier,
+                        module: module,
+                        cours: cours,
+                        nbHeures: 35,
+                        dispenses: [],
+                        libelle: module.libelle + ' (semaine ' + (nbTotalSemaines - i) + ')'
+                    };
+                    me.calendar.addSemaine(semaine);
+                    var $container = $('#modules-planifiables-container');
+                    $container.append(getSemaineRendering(semaine));
+                }
+                $(element).find('span').text(module.libelle + ' (' + (nbTotalSemaines - nbSemainesRestantes) + ' semaines)');
+            }
+        }
+
+        $('.tr-cours').not('.no-remove').remove();
+        $(element).removeClass('selected').addClass('clickable');
+        $(element).parent().removeClass('module-container');
+
+        insertEntreprise();
     };
 
     var transformerContainer = function (container) {
@@ -73,17 +116,6 @@ var PlacementManager = function (calendrier) {
         $(container).parents('.tr').find('.indicateur').toggleClass('amber lighten-4');
         $(container).parent().toggleClass('cours');
         $(container).parent().toggleClass('module-planifie');
-    };
-
-    var moduleDroped = function (module, container) {
-        transformerContainer(container);
-        me.calendar.removeModule(parseInt(module.id));
-
-        $('.tr-cours').not('.no-remove').remove();
-        $(module).removeClass('selected').addClass('clickable');
-        $(module).parent().removeClass('module-container');
-
-        insertEntreprise();
     };
 
     var insertEntreprise = function () {

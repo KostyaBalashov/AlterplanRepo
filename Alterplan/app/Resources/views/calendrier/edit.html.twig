@@ -203,7 +203,8 @@ You should have received a copy of the GNU Affero General Public License along w
 
         $(document).ready(function () {
             initTitleInput('{{ calendrier.titre }}');
-            refreshModules(calendrier.modules);
+            calendrier.displayPlaceableElements();
+
             $('#modules_search').click(function () {
                 renderModal('gestion-modules',
                     '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',

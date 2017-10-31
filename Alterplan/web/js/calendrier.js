@@ -10,49 +10,96 @@
  */
 var Calendrier = function (jCalendrier) {
     var parsedPeriode = JSON.parse(jCalendrier.periode);
+    var me = this;
+
     this.codeCalendrier = jCalendrier.codeCalendrier;
     this.periode = {'debut': JSON.parse(parsedPeriode.debut), 'fin': JSON.parse(parsedPeriode.fin)};
     this.formation = JSON.parse(jCalendrier.formation);
-    this.modules = JSON.parse(jCalendrier.modulesAPlanifier).reduce(function (p1, p2) {
-        p1[p2.idModule] = p2;
-        return p1;
-    }, []);
     this.contraintes = JSON.parse(jCalendrier.contraintes);
 
-    this.addModule = function (jModule) {
-        this.modules[jModule.idModule] = jModule;
+    this.modulesCalendrierPlaces = JSON.parse(jCalendrier.modulesCalendrierPlaces).reduce(function (p1, p2) {
+        p1[p2.module.idModule] = p2;
+        return p1;
+    }, []);
+
+    this.modulesCalendrierAPlacer = JSON.parse(jCalendrier.modulesCalendrierAPlacer).reduce(function (p1, p2) {
+        p1[p2.module.idModule] = p2;
+        return p1;
+    }, []);
+
+    this.modules = this.modulesCalendrierAPlacer.reduce(function (p1, p2) {
+        p1[p2.module.idModule] = p2.module;
+        return p1;
+    }, []);
+
+    this.displayPlaceableElements = function () {
+        var $container = $('#modules-planifiables-container');
+        $container.empty();
+        for (cle in this.modulesCalendrierAPlacer) {
+            if (this.modulesCalendrierAPlacer.hasOwnProperty(cle)) {
+                $container.append(getPlaceableRendering(this.modulesCalendrierAPlacer[cle]));
+            }
+        }
     };
 
-    this.removeModule = function (idModule) {
-        if (this.modules.hasOwnProperty(idModule)) {
-            delete this.modules[idModule];
-        }
+    this.updateModules = function () {
+        this.modules = this.modulesCalendrierAPlacer.reduce(function (p1, p2) {
+            p1[p2.module.idModule] = p2.module;
+            return p1;
+        }, [])
     };
 };
 
-function refreshModules(modules) {
-    var $container = $('#modules-planifiables-container');
-    $container.empty();
-    for (cle in modules) {
-        if (modules.hasOwnProperty(cle)) {
-            $container.append(getModuleRendering(modules[cle]));
-        }
-    }
-}
-
-function getModuleRendering(jModule) {
+function getPlaceableRendering(jPlaceable) {
     var div = $(document.createElement('div'));
-    div.data('module', jModule);
+
+    div.data('placeable', jPlaceable);
     div.addClass('flow-text card-panel module clickable');
     div.click(function () {
-        selectModule($(this));
+        selectPlaceable($(this));
     });
 
     var span = $(document.createElement('span'));
-    span.text(jModule.libelle);
+    span.text(jPlaceable.libelle);
     div.append(span);
 
     return div;
+}
+
+function selectPlaceable(clickedElement) {
+    var $element = $(clickedElement);
+    if (!$element.hasClass('selected')) {
+        showLoader();
+        if ($element.hasClass('module-place')) {
+            $element.parent().toggleClass('module-container');
+        }
+
+        $('.module.selected').removeClass('selected').addClass('clickable');
+        $('.module-place.selected').removeClass('selected').addClass('clickable').parent().toggleClass('module-container');
+
+        $element.removeClass('clickable').addClass('selected');
+        var url = Routing.generate('cours_search', {
+            idModule: $element.data('placeable').module.idModule,
+            codeCalendrier: calendrier.codeCalendrier
+        });
+
+        $.get(url, function (data) {
+            renderCours(data);
+        }).always(function () {
+            dismissLoader();
+        });
+    }
+}
+
+function renderCours(data) {
+    var bodySelector = '#calnendar-body';
+    $(bodySelector).find('.tr').not('.no-remove').remove();
+    var coursManager = new CoursManager(data);
+    for (idCour in coursManager.all) {
+        if (coursManager.all.hasOwnProperty(idCour)) {
+            coursManager.renderCour(coursManager.all[idCour], bodySelector);
+        }
+    }
 }
 
 function endEdit(e, defaultText) {
@@ -84,42 +131,6 @@ function initTitleInput(defaultText) {
     });
 }
 
-function selectModule(clickedModule) {
-    var $module = $(clickedModule);
-    if (!$module.hasClass('selected')) {
-        showLoader();
-        if ($module.hasClass('module-place')) {
-            $module.parent().toggleClass('module-container');
-        }
-
-        $('.module.selected').removeClass('selected').addClass('clickable');
-        $('.module-place.selected').removeClass('selected').addClass('clickable').parent().toggleClass('module-container');
-
-        $module.removeClass('clickable').addClass('selected');
-        var url = Routing.generate('cours_search', {
-            idModule: $module.attr('id'),
-            codeCalendrier: calendrier.codeCalendrier
-        });
-
-        $.get(url, function (data) {
-            renderCours(data);
-        }).always(function () {
-            dismissLoader();
-        });
-    }
-}
-
-function renderCours(data) {
-    var bodySelector = '#calnendar-body';
-    $(bodySelector).find('.tr').not('.no-remove').remove();
-    var coursManager = new CoursManager(data);
-    for (idCour in coursManager.all) {
-        if (coursManager.all.hasOwnProperty(idCour)) {
-            coursManager.renderCour(coursManager.all[idCour], bodySelector);
-        }
-    }
-}
-
 function saveModulesAPlanifier() {
     showLoader();
     closeModaleGestionModules();
@@ -130,23 +141,32 @@ function saveModulesAPlanifier() {
     for (removedKey in modulesManager.removedModules) {
         if (calendrier.modules.hasOwnProperty(removedKey)
             && (removedKey in calendrier.modules)) {
-            delete calendrier.modules[removedKey];
-            removed.push(removedKey);
+            removed.push(calendrier.modulesCalendrierAPlacer[removedKey].codeModuleCalendrier);
+            delete calendrier.modulesCalendrierAPlacer[removedKey];
         }
     }
 
     for (addedKey in modulesManager.addedModules) {
         if (!calendrier.modules.hasOwnProperty(addedKey)) {
-            calendrier.modules[addedKey] = modulesManager.addedModules[addedKey];
-            added.push(addedKey);
+            calendrier.modulesCalendrierAPlacer[addedKey] = {
+                codeCalendrier: calendrier.codeCalendrier,
+                dateDebut: null,
+                dateFin: null,
+                libelle: modulesManager.addedModules[addedKey].libelle,
+                module: modulesManager.addedModules[addedKey]
+            };
+
+            added.push(calendrier.modulesCalendrierAPlacer[addedKey]);
         }
     }
+
+    calendrier.updateModules();
 
     var data = {'addedModules': added, 'removedModules': removed};
     var url = Routing.generate('calendrier_edit', {codeCalendrier: calendrier.codeCalendrier});
     $.post(url, data);
 
-    refreshModules(calendrier.modules);
+    calendrier.displayPlaceableElements();
     dismissLoader();
 }
 

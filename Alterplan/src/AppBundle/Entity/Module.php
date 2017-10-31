@@ -86,17 +86,9 @@ class Module implements \JsonSerializable
      */
     private $modulesParUnite;
 
-    /**
-     * @var Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Calendrier", mappedBy="modulesAPlanifier")
-     */
-    private $calendriersEnAttente;
-
     public function __construct()
     {
         $this->modulesParUnite = new ArrayCollection();
-        $this->calendriersEnAttente = new ArrayCollection();
     }
 
     public function jsonSerialize()
@@ -134,24 +126,6 @@ class Module implements \JsonSerializable
         }
 
         return $formation;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getCalendriersEnAttente()
-    {
-        return $this->calendriersEnAttente;
-    }
-
-    /**
-     * @param Collection $calendriersEnAttente
-     * @return Module
-     */
-    public function setCalendriersEnAttente($calendriersEnAttente)
-    {
-        $this->calendriersEnAttente = $calendriersEnAttente;
-        return $this;
     }
 
     /**

@@ -20,6 +20,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Contrainte;
+use AppBundle\Entity\Module;
 use AppBundle\Entity\ModuleCalendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
@@ -44,13 +45,6 @@ use AppBundle\Entity\TypeContrainte;
  */
 class CalendrierController extends Controller
 {
-    private $moduleAPlanifierService;
-
-    public function __construct(ModuleAPlanifierService $moduleAPlanifierService)
-    {
-        $this->moduleAPlanifierService = $moduleAPlanifierService;
-    }
-
     /**
      * Affiche le calendrier créé ou a éditer
      * @Route("/edit/{codeCalendrier}", options={"expose"=true}, name="calendrier_edit")
@@ -62,13 +56,22 @@ class CalendrierController extends Controller
             $removedModulesAPlacer = $request->get('removedModules');
             $addedModulesAPlacer = $request->get('addedModules');
 
-            if ($removedModulesAPlacer) {
-                $this->moduleAPlanifierService->delete($calendrier->getCodeCalendrier(), $removedModulesAPlacer);
-            }
+            $moduleRepo = $this->getDoctrine()->getRepository(Module::class);
+            $em = $this->getDoctrine()->getManager();
 
-            if ($addedModulesAPlacer) {
-                $this->moduleAPlanifierService->insert($calendrier->getCodeCalendrier(), $addedModulesAPlacer);
+            $repo = $this->getDoctrine()->getRepository(ModuleCalendrier::class);
+            $repo->delete($removedModulesAPlacer);
+
+            foreach ($addedModulesAPlacer as $moduleCalendrier) {
+                $module = $moduleRepo->find($moduleCalendrier['module']['idModule']);
+                $mc = new ModuleCalendrier();
+                $mc->setNbSemaines($module->getDureeEnSemaines());
+                $mc->setLibelle($module->getLibelle());
+                $mc->setCalendrier($calendrier);
+                $mc->setModule($module);
+                $em->persist($mc);
             }
+            $em->flush();
 
             return new Response('Ok');
         } else {
@@ -121,7 +124,12 @@ class CalendrierController extends Controller
 
             foreach ($calendrier->getFormation()->getAllModules() as $module) {
                 if (!$module->isArchiver()) {
-                    $calendrier->addModuleAPlacer($module);
+                    $moduleCalendrier = new ModuleCalendrier();
+                    $moduleCalendrier->setModule($module);
+                    $moduleCalendrier->setCalendrier($calendrier);
+                    $moduleCalendrier->setLibelle($module->getLibelle());
+                    $moduleCalendrier->setNbSemaines($module->getDureeEnSemaines());
+                    $calendrier->getModulesCalendrier()->add($moduleCalendrier);
                 }
             }
             $today = date("d/m/Y");
@@ -411,9 +419,9 @@ class CalendrierController extends Controller
         $previousModuleDate = $calendrier->getDateDebut();
 
         // On parcourt la liste des modulesCalendrier;
-        foreach ($calendrier->getModulesCalendrier() as $moduleCalendrier) {
+        foreach ($calendrier->getModuleCalendrierPlaces() as $moduleCalendrier) {
             // On prend la date de début du cours
-            $currentModuleDate = $moduleCalendrier->getCours()->getDebut();
+            $currentModuleDate = $moduleCalendrier->getDateDebut();
 
             // On calcule le nombre de jour d'intervale qui sépare
             // la fin d'un module (ou dans un premier cas, la date de début de formation) et la date de début d'un
@@ -435,7 +443,7 @@ class CalendrierController extends Controller
             } else {
                 array_push($tableauCalendrier, array("cours" => $moduleCalendrier));
             }
-            $previousModuleDate = $moduleCalendrier->getCours()->getFin();
+            $previousModuleDate = $moduleCalendrier->getDateFin();
         }
 
         // On regarde s'il y a une periode d'entreprise avant la fin de la formation
@@ -521,11 +529,11 @@ class CalendrierController extends Controller
      */
     public function sortModulesCalendrier($calendrier)
     {
-        $arrayModulesCalendrier = $calendrier->getModulesCalendrier();
+        $arrayModulesCalendrier = $calendrier->getModuleCalendrierPlaces();
 
         $iterator = $arrayModulesCalendrier->getIterator();
         $iterator->uasort(function ($a, $b) {
-            return ($a->getCours()->getDebut() < $b->getCours()->getDebut()) ? -1 : 1;
+            return ($a->getDateDebut() < $b->getDateDebut()) ? -1 : 1;
         });
         $collection = new ArrayCollection(iterator_to_array($iterator));
         return $collection;
@@ -536,7 +544,7 @@ class CalendrierController extends Controller
      * Permet de modifier les dates de contrat d'un calendrier
      * @param $calendrier calendrier concerné
      * @Route("/saveCalendrierDate/{codeCalendrier}", name="saveCalendrierDate", options = { "expose" = true })
-     * @return réponse vide
+     * @return JsonResponse vide
      * @Method({"POST"})
      */
 
