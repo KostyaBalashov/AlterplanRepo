@@ -292,7 +292,10 @@ function closeModaleInscrireCalendrier() {
 function inscrireCalendrier() {
     showLoader();
     var url = Routing.generate('calendrier_inscrire', {codeCalendrier: calendrier.codeCalendrier});
-    $.post(url);
+    $.post(url).done(function () {
+        showToast("Le calendrier a bien été inscrit", "success");
+        $('#inscrireCalendrier').addClass('disabled');
+    });
     closeModaleInscrireCalendrier();
     dismissLoader();
 }

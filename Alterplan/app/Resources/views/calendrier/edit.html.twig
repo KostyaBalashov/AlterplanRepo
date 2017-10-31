@@ -251,7 +251,7 @@ You should have received a copy of the GNU Affero General Public License along w
             var calendrierInsrit = {{ calendrier.isInscrit }}+"";
             // Si le calendrier est inscrit, on retir la possibilité de cliquer sur le lien
             if(calendrierInsrit === "1") {
-                $('#inscrireCalendrier').removeClass('yellow').addClass('link_disable');
+                $('#inscrireCalendrier').addClass('disabled');
             }
         });
     </script>

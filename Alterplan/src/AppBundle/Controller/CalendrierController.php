@@ -592,17 +592,12 @@ class CalendrierController extends Controller
             $calendrier->setIsInscrit(1);
             $em->persist($calendrier);
             $em->flush();
+            return new JsonResponse("success");
         } else {
-            if($calendrierIsInscrit != null) {
-                return $this->render(':calendrier:modaleInscrireCalendrier.html.twig', array(
-                    'calendrier' => $calendrier,
-                    'calendrierInscrit' => $calendrierIsInscrit
-                ));
-            } else {
-                $calendrier->setIsInscrit(1);
-                $em->persist($calendrier);
-                $em->flush();
-            }
+            return $this->render(':calendrier:modaleInscrireCalendrier.html.twig', array(
+                'calendrier' => $calendrier,
+                'calendrierInscrit' => $calendrierIsInscrit
+            ));
         }
     }
 }
