@@ -285,3 +285,14 @@ function closeModaleGestionContraintes() {
     $("div[data-target='contrainte']").modal('close');
 }
 
+function closeModaleInscrireCalendrier() {
+    $("div[data-target='inscrire_calendrier']").modal('close');
+}
+
+function inscrireCalendrier() {
+    showLoader();
+    var url = Routing.generate('calendrier_inscrire', {codeCalendrier: calendrier.codeCalendrier});
+    $.post(url);
+    closeModaleInscrireCalendrier();
+    dismissLoader();
+}

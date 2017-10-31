@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License along w
 {% endblock %}
 
 {% block body %}
+
     <div class="row center blue lighten-1">
         <div class="col s6 offset-s3">
             <div class="hoverable clickable">
@@ -118,7 +119,8 @@ You should have received a copy of the GNU Affero General Public License along w
                 </a>
             </li>
             <li>
-                <a class="btn-floating yellow darken-1 tooltipped"
+                <a id="inscrireCalendrier"
+                   class="btn-floating yellow darken-1 tooltipped"
                    data-position="left"
                    data-delay="50"
                    data-tooltip="Inscrire">
@@ -183,6 +185,18 @@ You should have received a copy of the GNU Affero General Public License along w
             </button>
         {% endblock %}
     {% endembed %}
+
+    {% embed ':composants:modale.html.twig' with {'id' : 'inscrire_calendrier'} %}
+        {% block modal_action_buttons %}
+            <button type="button" onclick="closeModaleInscrireCalendrier()"
+                    class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
+            </button>
+            <button type="button" onclick="inscrireCalendrier()"
+                    class="modal-action waves-effect waves-green btn">Valider
+            </button>
+        {% endblock %}
+    {% endembed %}
+
 {% endblock %}
 
 {% block customJS %}
@@ -216,6 +230,11 @@ You should have received a copy of the GNU Affero General Public License along w
                 renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
             });
 
+            $('#inscrireCalendrier').click(function () {
+                var url = "{{ path('calendrier_inscrire', { 'codeCalendrier' : calendrier.codeCalendrier}) }}";
+                renderModal('inscrire_calendrier',url,false);
+            });
+
             var drake = new dragula({
                 isContainer: placementManager.isContainer,
                 moves: placementManager.moves,
@@ -226,6 +245,14 @@ You should have received a copy of the GNU Affero General Public License along w
 
             drake.on('over', placementManager.onOver);
             drake.on('drop', placementManager.onDrop);
+
+            // On concatène le boolean isInscrit car lorsque le isInscrit est false, il affiche vide ce qui remonte une erreur
+            // de syntaxe.
+            var calendrierInsrit = {{ calendrier.isInscrit }}+"";
+            // Si le calendrier est inscrit, on retir la possibilité de cliquer sur le lien
+            if(calendrierInsrit === "1") {
+                $('#inscrireCalendrier').removeClass('yellow').addClass('link_disable');
+            }
         });
     </script>
 {% endblock %}

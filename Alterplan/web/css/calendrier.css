@@ -74,3 +74,9 @@ div.fixed-action-btn > a.btn-large:hover {
 .module-place.selected:hover, .module.selected:hover, .semaine-module.selected:hover {
     cursor: move;
 }
+
+.link_disable {
+    pointer-events: none;
+    cursor: default;
+    background-color : grey !important;
+}

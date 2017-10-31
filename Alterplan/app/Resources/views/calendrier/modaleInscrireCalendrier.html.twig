@@ -1,0 +1,40 @@
+{#
+This file is part of Alterplan. 
+ 
+Alterplan is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
+ 
+Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. 
+ 
+You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
+#}
+
+<link rel="stylesheet" href="{{ asset('css/calendrier.css') }}" />
+<div class="card" style="height: 45em; max-height: 45em; overflow: auto;">
+    <div class="card-content custom-padding">
+        <span class="card-title">Confirmation d'inscription du calendrier</span>
+        {% if(calendrierInscrit != null and calendrierInscrit|length > 0) %}
+            <br>
+            Un calendrier est déjà inscrit pour ce stagiaire :
+            <br>
+            <table>
+                <thead>
+                    <th>Titre du calendrier</th>
+                    <th>Formation</th>
+                    <th>Date de début du calendrier</th>
+                    <th>Date de fin du calendrier</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ calendrierInscrit[0].titre }}</td>
+                        <td>{{ calendrierInscrit[0].formation.libelleLong }}</td>
+                        <td>{{ calendrierInscrit[0].dateDebut.format('d/m/Y') }}</td>
+                        <td>{{ calendrierInscrit[0].dateFin.format('d/m/Y')  }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            Voulez-vous remplacer le calendrier déjà inscrit (<b>{{ calendrierInscrit[0].titre }}</b>) par ce calendrier (<b>{{ calendrier.titre }}</b>)?
+        {% endif %}
+
+    </div>
+</div>

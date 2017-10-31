@@ -71,7 +71,6 @@ class CalendrierController extends Controller
                 $mc->setModule($module);
                 $em->persist($mc);
             }
-            $em->flush();
 
             return new Response('Ok');
         } else {
@@ -409,6 +408,11 @@ class CalendrierController extends Controller
         $dompdf->stream($calendrier->getTitre() . ".pdf");
     }
 
+    /**
+     * génère le calendrier
+     * @param $calendrier calendrier
+     * @return array calendrier avec entreprise et cours
+     */
     public function getPlanning($calendrier)
     {
 
@@ -566,4 +570,39 @@ class CalendrierController extends Controller
         return new JsonResponse($calendrier);
     }
 
+
+    /**
+     * @param Calendrier $calendrier
+     * @Route("/inscrire/{codeCalendrier}", options={"expose"=true}, name="calendrier_inscrire")
+     * @Method({"GET", "POST"})
+     * @return  Response
+     */
+    public function inscrireCalendrier(Request $request, Calendrier $calendrier) {
+        $repoCalendrier = $this->getDoctrine()->getRepository(Calendrier::class);
+        $em = $this->getDoctrine()->getManager();
+        // recherche d'un calendrier inscrit pour le stagiaire concerné.
+        $calendrierIsInscrit = $repoCalendrier->findBy(array('isInscrit'=>1, 'stagiaire' => $calendrier->getStagiaire()));
+
+
+        if ($request->getMethod() == 'POST' && $request->isXmlHttpRequest()) {
+            if($calendrierIsInscrit != null) {
+                $calendrierIsInscrit[0]->setIsInscrit(0);
+                $em->persist($calendrierIsInscrit[0]);
+            }
+            $calendrier->setIsInscrit(1);
+            $em->persist($calendrier);
+            $em->flush();
+        } else {
+            if($calendrierIsInscrit != null) {
+                return $this->render(':calendrier:modaleInscrireCalendrier.html.twig', array(
+                    'calendrier' => $calendrier,
+                    'calendrierInscrit' => $calendrierIsInscrit
+                ));
+            } else {
+                $calendrier->setIsInscrit(1);
+                $em->persist($calendrier);
+                $em->flush();
+            }
+        }
+    }
 }
