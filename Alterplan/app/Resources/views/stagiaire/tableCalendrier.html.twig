@@ -147,7 +147,7 @@ You should have received a copy of the GNU Affero General Public License along w
                 var calendarTableDiv = $('.bloc_calendrier');
                 calendarTableDiv.empty();
                 calendarTableDiv.html(data);
-
+                $(".dropdown-button").dropdown();
             },
             error: function () {
                 dismissLoader();
