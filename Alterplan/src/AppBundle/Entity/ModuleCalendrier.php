@@ -92,6 +92,8 @@ class ModuleCalendrier implements \JsonSerializable
                     $result = $result - ($interval->days + 1);
                 }
             }
+        } else {
+            $result = $this->module->getDureeEnHeures();
         }
 
         return $result;
@@ -104,6 +106,7 @@ class ModuleCalendrier implements \JsonSerializable
         $result['codeModuleCalendrier'] = $this->codeModuleCalendrier;
         $result['codeCalendrier'] = $this->calendrier->getCodeCalendrier();
         $result['nbHeures'] = $this->getNombreHeuresReel();
+        $result['nbSemaines'] = $this->getNbSemaines();
         $result['dateDebut'] = json_encode($this->dateDebut);
         $result['dateFin'] = json_encode($this->dateFin);
         $result['libelle'] = $this->libelle;

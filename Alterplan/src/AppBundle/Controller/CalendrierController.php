@@ -72,6 +72,7 @@ class CalendrierController extends Controller
                 $em->persist($mc);
             }
 
+            $em->flush();
             return new Response('Ok');
         } else {
             return $this->render(':calendrier:edit.html.twig', array(
@@ -577,15 +578,16 @@ class CalendrierController extends Controller
      * @Method({"GET", "POST"})
      * @return  Response
      */
-    public function inscrireCalendrier(Request $request, Calendrier $calendrier) {
+    public function inscrireCalendrier(Request $request, Calendrier $calendrier)
+    {
         $repoCalendrier = $this->getDoctrine()->getRepository(Calendrier::class);
         $em = $this->getDoctrine()->getManager();
         // recherche d'un calendrier inscrit pour le stagiaire concerné.
-        $calendrierIsInscrit = $repoCalendrier->findBy(array('isInscrit'=>1, 'stagiaire' => $calendrier->getStagiaire()));
+        $calendrierIsInscrit = $repoCalendrier->findBy(array('isInscrit' => 1, 'stagiaire' => $calendrier->getStagiaire()));
 
 
         if ($request->getMethod() == 'POST' && $request->isXmlHttpRequest()) {
-            if($calendrierIsInscrit != null) {
+            if ($calendrierIsInscrit != null) {
                 $calendrierIsInscrit[0]->setIsInscrit(0);
                 $em->persist($calendrierIsInscrit[0]);
             }

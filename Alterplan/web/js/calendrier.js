@@ -18,17 +18,17 @@ var Calendrier = function (jCalendrier) {
     this.contraintes = JSON.parse(jCalendrier.contraintes);
 
     this.modulesCalendrierPlaces = JSON.parse(jCalendrier.modulesCalendrierPlaces).reduce(function (p1, p2) {
-        p1[p2.module.idModule] = p2;
+        p1[p2.module.idModule + '-' + p2.codeModuleCalendrier] = p2;
         return p1;
     }, []);
 
     this.modulesCalendrierAPlacer = JSON.parse(jCalendrier.modulesCalendrierAPlacer).reduce(function (p1, p2) {
-        p1[p2.module.idModule] = p2;
+        p1[p2.module.idModule + '-' + p2.codeModuleCalendrier] = p2;
         return p1;
     }, []);
 
-    this.modules = this.modulesCalendrierAPlacer.reduce(function (p1, p2) {
-        p1[p2.module.idModule] = p2.module;
+    this.modules = Object.keys(this.modulesCalendrierAPlacer).reduce(function (p1, p2) {
+        p1[me.modulesCalendrierAPlacer[p2].module.idModule] = me.modulesCalendrierAPlacer[p2].module;
         return p1;
     }, []);
 
@@ -48,11 +48,42 @@ var Calendrier = function (jCalendrier) {
             return p1;
         }, [])
     };
+
+    this.addModuleCalendrierAPlacer = function (jModuleCalendrier) {
+        var code = 0;
+        for (cle in this.modulesCalendrierAPlacer) {
+            if (this.modulesCalendrierAPlacer.hasOwnProperty(cle)) {
+                code = code < this.modulesCalendrierAPlacer[cle].codeModuleCalendrier ? this.modulesCalendrierAPlacer[cle].codeModuleCalendrier : code;
+            }
+        }
+        jModuleCalendrier.codeModuleCalendrier = ++code;
+        this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
+        return jModuleCalendrier;
+    };
+
+    this.addModuleCalendrierPlace = function (jModuleCalendrier) {
+        if (!jModuleCalendrier.hasOwnProperty('codeModuleCalendrier')) {
+            var code = 0;
+            for (cle in this.modulesCalendrierPlaces) {
+                if (this.modulesCalendrierPlaces.hasOwnProperty(cle)) {
+                    code = code < this.modulesCalendrierPlaces[cle].codeModuleCalendrier ? this.modulesCalendrierPlaces[cle].codeModuleCalendrier : code;
+                }
+            }
+            jModuleCalendrier.codeModuleCalendrier = ++code;
+        }
+
+        this.modulesCalendrierPlaces[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
+        if (this.modulesCalendrierAPlacer.hasOwnProperty(jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier)) {
+            delete this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier];
+        }
+
+        return jModuleCalendrier;
+    };
 };
 
 function getPlaceableRendering(jPlaceable) {
     var div = $(document.createElement('div'));
-
+    div.attr('id', jPlaceable.module.idModule + '-' + jPlaceable.codeModuleCalendrier);
     div.data('placeable', jPlaceable);
     div.addClass('flow-text card-panel module clickable');
     div.click(function () {
@@ -138,30 +169,36 @@ function saveModulesAPlanifier() {
     var added = [];
     var removed = [];
 
-    for (removedKey in modulesManager.removedModules) {
-        if (calendrier.modules.hasOwnProperty(removedKey)
-            && (removedKey in calendrier.modules)) {
-            removed.push(calendrier.modulesCalendrierAPlacer[removedKey].codeModuleCalendrier);
-            delete calendrier.modulesCalendrierAPlacer[removedKey];
+    var moduleCalendrierRemoved = Object.keys(calendrier.modulesCalendrierAPlacer).filter(function (t, number, ts) {
+        return Object.keys(modulesManager.removedModules).indexOf(String(calendrier.modulesCalendrierAPlacer[t].module.idModule)) > -1;
+    });
+
+    for (cleMC in moduleCalendrierRemoved) {
+        if (moduleCalendrierRemoved.hasOwnProperty(cleMC) &&
+            calendrier.modulesCalendrierAPlacer.hasOwnProperty(moduleCalendrierRemoved[cleMC])) {
+            removed.push(calendrier.modulesCalendrierAPlacer[moduleCalendrierRemoved[cleMC]].codeModuleCalendrier);
+            delete calendrier.modulesCalendrierAPlacer[moduleCalendrierRemoved[cleMC]];
         }
     }
 
     for (addedKey in modulesManager.addedModules) {
         if (!calendrier.modules.hasOwnProperty(addedKey)) {
-            calendrier.modulesCalendrierAPlacer[addedKey] = {
+
+            var addedMC = calendrier.addModuleCalendrierAPlacer({
                 codeCalendrier: calendrier.codeCalendrier,
                 dateDebut: null,
                 dateFin: null,
                 libelle: modulesManager.addedModules[addedKey].libelle,
                 module: modulesManager.addedModules[addedKey]
-            };
+            });
 
-            added.push(calendrier.modulesCalendrierAPlacer[addedKey]);
+            added.push(addedMC);
         }
     }
 
     calendrier.updateModules();
 
+    //TODO : enregistrer avec les calendrier peut être?
     var data = {'addedModules': added, 'removedModules': removed};
     var url = Routing.generate('calendrier_edit', {codeCalendrier: calendrier.codeCalendrier});
     $.post(url, data);

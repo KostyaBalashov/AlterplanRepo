@@ -70,40 +70,53 @@ var PlacementManager = function (calendrier) {
 
     var elementDroped = function (element, container) {
         transformerContainer(container);
+        var nbHeuresModule = $(element).data('placeable').nbHeures;
+        var nbHeuresCours = $(container).parents('.tr').data('cours').nbHeures;
+        if (nbHeuresModule === nbHeuresCours) {
 
-        if ($(element).hasClass('semaine-module')) {
-            me.calendar.removeSemaine(parseInt($(element).data('semaine').codeModuleCalendrier));
-        } else {
-            me.calendar.removeModule(parseInt($(element).data('module').idModule));
+            $(element).data('placeable').dateDebut = $(container).parents('.tr').data('cours').dateDebut;
+            $(element).data('placeable').dateFin = $(container).parents('.tr').data('cours').dateFin;
+            me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
 
-            var module = $(element).data('module');
-            var cours = $(container).parents('.tr').data('cours');
-            var nbTotalSemaines = module.nbSemaines;
-            var nbSemainesRestantes = Math.round((module.nbHeures - cours.nbHeures) / 35);
-            if (nbSemainesRestantes > 0) {
-                $(element).addClass('semaine-module');
-                for (var i = 0; i < nbSemainesRestantes; i++) {
-                    var semaine = {
-                        codeModuleCalendrier: 0,
-                        codeCalendrier: me.calendar.codeCalendrier,
-                        module: module,
-                        cours: cours,
-                        nbHeures: 35,
-                        dispenses: [],
-                        libelle: module.libelle + ' (semaine ' + (nbTotalSemaines - i) + ')'
-                    };
-                    me.calendar.addSemaine(semaine);
-                    var $container = $('#modules-planifiables-container');
-                    $container.append(getSemaineRendering(semaine));
-                }
-                $(element).find('span').text(module.libelle + ' (' + (nbTotalSemaines - nbSemainesRestantes) + ' semaines)');
+        } else if (nbHeuresModule > nbHeuresCours) {
+
+            var nbTotaleSemaines = $(element).data('placeable').module.nbSemaines;
+            var nbSemainesRestante = Math.round((nbHeuresModule - nbHeuresCours) / 35);
+            var nbSemainesPlaces = nbTotaleSemaines - nbSemainesRestante;
+
+            $(element).data('placeable').dateDebut = $(container).parents('.tr').data('cours').dateDebut;
+            $(element).data('placeable').dateFin = $(container).parents('.tr').data('cours').dateFin;
+            $(element).data('placeable').nbHeures = nbHeuresCours;
+            $(element).data('placeable').nbSemaines = nbSemainesPlaces;
+            var s = [];
+            for (var i = 1; i <= nbSemainesPlaces; i++) {
+                s.push('S' + i);
             }
+            $(element).data('placeable').libelle = $(element).data('placeable').module.libelle + ' (' + s.join(',') + ')';
+            $(element).find('span').text($(element).data('placeable').libelle);
+            me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
+
+            var sr = [];
+            for (var j = 1; j <= nbSemainesRestante; j++) {
+                sr.push('S' + (j + nbSemainesPlaces));
+            }
+            var mc = {
+                codeCalendrier: me.calendar.codeCalendrier,
+                dateDebut: null,
+                dateFin: null,
+                libelle: $(element).data('placeable').module.libelle + ' (' + sr.join(',') + ')',
+                module: $(element).data('placeable').module,
+                nbHeures: nbHeuresModule - nbHeuresCours,
+                nbSemaines: nbSemainesRestante
+
+            };
+            var $container = $('#modules-planifiables-container');
+            $container.append(getPlaceableRendering(me.calendar.addModuleCalendrierAPlacer(mc)));
         }
 
         $('.tr-cours').not('.no-remove').remove();
         $(element).removeClass('selected').addClass('clickable');
         $(element).parent().removeClass('module-container');
-
         insertEntreprise();
     };
 
