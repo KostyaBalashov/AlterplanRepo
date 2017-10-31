@@ -75,8 +75,6 @@ div.fixed-action-btn > a.btn-large:hover {
     cursor: move;
 }
 
-.link_disable {
-    pointer-events: none;
-    cursor: default;
-    background-color : grey !important;
+.card-inscrire {
+    height:auto !important;
 }
