@@ -63,14 +63,8 @@ var CoursManager = function (jCours) {
     };
 
     var setDate = function ($template, jCour) {
-        function pad(s) {
-            return (s < 10) ? '0' + s : s;
-        }
-
-        var dateDebut = new Date(jCour.dateDebut.date);
-        var strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
-        var dateFin = new Date(jCour.dateFin.date);
-        var strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
+        var strDateDebut = getDateStr(new Date(jCour.dateDebut.date));
+        var strDateFin = getDateStr(new Date(jCour.dateFin.date));
         var date = strDateDebut + ' - ' + strDateFin;
 
         $template.find("span.date").text(date);

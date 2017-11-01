@@ -15,6 +15,8 @@ var PlacementManager = function (calendrier) {
     var newModuleClasses = 'module-place center valign-wrapper hoverable bordered';
     var spanClasses = 'center-align col s12';
     var containerClasse = 'valign-wrapper';
+    var oneH = 3600000;
+    var oneD = 24 * oneH;
 
     var me = this;
     this.calendar = calendrier;
@@ -33,6 +35,11 @@ var PlacementManager = function (calendrier) {
 
     this.onOver = function (el, container, source) {
         if ($(container).hasClass('module-container')) {
+            var nbHeuresModule = $(el).data('placeable').nbHeures;
+            var nbHeuresCours = $(container).parents('.tr').data('cours').nbHeures;
+            if (nbHeuresModule < nbHeuresCours && Math.round(nbHeuresCours / nbHeuresModule) > 1) {
+                splitCours($(container).parents('.tr'), Math.round(nbHeuresCours / nbHeuresModule));
+            }
             $(el).removeClass(oldModuleClasses);
             $(el).addClass(newModuleClasses);
             $(el).find('span').addClass(spanClasses);
@@ -54,18 +61,42 @@ var PlacementManager = function (calendrier) {
             if ($(target).hasClass('module-container')) {
                 elementDroped(el, target);
             } else {
-                if ($(el).hasClass('semaine-module')) {
-                    me.calendar.addSemaine($(el).data('semaine'));
-                } else {
-                    me.calendar.addModule($(el).data('module'));
-                }
+                me.calendar.removeModulePlace(el.id);
             }
 
             if ($(source).hasClass('module-container')) {
                 transformerContainer(source);
-                delete me.modulesPlaces[$(source).parents('.tr').data('cours').idCours];
             }
+
+            $('.tr-cours').not('.no-remove').remove();
+            $(el).removeClass('selected').addClass('clickable');
+            insertEntreprise();
         }
+    };
+
+    var splitCours = function (trCours, semaines) {
+        var dateDebut = new Date(trCours.data('cours').dateDebut.date);
+        var dateFin = new Date(trCours.data('cours').dateFin.date);
+
+        var nwDateFin = new Date(dateDebut.getTime() + ((dateFin - dateDebut) / semaines) - oneD);
+        var nbH = Math.round((nwDateFin - dateDebut) / oneD) * 7;
+
+        trCours.data('cours').dateFin = {date: nwDateFin.toDateString()};
+        trCours.data('cours').nbHeures = nbH;
+        trCours.find('span.date').text(getDateStr(dateDebut) + '-' + getDateStr(nwDateFin));
+        trCours.find('span.heures').text(nbH + 'H');
+
+        var nwDateDebut = new Date(nwDateFin.getTime() + (3 * oneD - 12 * oneH));
+        nbH = Math.round((dateFin - nwDateDebut + oneD) / oneD) * 7;
+        var cloneTr = trCours.clone();
+
+        cloneTr.data('cours', JSON.parse(JSON.stringify(trCours.data('cours'))));
+        cloneTr.data('cours').dateDebut = {date: nwDateDebut.toDateString()};
+        cloneTr.data('cours').dateFin = {date: dateFin.toDateString()};
+        cloneTr.data('cours').nbHeures = nbH;
+        cloneTr.find('span.date').text(getDateStr(nwDateDebut) + '-' + getDateStr(dateFin));
+        cloneTr.find('span.heures').text(nbH + 'H');
+        cloneTr.insertAfter(trCours);
     };
 
     var elementDroped = function (element, container) {
@@ -88,36 +119,34 @@ var PlacementManager = function (calendrier) {
             $(element).data('placeable').dateFin = $(container).parents('.tr').data('cours').dateFin;
             $(element).data('placeable').nbHeures = nbHeuresCours;
             $(element).data('placeable').nbSemaines = nbSemainesPlaces;
-            var s = [];
-            for (var i = 1; i <= nbSemainesPlaces; i++) {
-                s.push('S' + i);
+            if (nbSemainesRestante > 0) {
+                var s = [];
+                for (var i = 1; i <= nbSemainesPlaces; i++) {
+                    s.push('S' + i);
+                }
+                $(element).data('placeable').libelle = $(element).data('placeable').module.libelle + ' (' + s.join(',') + ')';
+                $(element).find('span').text($(element).data('placeable').libelle);
+
+                var sr = [];
+                for (var j = 1; j <= nbSemainesRestante; j++) {
+                    sr.push('S' + (j + nbSemainesPlaces));
+                }
+                var mc = {
+                    codeCalendrier: me.calendar.codeCalendrier,
+                    dateDebut: null,
+                    dateFin: null,
+                    libelle: $(element).data('placeable').module.libelle + ' (' + sr.join(',') + ')',
+                    module: $(element).data('placeable').module,
+                    nbHeures: nbHeuresModule - nbHeuresCours,
+                    nbSemaines: nbSemainesRestante
+
+                };
+                var $container = $('#modules-planifiables-container');
+                $container.append(getPlaceableRendering(me.calendar.addModuleCalendrierAPlacer(mc)));
             }
-            $(element).data('placeable').libelle = $(element).data('placeable').module.libelle + ' (' + s.join(',') + ')';
-            $(element).find('span').text($(element).data('placeable').libelle);
             me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
-
-            var sr = [];
-            for (var j = 1; j <= nbSemainesRestante; j++) {
-                sr.push('S' + (j + nbSemainesPlaces));
-            }
-            var mc = {
-                codeCalendrier: me.calendar.codeCalendrier,
-                dateDebut: null,
-                dateFin: null,
-                libelle: $(element).data('placeable').module.libelle + ' (' + sr.join(',') + ')',
-                module: $(element).data('placeable').module,
-                nbHeures: nbHeuresModule - nbHeuresCours,
-                nbSemaines: nbSemainesRestante
-
-            };
-            var $container = $('#modules-planifiables-container');
-            $container.append(getPlaceableRendering(me.calendar.addModuleCalendrierAPlacer(mc)));
         }
-
-        $('.tr-cours').not('.no-remove').remove();
-        $(element).removeClass('selected').addClass('clickable');
         $(element).parent().removeClass('module-container');
-        insertEntreprise();
     };
 
     var transformerContainer = function (container) {
@@ -132,10 +161,6 @@ var PlacementManager = function (calendrier) {
     };
 
     var insertEntreprise = function () {
-        function pad(s) {
-            return (s < 10) ? '0' + s : s;
-        }
-
         function getEntreprise(periode, semaines) {
             var entrepriseTemplate = $('#entreprise-template').children();
             entrepriseTemplate.find("span.date").text(periode);
@@ -152,15 +177,15 @@ var PlacementManager = function (calendrier) {
 
             var prev = $(item).prev();
             if (prev.length > 0) {
-                dateDebut = new Date($(prev).data('cours').dateFin.date);
-                dateFin = new Date($(item).data('cours').dateDebut.date);
+                dateDebut = new Date(new Date($(prev).data('cours').dateFin.date).getTime() + 3 * oneD);
+                dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
             } else {
                 dateDebut = new Date(me.calendar.periode.debut.date);
-                dateFin = new Date($(item).data('cours').dateDebut.date);
+                dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
             }
 
-            strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
-            strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
+            strDateDebut = getDateStr(dateDebut);
+            strDateFin = getDateStr(dateFin);
             semaines = Math.round((dateFin - dateDebut) / 604800000);
             if (semaines > 0) {
                 $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertBefore(item);
@@ -168,10 +193,10 @@ var PlacementManager = function (calendrier) {
 
             var next = $(item).next();
             if (next.length === 0) {
-                dateDebut = new Date($(item).data('cours').dateFin.date);
+                dateDebut = new Date(new Date($(item).data('cours').dateFin.date).getTime() + 3 * oneD);
                 dateFin = new Date(me.calendar.periode.fin.date);
-                strDateDebut = [pad(dateDebut.getDate()), pad(dateDebut.getMonth() + 1), dateDebut.getFullYear()].join('/');
-                strDateFin = [pad(dateFin.getDate()), pad(dateFin.getMonth() + 1), dateFin.getFullYear()].join('/');
+                strDateDebut = getDateStr(dateDebut);
+                strDateFin = getDateStr(dateFin);
                 semaines = Math.round((dateFin - dateDebut) / 604800000);
                 if (semaines > 0) {
                     $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertAfter(item);

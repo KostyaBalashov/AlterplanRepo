@@ -50,13 +50,15 @@ var Calendrier = function (jCalendrier) {
     };
 
     this.addModuleCalendrierAPlacer = function (jModuleCalendrier) {
-        var code = 0;
-        for (cle in this.modulesCalendrierAPlacer) {
-            if (this.modulesCalendrierAPlacer.hasOwnProperty(cle)) {
-                code = code < this.modulesCalendrierAPlacer[cle].codeModuleCalendrier ? this.modulesCalendrierAPlacer[cle].codeModuleCalendrier : code;
+        if (!jModuleCalendrier.hasOwnProperty('codeModuleCalendrier')) {
+            var code = 0;
+            for (cle in this.modulesCalendrierAPlacer) {
+                if (this.modulesCalendrierAPlacer.hasOwnProperty(cle)) {
+                    code = code < this.modulesCalendrierAPlacer[cle].codeModuleCalendrier ? this.modulesCalendrierAPlacer[cle].codeModuleCalendrier : code;
+                }
             }
+            jModuleCalendrier.codeModuleCalendrier = ++code;
         }
-        jModuleCalendrier.codeModuleCalendrier = ++code;
         this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
         return jModuleCalendrier;
     };
@@ -78,6 +80,15 @@ var Calendrier = function (jCalendrier) {
         }
 
         return jModuleCalendrier;
+    };
+
+    this.removeModulePlace = function (identifiant) {
+        if (this.modulesCalendrierPlaces.hasOwnProperty(identifiant)) {
+            this.modulesCalendrierPlaces[identifiant].dateDebut = null;
+            this.modulesCalendrierPlaces[identifiant].dateFin = null;
+            this.addModuleCalendrierAPlacer(this.modulesCalendrierPlaces[identifiant]);
+            delete this.modulesCalendrierPlaces[identifiant];
+        }
     };
 };
 
