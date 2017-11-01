@@ -342,14 +342,16 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         div_input.append(label);
                         div_input.append(input);
                         initDP();
-                        input.value = contrainte.P1;
+                        $(input).attr('data-value', contrainte.P1);
                     } else {
                         label.htmlFor = "dateFin";
                         label.innerHTML = "Au ";
                         input.className = "datepicker dateFin inputContrainte";
                         input.id = "dateFin"
+
                         initDP();
-                        input.value = contrainte.P2;
+
+                        $(input).attr('data-value', contrainte.P2);
                     }
 
                     div_input.append(label);

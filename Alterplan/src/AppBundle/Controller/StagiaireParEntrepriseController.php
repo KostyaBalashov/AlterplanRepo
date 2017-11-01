@@ -111,4 +111,8 @@ class StagiaireParEntrepriseController extends Controller
         $stagiaires = $repo->findAll();
         return new JsonResponse($stagiaires);
     }
+
+
+
+
 }

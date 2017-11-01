@@ -106,7 +106,7 @@ function initDatePicker(selector, onSetCallBack) {
         selector = '.datepicker';
     }
     console.log('selector!');
-    $(selector).pickadate({
+    var $input = $(selector).pickadate({
         labelMonthNext: 'mois suivant',
         labelMonthPrev: 'mois précédent',
         labelMonthSelect: 'Sélectionnez un mois',
@@ -126,6 +126,7 @@ function initDatePicker(selector, onSetCallBack) {
         selectMonths: true,
         onSet: onSetCallBack
     });
+    return $input.pickadate('picker');
 }
 
 function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContainingValue, minOrMax) {

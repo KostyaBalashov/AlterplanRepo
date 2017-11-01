@@ -76,5 +76,10 @@ div.fixed-action-btn > a.btn-large:hover {
 }
 
 .card-inscrire {
-    height:auto !important;
+    height: auto !important;
 }
+
+.warning {
+    color: red;
+}
+

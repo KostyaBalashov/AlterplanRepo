@@ -602,4 +602,19 @@ class CalendrierController extends Controller
             ));
         }
     }
+
+    /**
+     * @param $calendrier Calendrier
+     * @Route("/nonrecouvrement/{codeCalendrier}", options={"expose"=true}, name="non_recouvrement")
+     * @Method({"GET", "POST"})
+     * @return  Response
+     */
+    public function CalendrierNonRecouvrement(Request $request)
+    {
+        $codeStagiaire = $request->get('codeStagiaire');
+        $repo = $this->getDoctrine()->getRepository(Calendrier::class);
+        $calendrieCompare = $repo->findOneBy(array('codeStagiaire' => $codeStagiaire, 'isInscrit' => 1));
+        return new JsonResponse($calendrieCompare);
+    }
+
 }

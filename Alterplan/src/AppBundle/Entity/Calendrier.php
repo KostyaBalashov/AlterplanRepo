@@ -120,6 +120,7 @@ class Calendrier implements \JsonSerializable
         $result['formation'] = json_encode([
                 'CodeFormation' => $this->formation->getCodeFormation(),
                 'Libelle' => $this->formation->getLibelleLong() . ' (' . $this->formation->getLibelleCourt() . ' )',
+                'ordresModule' => $this->formation->getOrdresModule()->toArray(),
                 'Lieu' => $this->formation->getLieu() ? $this->formation->getLieu()->getLibelle() : ' - ']
             , JSON_FORCE_OBJECT);
 

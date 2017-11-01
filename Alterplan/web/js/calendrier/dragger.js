@@ -147,6 +147,7 @@ var PlacementManager = function (calendrier) {
             me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
         }
         $(element).parent().removeClass('module-container');
+        verifContraintes();
     };
 
     var transformerContainer = function (container) {
