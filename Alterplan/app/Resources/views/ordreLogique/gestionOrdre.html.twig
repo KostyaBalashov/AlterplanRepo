@@ -15,8 +15,8 @@ You should have received a copy of the GNU Affero General Public License along w
 {% endblock %}
 
 {% block customCSS %}
-    <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/ordreLogique.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/dragula/dragula.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/ordreLogique.css') }}"/>
 {% endblock %}
 
 {% block body %}
@@ -33,7 +33,7 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
 
         <div class="col s9 ordreContent">
-            {% include ':ordreLogique:ordreModule.html.twig'%}
+            {% include ':ordreLogique:ordreModule.html.twig' %}
         </div>
         <div class="fixed-action-btn" style="z-index: 1">
             <a id="save" class="btn-floating btn-large waves-effect waves-light tooltipped"
@@ -70,9 +70,9 @@ You should have received a copy of the GNU Affero General Public License along w
                 showLoader();
                 $.post("{{ path('formations_save', {'codeFormation': formation.codeFormation}) }}",
                     {'ordreLogique': ordreLogique.formation.getInnerFormation()}).done(function (data) {
-                        ordreLogique = new OrdreLogique(JSON.parse(data));
-                        ordreLogique.formation.selectModule(parseInt($('.module.selected').attr('id'), 10));
-                        showToast('Les modifications ont été enregistrées');
+                    ordreLogique = new OrdreLogique(JSON.parse(data));
+                    ordreLogique.formation.selectModule(parseInt($('.module.selected').attr('id'), 10));
+                    showToast('Les modifications ont été enregistrées');
                 }).fail(function () {
                     showToast("Erreur interne", 'error');
                 }).always(function () {
@@ -86,7 +86,7 @@ You should have received a copy of the GNU Affero General Public License along w
                 $.get("{{ path('formations_edit',{'codeFormation': formation.codeFormation}) }}", function (data) {
                     ordreLogique = new OrdreLogique({{ formation|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
                     var selectedModule = $('.module.selected');
-                    if (selectedModule){
+                    if (selectedModule) {
                         selectedModule.removeClass('selected');
                     }
                     $('.ordreContent').html(data);
@@ -106,7 +106,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
                     //On désélectionne l'ancien
                     var otherSelected = $('.module.selected');
-                    if (otherSelected){
+                    if (otherSelected) {
                         otherSelected.each(function (index) {
                             $(otherSelected[index]).removeClass('selected');
                         });
@@ -131,7 +131,11 @@ You should have received a copy of the GNU Affero General Public License along w
             });
 
             //Lorsqu'on drop un élément el, prevenant de source, dans le conteneur target devant le sibling
-            drake.on('drop', ordreLogique.onDrop);
+            drake.on('drop', onDrop);
         });
+
+        function onDrop(el, target, source, sibling) {
+            ordreLogique.onDrop(el, target, source, sibling);
+        }
     </script>
 {% endblock %}

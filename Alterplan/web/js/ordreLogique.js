@@ -15,6 +15,7 @@
  * @constructor
  */
 function OrdreLogique(formationJson) {
+    var me = this;
     this.formation = new Formation(formationJson);
 
     /**
@@ -23,9 +24,9 @@ function OrdreLogique(formationJson) {
      * @param element l'élément supprimé
      */
     this.handleRemove = function (container, element) {
-        if(container instanceof GroupeModule){
+        if (container instanceof GroupeModule) {
             container.removeSousGroupe(element);
-        }else if (container instanceof SousGroupe){
+        } else if (container instanceof SousGroupe) {
             container.removeModule(element);
         }
     };
@@ -39,7 +40,7 @@ function OrdreLogique(formationJson) {
         $('.droite > module-disponible').each(function () {
             $(this).remove();
         });
-        for (var i = 0, len = modulesJson.length; i < len; i++){
+        for (var i = 0, len = modulesJson.length; i < len; i++) {
             var module = new Module();
             module.identifiant = modulesJson[i]['idModule'];
             module.libelle = modulesJson[i]['libelle'];
@@ -57,13 +58,13 @@ function OrdreLogique(formationJson) {
             $(this).remove();
         });
 
-        for(grp in groupesJson){
-            if (groupesJson.hasOwnProperty(grp)){
+        for (grp in groupesJson) {
+            if (groupesJson.hasOwnProperty(grp)) {
                 var groupe = this.createGroupe();
                 groupe.identifiant = groupesJson[grp].codeGroupe;
 
                 var sousGroupes = this.createSousGroupes(groupesJson[grp].sousGroupes);
-                for (var j = 0, jLen = sousGroupes.length; j < jLen; j++){
+                for (var j = 0, jLen = sousGroupes.length; j < jLen; j++) {
                     sousGroupes[j].groupeParent = groupe.identifiant;
                     groupe.getDraggableContainer().appendChild(sousGroupes[j]);
                 }
@@ -80,14 +81,14 @@ function OrdreLogique(formationJson) {
      */
     this.createSousGroupes = function (sousGroupesJson) {
         var sousGroupes = [];
-        for (ssGrp in sousGroupesJson){
-            if (sousGroupesJson.hasOwnProperty(ssGrp)){
+        for (ssGrp in sousGroupesJson) {
+            if (sousGroupesJson.hasOwnProperty(ssGrp)) {
                 var sousGroupe = this.createSousGroupe();
                 sousGroupe.identifiant = sousGroupesJson[ssGrp].codeSousGroupe;
 
                 var modulesJson = sousGroupesJson[ssGrp].modules;
-                for (m in modulesJson){
-                    if (modulesJson.hasOwnProperty(m)){
+                for (m in modulesJson) {
+                    if (modulesJson.hasOwnProperty(m)) {
                         var module = new Module();
                         module.identifiant = modulesJson[m].idModule;
                         module.libelle = modulesJson[m].libelle;
@@ -180,17 +181,17 @@ function OrdreLogique(formationJson) {
         var ok = true;
 
         //Petit patche pour ne pas accepter des éléments au dessus des titres
-        if(jSibling){
+        if (jSibling) {
             ok = !jSibling.hasClass('card-title');
         }
 
         //Le conteneur de droite
-        if(jTarget.hasClass('droite')){
+        if (jTarget.hasClass('droite')) {
             //Accepte les modules
             ok = ok && el instanceof Module;
 
             //Le conteneur de centre
-        }else if (jTarget.hasClass('centre')) {
+        } else if (jTarget.hasClass('centre')) {
             //Accepter les Groupes et les Modules
             ok = ok && (el instanceof GroupeModule || el instanceof Module);
 
@@ -201,7 +202,7 @@ function OrdreLogique(formationJson) {
                 && (target.parentElement.nbElements < 2));
 
             //Le conteneur Sous Groupe
-        } else if (target.parentElement instanceof SousGroupe){
+        } else if (target.parentElement instanceof SousGroupe) {
             //Accepte les Modules s'il a moins de 4 éléments
             ok = ok && (el instanceof Module && (target.parentElement.nbElements < 4));
         }
@@ -209,24 +210,23 @@ function OrdreLogique(formationJson) {
         return ok;
     };
 
-    var me = this;
     this.onDrop = function (el, target, source, sibling) {
         //Si c'est un Module
-        if(el instanceof Module) {
+        if (el instanceof Module) {
             //Droppé depuis la droite
-            if (source.classList.contains('droite')){
+            if (source.classList.contains('droite')) {
                 //On supprime le module disponible depuis Json
                 me.formation.removeModuleDisponible(el);
             }
 
             //Droppé au centre
-            if (target.classList.contains('centre')){
+            if (target.classList.contains('centre')) {
                 var idGroupe = -1;
                 var groupes = target.getElementsByTagName('groupe-module');
                 //Génération de l'id du groupe
-                for (var i = 0, len = groupes.length; i < len; i++){
+                for (var i = 0, len = groupes.length; i < len; i++) {
                     var id = parseInt(groupes[i].identifiant);
-                    if (id > idGroupe){
+                    if (id > idGroupe) {
                         idGroupe = id;
                     }
                 }
@@ -240,9 +240,9 @@ function OrdreLogique(formationJson) {
                 groupe.addSousGroupe(sousGroupe);
                 sousGroupe.addModule(el);
 
-                if(sibling){
+                if (sibling) {
                     target.insertBefore(groupe, sibling);
-                }else {
+                } else {
                     target.appendChild(groupe);
                 }
 
@@ -250,14 +250,14 @@ function OrdreLogique(formationJson) {
                 me.handleRemove(source.parentElement, el);
 
                 //Droppé dans un Groupe
-            }else if(target.parentElement instanceof GroupeModule){
+            } else if (target.parentElement instanceof GroupeModule) {
                 var sousGroupe = me.createSousGroupe();
                 target.parentElement.addSousGroupe(sousGroupe);
                 sousGroupe.addModule(el);
 
-                if (sibling){
+                if (sibling) {
                     target.insertBefore(sousGroupe, sibling);
-                }else {
+                } else {
                     target.appendChild(sousGroupe);
                 }
 
@@ -265,12 +265,12 @@ function OrdreLogique(formationJson) {
                 me.handleRemove(source.parentElement, el);
 
                 //Droppé dans un Sous Groupe
-            }else if(target.parentElement instanceof SousGroupe){
-                if(target.parentElement !== source.parentElement){
+            } else if (target.parentElement instanceof SousGroupe) {
+                if (target.parentElement !== source.parentElement) {
                     target.parentElement.addModule(el);
-                    if (sibling){
+                    if (sibling) {
                         target.insertBefore(el, sibling);
-                    }else {
+                    } else {
                         target.appendChild(el);
                     }
 
@@ -278,8 +278,8 @@ function OrdreLogique(formationJson) {
                     me.handleRemove(source.parentElement, el);
                 }
                 //Droppé à droite
-            } else if (target.classList.contains('droite')){
-                if (!source.classList.contains('droite')){
+            } else if (target.classList.contains('droite')) {
+                if (!source.classList.contains('droite')) {
                     //Ajout du module disponible dans le Json
                     me.formation.addModuleDisponible(el);
                     //On fait la suppression nécessaire au niveau du Json
@@ -288,7 +288,7 @@ function OrdreLogique(formationJson) {
             }
 
             //Si c'est un Sous Groupe
-        }else if (el instanceof SousGroupe){
+        } else if (el instanceof SousGroupe) {
             //On l'ajoute au groupe (seul un Groupe accepte des Sous groupes cf. méthode accepts dessus)
             target.parentElement.addSousGroupe(el);
             //On fait la suppression nécessaire au niveau du Json
