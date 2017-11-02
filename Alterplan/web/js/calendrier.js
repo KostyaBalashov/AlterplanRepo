@@ -354,32 +354,33 @@ function verifContraintes() {
 
     //on commence par supprimer toutes les divs warning
     $(".contrainte").remove();
+    var size = Object.keys(calendrier.modulesCalendrierPlaces).length;
+    if (size > 0) {
 
-    var firstModule = null;
-    var lastModule = null;
-    var nbHeuresFormation = 0;
-    var nbSemainesFormationMax = null;
-    var codeStagiaireNR = null;
-    var modulesPlaces = calendrier.modulesCalendrierPlaces
-    for (cle in calendrier.modulesCalendrierPlaces) {
-        if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cle)) {
-            modulePlace = calendrier.modulesCalendrierPlaces[cle];
-            nbHeuresFormation += modulePlace.nbHeures;
-            if (firstModule != null && lastModule != null) {
-                if (modulePlace.dateDebut.date < firstModule.dateDebut.date) {
+        var firstModule = null;
+        var lastModule = null;
+        var nbHeuresFormation = 0;
+        var nbSemainesFormationMax = null;
+        var codeStagiaireNR = null;
+        var modulesPlaces = calendrier.modulesCalendrierPlaces;
+        for (cle in calendrier.modulesCalendrierPlaces) {
+            if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cle)) {
+                modulePlace = calendrier.modulesCalendrierPlaces[cle];
+                nbHeuresFormation += modulePlace.nbHeures;
+                if (firstModule != null && lastModule != null) {
+                    if (modulePlace.dateDebut.date < firstModule.dateDebut.date) {
+                        firstModule = calendrier.modulesCalendrierPlaces[cle];
+                    }
+                    if (modulePlace.dateDebut.date > lastModule.dateDebut.date) {
+                        lastModule = calendrier.modulesCalendrierPlaces[cle];
+                    }
+
+                } else {
                     firstModule = calendrier.modulesCalendrierPlaces[cle];
-                }
-                if (modulePlace.dateDebut.date > lastModule.dateDebut.date) {
                     lastModule = calendrier.modulesCalendrierPlaces[cle];
                 }
-
-            } else {
-                firstModule = calendrier.modulesCalendrierPlaces[cle];
-                lastModule = calendrier.modulesCalendrierPlaces[cle];
             }
         }
-    }
-    if (calendrier.modulesCalendrierPlaces.length > 0) {
 
 
         //1ère vérification: periode contractuelle
