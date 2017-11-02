@@ -71,7 +71,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         option.setAttribute('data-nb-input', typeContrainte.nbParametres);
                         option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(contrainte));
                         option.innerHTML = typeContrainte.libelle;
-                        selectList.append(option);
+                        $(selectList).append(option);
                         if (contrainte) {
                             if (typeContrainte.codeTypeContrainte === contrainte.typeContrainte.codeTypeContrainte) {
                                 option.setAttribute('selected', 'true');
@@ -96,15 +96,15 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                 if (selectList.selectedIndex === 0) {
                     $(deleteButton).addClass('disabled');
                 }
-                tdDelete.append(deleteButton);
+                $(tdDelete).append(deleteButton);
 
                 // on place tous les éléments dans le tbody
-                tdTypeContrainte.append(selectList);
-                tdData.append(div_input);
-                tr.append(tdTypeContrainte);
-                tr.append(tdData);
-                tr.append(tdDelete)
-                tBody.append(tr);
+                $(tdTypeContrainte).append(selectList);
+                $(tdData).append(div_input);
+                $(tr).append(tdTypeContrainte);
+                $(tr).append(tdData);
+                $(tr).append(tdDelete)
+                $(tBody).append(tr);
                 x++;
                 initDP();
 
@@ -200,7 +200,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         option.setAttribute('data-nb-input', typeContrainte.nbParametres);
                         option.setAttribute('data-nb-contraintes', me.contraintes.indexOf(newContrainte));
                         option.innerHTML = typeContrainte.libelle;
-                        newSelectList.append(option);
+                        $(newSelectList).append(option);
                         if (newContrainte) {
                             if (typeContrainte.codeTypeContrainte === newContrainte.typeContrainte.codeTypeContrainte) {
                                 option.setAttribute('selected', 'true');
@@ -222,15 +222,15 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     if (newSelectList.selectedIndex === 0) {
                         $(newDeleteButton).addClass('disabled');
                     }
-                newTdDelete.append(newDeleteButton); //gestion td avec bouton delete
+                $(newTdDelete).append(newDeleteButton); //gestion td avec bouton delete
 
 
-                newTd.append(newSelectList);
-                newTdData.append(newDiv_input);
-                newTr.append(newTd);
-                newTr.append(newTdData);
-                newTr.append(newTdDelete);
-                tBody.append(newTr);
+                $(newTd).append(newSelectList);
+                $(newTdData).append(newDiv_input);
+                $(newTr).append(newTd);
+                $(newTr).append(newTdData);
+                $(newTr).append(newTdDelete);
+                $(tBody).append(newTr);
 
                 initDP();
                 $('select').material_select();
@@ -339,8 +339,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.innerHTML = "Du ";
                         input.className = "datepicker dateDebut inputContrainte";
                         input.id = "dateDebut";
-                        div_input.append(label);
-                        div_input.append(input);
+                        $(div_input).append(label);
+                        $(div_input).append(input);
                         initDP();
                         $(input).attr('data-value', contrainte.P1);
                     } else {
@@ -354,8 +354,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         $(input).attr('data-value', contrainte.P2);
                     }
 
-                    div_input.append(label);
-                    div_input.append(input);
+                    $(div_input).append(label);
+                    $(div_input).append(input);
                     break;
 
                 //cas 2 : deux int Volume horaire
@@ -380,8 +380,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
-                    div_input.append(label);
-                    div_input.append(input);
+                    $(div_input).append(label);
+                    $(div_input).append(input);
                     break;
                 //cas 3 deux int Ecart début de la formation
                 case 3:
@@ -405,8 +405,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
-                    div_input.append(label);
-                    div_input.append(input);
+                    $(div_input).append(label);
+                    $(div_input).append(input);
                     break;
                 //cas 4 deux int Ecart fin de la formation
                 case 4:
@@ -430,8 +430,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         input.className = "inputContrainte int validate";
                         input.value = contrainte.P2;
                     }
-                    div_input.append(label);
-                    div_input.append(input);
+                    $(div_input).append(label);
+                    $(div_input).append(input);
                     break;
                 //cas 5 1 int Semaines en formation (max)
                 case 5:
@@ -442,7 +442,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     input.className = "inputContrainte int validate";
                     input.placeholder = "Nb. de semaines successives max. en formation";
                     input.value = contrainte.P1;
-                    div_input.append(input);
+                    $(div_input).append(input);
                     break;
                 //cas 6 1 string Non recouvrement stagiaire
                 case 6:
@@ -456,8 +456,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                     input.placeholder = "Nom du stagiaire";
                     input.autocomplete = "off";
                     input.value = contrainte.P1;
-                    div_input.append(div);
-                    div.append(input);
+                    $(div_input).append(div);
+                    $(div).append(input);
                     $.ajax({
                             type: "GET",
                             url: Routing.generate('all_Stagiaires', true),

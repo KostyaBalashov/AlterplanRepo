@@ -89,6 +89,7 @@ var Calendrier = function (jCalendrier) {
             this.modulesCalendrierPlaces[identifiant].dateFin = null;
             this.addModuleCalendrierAPlacer(this.modulesCalendrierPlaces[identifiant]);
             delete this.modulesCalendrierPlaces[identifiant];
+            verifContraintes();
         }
     };
 };
@@ -352,7 +353,7 @@ function inscrireCalendrier() {
 function verifContraintes() {
 
     //on commence par supprimer toutes les divs warning
-    $(".warning").remove();
+    $(".contrainte").remove();
 
     var firstModule = null;
     var lastModule = null;
@@ -362,12 +363,13 @@ function verifContraintes() {
     var modulesPlaces = calendrier.modulesCalendrierPlaces
     for (cle in calendrier.modulesCalendrierPlaces) {
         if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cle)) {
-            nbHeuresFormation += calendrier.modulesCalendrierPlaces[cle].nbHeures;
+            modulePlace = calendrier.modulesCalendrierPlaces[cle];
+            nbHeuresFormation += modulePlace.nbHeures;
             if (firstModule != null && lastModule != null) {
-                if (calendrier.modulesCalendrierPlaces[cle].dateDebut < firstModule.dateDebut) {
+                if (modulePlace.dateDebut.date < firstModule.dateDebut.date) {
                     firstModule = calendrier.modulesCalendrierPlaces[cle];
                 }
-                if (calendrier.modulesCalendrierPlaces[cle].dateFin > lastModule.dateFin) {
+                if (modulePlace.dateDebut.date > lastModule.dateDebut.date) {
                     lastModule = calendrier.modulesCalendrierPlaces[cle];
                 }
 
@@ -498,7 +500,7 @@ function verifContraintes() {
     //gestion de l'ordre logique des modules
 
     {
-        var txtCOL = null;
+
         //pour chaque ordremodule
         for (cle in calendrier.formation.ordresModule) {
             if (calendrier.formation.ordresModule.hasOwnProperty(cle)) {
@@ -508,7 +510,7 @@ function verifContraintes() {
                 for (cleMCPlace in calendrier.modulesCalendrierPlaces) {
                     if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleMCPlace)) {
                         var mcPlace = calendrier.modulesCalendrierPlaces[cleMCPlace];
-
+                        var txtCOL = '';
                         //si le calendrier placé correspond à l'ordre module
                         if (mcPlace.module.idModule === ordreModule.idModule) {
                             var tableModuleFail = [];
@@ -522,6 +524,8 @@ function verifContraintes() {
                                     var module1 = [];
                                     var module2 = [];
                                     var moduleCompare = null;
+                                    var sg1Vide = true;
+                                    var sg2Vide = true;
                                     for (i = 0; i < 10; i++) {
                                         moduleFailGroupe[i] = null;
                                         module1[i] = true;
@@ -529,6 +533,7 @@ function verifContraintes() {
                                     }
                                     //region sg1
                                     var i = 0;
+                                    moduleCompare = null;
                                     if (groupe.sousGroupes != null) {
                                         for (var j in groupe.sousGroupes) {
                                             sousgroupe1 = groupe.sousGroupes[j];
@@ -539,21 +544,30 @@ function verifContraintes() {
                                                 if (sousgroupe1.modules.hasOwnProperty(CleSG1)) {
                                                     var module = sousgroupe1.modules[CleSG1];
                                                     if (module !== null) {
-                                                        moduleCompare = calendrier.modulesCalendrierPlaces.filter(function (obj) {
-                                                            return obj.module.idModule == module.idModule;
-                                                        });
-                                                        if (moduleCompare.length > 0) {
-                                                            moduleFailGroupe[i] = (moduleCompare[0].libelle);
-                                                            if (moduleCompare[0].dateDebut > mcPlace.dateDebut) {
+                                                        for (cleCompare in calendrier.modulesCalendrierPlaces) {
+                                                            if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
+                                                                var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
+                                                                if (moduletest.module.idModule === module.idModule) {
+                                                                    moduleCompare = moduletest;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        if (moduleCompare) {
+                                                            moduleFailGroupe[i] = (moduleCompare.libelle);
+                                                            sg1Vide = false;
+                                                            if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
                                                                 module1[i] = false;
                                                             } else {
                                                                 module1[i] = true;
                                                             }
-                                                        } else {
+                                                        }
+                                                        else {
                                                             moduleFailGroupe[i] = null;
                                                             module1[i] = true;
                                                         }
-                                                    } else {
+                                                    }
+                                                    else {
                                                         moduleFailGroupe[i] = null;
                                                         module1[i] = true;
                                                     }
@@ -564,6 +578,7 @@ function verifContraintes() {
                                     }
                                     //endregion
                                     i = 5;
+                                    moduleCompare = null;
                                     //region sg2
                                     if (groupe.sousGroupes != null) {
                                         var sousgroupe2 = groupe.sousGroupes[Object.keys(groupe.sousGroupes)[Object.keys(groupe.sousGroupes).length - 1]];
@@ -572,55 +587,79 @@ function verifContraintes() {
                                                 if (sousgroupe2.modules.hasOwnProperty(CleSG2)) {
                                                     var module = sousgroupe2.modules[CleSG2];
                                                     if (module !== null) {
-                                                        moduleCompare = calendrier.modulesCalendrierPlaces.filter(function (obj) {
-                                                            return obj.module.idModule == module.idModule;
-                                                        });
-                                                        if (moduleCompare.length > 0) {
-                                                            moduleFailGroupe[i] = (moduleCompare[0].libelle);
-                                                            if (moduleCompare[0].dateDebut > mcPlace.dateDebut) {
+                                                        for (cleCompare in calendrier.modulesCalendrierPlaces) {
+                                                            if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
+                                                                var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
+                                                                if (moduletest.module.idModule === module.idModule) {
+                                                                    moduleCompare = moduletest;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        if (moduleCompare) {
+                                                            moduleFailGroupe[i] = (moduleCompare.libelle);
+                                                            sg2Vide = false;
+                                                            if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
                                                                 module2[i] = false;
                                                             } else {
                                                                 module2[i] = true;
                                                             }
-                                                        } else {
+                                                        }
+                                                        else {
                                                             moduleFailGroupe[i] = null;
                                                             module2[i] = true;
                                                         }
-                                                    } else {
-                                                        moduleFailGroupe[i] = null;
-                                                        module2[i] = true;
                                                     }
-                                                    i++;
+                                                } else {
+                                                    moduleFailGroupe[i] = null;
+                                                    module2[i] = true;
                                                 }
+                                                i++;
                                             }
                                         }
                                     }
-                                    //endregion
-                                    //on fait le if
+                                }
+                                //endregion
+                                //on fait le if
+                                //si on a aucune valeur dans l'un des deux groupes, alors on fait un if que sur celui qui a de la valeur
+                                if (sg1Vide === false && sg2Vide === false) {
                                     if (((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) ||
                                         (module2[5] && module2[6] && module2[7] && module2[3] && module2[4])) === false) {
                                         // le groupe ne suit pas l'ordre logique --> on ajoutes les modules posant pb à la liste.
                                         tableModuleFail.push(moduleFailGroupe)
                                     }
-                                }
-                            }
-                            for (i = 0; i < tableModuleFail.length; i++) {
-                                for (j = 0; j < 10; j++) {
-                                    if (tableModuleFail[i][j] != null) {
-                                        if (j != 0 && j != 5)
-                                            txtCOL += "et " + tableModuleFail[i][j] + " ";
-                                    } else if (j === 0) {
-                                        txtCOL += "- " + tableModuleFail[i][j] + " ";
-                                    } else if (j === 5) {
-                                        txtCOL += "ou bien " + tableModuleFail[i][j] + " ";
+                                } else if (sg1Vide === false && sg2Vide === true) {
+                                    if ((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) === false) {
+                                        tableModuleFail.push(moduleFailGroupe);
+                                    }
+                                } else if (sg1Vide === true && sg2Vide === false) {
+                                    if ((module2[5] && module2[6] && module2[7] && module2[3] && module2[4]) === false) {
+                                        tableModuleFail.push(moduleFailGroupe);
                                     }
                                 }
-                                txtCOL += "<br/>";
                             }
-                            if (tableModuleFail.length > 1) {
-                                var div_header = $('#' + cleMCPlace)[0];
-                                var div_contrainte = createDivContraite(div_header, "L\'ordre logique des modules n\'est pas suivi: les modules suivant doivent PRÉCEDER ce module:" + '<br/>' + txtCOL);
+
+                            if (tableModuleFail) {
+                                for (i = 0; i < tableModuleFail.length; i++) {
+                                    for (j = 0; j < 10; j++) {
+                                        if (tableModuleFail[i][j] != null) {
+                                            if (j != 0 && j != 5) {
+                                                txtCOL += "et " + tableModuleFail[i][j] + " ";
+                                            } else if (j === 0) {
+                                                txtCOL += "- " + tableModuleFail[i][j] + " ";
+                                            } else if (j === 5) {
+                                                txtCOL += "ou bien " + tableModuleFail[i][j] + " ";
+                                            }
+                                        }
+                                    }
+                                    txtCOL += "<br/>";
+                                }
+                                if (tableModuleFail.length > 0) {
+                                    var div_header = $('#' + cleMCPlace)[0];
+                                    var div_contrainte = createDivContraite(div_header, "L\'ordre logique des modules n\'est pas suivi: les modules suivant doivent PRÉCEDER ce module:" + '<br/>' + txtCOL);
+                                }
                             }
+                            break;
                         }
                     }
                 }
@@ -662,15 +701,16 @@ function createDivContraite(parentDiv, tooltip) {
         var div = document.createElement('div');
         $(div).addClass('contrainte');
         var warning = document.createElement('i');
-        $(warning).addClass('material-icons');
+        $(warning).addClass('material-icons ');
         $(warning).addClass('tooltipped');
         $(warning).addClass('warning');
+        //$(warning).addClass('#ffab91 deep-orange lighten-3');
         $(warning).attr('data-position', 'bottom');
         $(warning).attr('data-tooltip', tooltip);
-        $(warning).attr('data-background-color', 'red');
+        $(warning).attr('data-background-color', '#ffab91 deep-orange lighten-3');
         $(warning).html('warning');
-        div.append(warning);
-        parentDiv.append(div);
+        $(div).append(warning);
+        $(parentDiv).append(div);
         return div
     }
 
