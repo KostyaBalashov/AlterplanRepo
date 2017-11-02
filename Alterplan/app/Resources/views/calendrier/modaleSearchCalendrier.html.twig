@@ -8,7 +8,7 @@ Alterplan is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
 #}
 
-<link rel="stylesheet" href="{{ asset('css/calendrier.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/calendrier.css') }}"/>
 
 <div class="row">
     <div class="card">
@@ -17,7 +17,9 @@ You should have received a copy of the GNU Affero General Public License along w
             {% include ':calendrier:searchForm.html.twig' %}
             <div class="card-action right-align">
                 <button type="submit" form="calendrier_search" class="waves-effect waves-light btn">Rechercher</button>
-                <button type="reset" form="calendrier_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+                <button type="reset" form="calendrier_search" class="waves-effect waves-light btn red lighten-3">Effacer
+                    les critères
+                </button>
             </div>
         </div>
     </div>
@@ -51,6 +53,9 @@ You should have received a copy of the GNU Affero General Public License along w
                 dismissLoader();
             })
         });
+
+        //gestion des boutons hors form pour les navigateurs non-compatibles
+        addFormFeature();
     })
 
 </script>

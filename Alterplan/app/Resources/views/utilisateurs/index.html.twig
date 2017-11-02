@@ -8,7 +8,8 @@
 
 {% block search_action_buttons %}
     <button type="submit" form="user_search" class="waves-effect waves-light btn">Rechercher</button>
-    <button type="reset" form="user_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+    <button type="reset" form="user_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères
+    </button>
 {% endblock %}
 
 {# affichage du tableau #}
@@ -21,7 +22,8 @@
 {# paramétrage de la modale #}
 {% block modal_id %}user{% endblock %}
 {% block modal_action_buttons %}
-    <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler</button>
+    <button type="button" class="modal-action modal-close waves-effect waves-green btn left red lighten-3">Annuler
+    </button>
     <button type="submit" form="user" class="modal-action waves-effect waves-green btn">Valider</button>
 {% endblock %}
 
@@ -48,6 +50,11 @@
                     dismissLoader();
                 })
             });
+
+            //gestion des boutons hors form pour les navigateurs non-compatibles
+            addFormFeature();
         })
+
+
     </script>
 {% endblock %}

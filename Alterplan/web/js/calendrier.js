@@ -379,186 +379,193 @@ function verifContraintes() {
             }
         }
     }
+    if (calendrier.modulesCalendrierPlaces.length > 0) {
 
-    //1ère vérification: periode contractuelle
-    if (calendrier.periode.debut > firstModule.dateDebut) {
-        div_header = $('#calandar-hearder')[0];
 
-        var divContrainte = createDivContraite(div_header, '- Le calendrier démarre avant  la période contractuelle qui débute le ' + calendrier.periode.debut);
-    }
-    if (calendrier.periode.fin < lastModule.dateFin) {
-        div_header = $('#calandar-hearder')[0];
-        var divContrainte = createDivContraite(div_header, ' - Le calendrier dépasse la période contractuelle qui finit le ' + calendrier.periode.fin);
-    }
-    //verif volume horaire
-    for (cle in calendrier.contraintes) {
-        if (calendrier.contraintes.hasOwnProperty(cle)) {
-            var contrainte = calendrier.contraintes[cle];
-            if (contrainte.typeContrainte.codeTypeContrainte === 2) {
-                if (nbHeuresFormation < contrainte.P1 || nbHeuresFormation > contrainte.p2) {
-                    div_header = $('#calandar-hearder')[0];
-                    var div_contrainte = createDivContraite(div_header, '- Le volume horaire actuel (' + nbHeuresFormation + 'h) ne convient pas (min: ' + contrainte.P1 + 'h, max: ' + contrainte.P2 + 'h)');
-                    //div_header.append(div_contrainte);
-                }
-            }
-            //Ecart debut de formation
-            if (contrainte.typeContrainte.codeTypeContrainte === 3) {
-                var date1 = new Date(firstModule.dateDebut.date);
-                var date2 = new Date(calendrier.periode.debut.date);
-                var diff = date1 - date2;
-                var semaines = Math.round(diff / 604800000);
-                if (semaines < contrainte.P1 || semaines > contrainte.P2) {
-                    div_header = $('#calandar-hearder')[0]
-                    var div_contrainte = createDivContraite(div_header, '- Ecart début de formation non valide: Actuel:' + semaines + ', min:' + contrainte.P1 + ', max:' + contrainte.P2);
-                }
-            }
-            //Ecart fin de formation
-            if (contrainte.typeContrainte.codeTypeContrainte === 4) {
-                var date1 = new Date(calendrier.periode.fin.date);
-                var date2 = new Date(firstModule.dateFin.date);
-                var diff = date1 - date2;
-                var semaines = Math.round(diff / 604800000);
-                if (semaines < contrainte.P1 || semaines > contrainte.P2) {
-                    div_header = $('#calandar-hearder')[0]
-                    var div_contrainte = createDivContraite(div_header, '- Ecart fin de formation non valide: Actuel:' + semaines + ', min:' + contrainte.P1 + ', max:' + contrainte.P2);
-                }
-            }
-            if (contrainte.typeContrainte.codeTypeContrainte === 5) {
-                nbSemainesFormationMax = contrainte.P1;
-            }
-            if (contrainte.typeContrainte.codeTypeContrainte === 6) {
-                codeStagiaireNR = contrainte.P2;
-            }
+        //1ère vérification: periode contractuelle
+        if (calendrier.periode.debut > firstModule.dateDebut) {
+            div_header = $('#calandar-hearder')[0];
+
+            var divContrainte = createDivContraite(div_header, '- Le calendrier démarre avant  la période contractuelle qui débute le ' + calendrier.periode.debut);
         }
-    }
-
-    //Semaines en formation Max
-    //on classe les modules dans l'ordre dans lequel ils arrivent.
-    // Si il y a moins de 7 jours entre les début des deux modules alors ils se suivent
-
-    if (nbSemainesFormationMax != null) {
-        var orderedModulesPlaces = calendrier.modulesCalendrierPlaces.sort(sortModulesByDate(a, b));
-        var nbSemaines = 0;
-        var previousModuleCalendrier = null;
-        for (cle in orderedModulesPlaces) {
-            if (orderedModulesPlaces.hasOwnProperty(cle)) {
-                var moduleCalendrier = orderedModulesPlaces[cle];
-                if (previousModuleCalendrier != null) {
-                    var semaines = Math.round((dateFin - dateDebut) / 604800000);
-                    if (!(semaines < 2)) {
-                        nbSemaines = 0;
-                    }
-                    nbSemaines++;
-                    if (nbSemaines > nbSemainesFormationMax) {
-                        var div_header = $('#' + cle)[0]
-                        var div_contrainte = createDivContraite(div_header, '- Nombre de semaines en formation dépassé (actuel:' + nbSemaines + ', max:' + nbSemainesFormationMax);
-
+        if (calendrier.periode.fin < lastModule.dateFin) {
+            div_header = $('#calandar-hearder')[0];
+            var divContrainte = createDivContraite(div_header, ' - Le calendrier dépasse la période contractuelle qui finit le ' + calendrier.periode.fin);
+        }
+        //verif volume horaire
+        for (cle in calendrier.contraintes) {
+            if (calendrier.contraintes.hasOwnProperty(cle)) {
+                var contrainte = calendrier.contraintes[cle];
+                if (contrainte.typeContrainte.codeTypeContrainte === 2) {
+                    if (nbHeuresFormation < contrainte.P1 || nbHeuresFormation > contrainte.p2) {
+                        div_header = $('#calandar-hearder')[0];
+                        var div_contrainte = createDivContraite(div_header, '- Le volume horaire actuel (' + nbHeuresFormation + 'h) ne convient pas (min: ' + contrainte.P1 + 'h, max: ' + contrainte.P2 + 'h)');
+                        //div_header.append(div_contrainte);
                     }
                 }
-                previousModuleCalendrier = moduleCalendrier;
+                //Ecart debut de formation
+                if (contrainte.typeContrainte.codeTypeContrainte === 3) {
+                    var date1 = new Date(firstModule.dateDebut.date);
+                    var date2 = new Date(calendrier.periode.debut.date);
+                    var diff = date1 - date2;
+                    var semaines = Math.round(diff / 604800000);
+                    if (semaines < contrainte.P1 || semaines > contrainte.P2) {
+                        div_header = $('#calandar-hearder')[0]
+                        var div_contrainte = createDivContraite(div_header, '- Ecart début de formation non valide: Actuel:' + semaines + ', min:' + contrainte.P1 + ', max:' + contrainte.P2);
+                    }
+                }
+                //Ecart fin de formation
+                if (contrainte.typeContrainte.codeTypeContrainte === 4) {
+                    var date1 = new Date(calendrier.periode.fin.date);
+                    var date2 = new Date(firstModule.dateFin.date);
+                    var diff = date1 - date2;
+                    var semaines = Math.round(diff / 604800000);
+                    if (semaines < contrainte.P1 || semaines > contrainte.P2) {
+                        div_header = $('#calandar-hearder')[0]
+                        var div_contrainte = createDivContraite(div_header, '- Ecart fin de formation non valide: Actuel:' + semaines + ', min:' + contrainte.P1 + ', max:' + contrainte.P2);
+                    }
+                }
+                if (contrainte.typeContrainte.codeTypeContrainte === 5) {
+                    nbSemainesFormationMax = contrainte.P1;
+                }
+                if (contrainte.typeContrainte.codeTypeContrainte === 6) {
+                    codeStagiaireNR = contrainte.P2;
+                }
             }
         }
-    }
 
-    //Non recouvrement
-    if (codeStagiaireNR != null) {
-        var calendrierNR = null;
-        var url = Routing.generate('non_recouvrement');
-        var data = {
-            'codeStagiaire': codeStagiaireNR
-        };
-        $.get(url, data, function (data) {
-            calendrierNR = data;
-        })
-        if (calendrierNR != null) {
-            // on trie les deux listes (on ne prends que les modulesPlaces pour la deuxieme),
-            //foreach sur la première
-            // foreach sur la deuxième
-            // Si dd1<dd2<df1 || dd1<df1<dd2 || dd2<dd1<df2 || dd2<df1<df2
-            // alors on déclanche la contrainte pour le module de la liste 1
-            var modulesPlaces = calendrier.modulesCalendrierPlaces.sort(sortModulesByDate(a, b));
-            var modulesNR = calendrierNR.modulesCalendrier.filter(filtreByDate).sort(sortModulesByDate(a, b));
-            for (cle in modulesPlaces) {
-                if (modulesPlaces.hasOwnProperty(cle)) {
-                    var module = modulesPlaces[cle];
-                    for (cle2 in modulesNR) {
-                        if (modulesNR.hasOwnProperty(cle2)) {
-                            var moduleNR = modulesNR[cle2];
-                            if (module.dateDebut < moduleNR.dateDebut < module.dateFin ||
-                                module.dateDebut < moduleNR.dateFin < module.dateFin ||
-                                moduleNR.dateDebut < module.dateDebut < moduleNR.dateFin ||
-                                moduleNR.dateDebut < module.dateFin < moduleNR.dateFin) {
-                                div_header = $('#' + cle)[0]
-                                var div_contrainte = createDivContraite(div_header, '- Le stagiaire ' + contrainte.P1 + ' est lui aussi en formation pendant cette periode');
+        //Semaines en formation Max
+        //on classe les modules dans l'ordre dans lequel ils arrivent.
+        // Si il y a moins de 7 jours entre les début des deux modules alors ils se suivent
+
+        if (nbSemainesFormationMax != null) {
+            var orderedModulesPlaces = calendrier.modulesCalendrierPlaces.sort(sortModulesByDate(a, b));
+            var nbSemaines = 0;
+            var previousModuleCalendrier = null;
+            for (cle in orderedModulesPlaces) {
+                if (orderedModulesPlaces.hasOwnProperty(cle)) {
+                    var moduleCalendrier = orderedModulesPlaces[cle];
+                    if (previousModuleCalendrier != null) {
+                        var semaines = Math.round((dateFin - dateDebut) / 604800000);
+                        if (!(semaines < 2)) {
+                            nbSemaines = 0;
+                        }
+                        nbSemaines++;
+                        if (nbSemaines > nbSemainesFormationMax) {
+                            var div_header = $('#' + cle)[0]
+                            var div_contrainte = createDivContraite(div_header, '- Nombre de semaines en formation dépassé (actuel:' + nbSemaines + ', max:' + nbSemainesFormationMax);
+
+                        }
+                    }
+                    previousModuleCalendrier = moduleCalendrier;
+                }
+            }
+        }
+
+        //Non recouvrement
+        if (codeStagiaireNR != null) {
+            var calendrierNR = null;
+            var url = Routing.generate('non_recouvrement');
+            var data = {
+                'codeStagiaire': codeStagiaireNR
+            };
+            $.get(url, data, function (data) {
+                calendrierNR = data;
+            })
+            if (calendrierNR != null) {
+                // on trie les deux listes (on ne prends que les modulesPlaces pour la deuxieme),
+                //foreach sur la première
+                // foreach sur la deuxième
+                // Si dd1<dd2<df1 || dd1<df1<dd2 || dd2<dd1<df2 || dd2<df1<df2
+                // alors on déclanche la contrainte pour le module de la liste 1
+                var modulesPlaces = calendrier.modulesCalendrierPlaces.sort(sortModulesByDate(a, b));
+                var modulesNR = calendrierNR.modulesCalendrier.filter(filtreByDate).sort(sortModulesByDate(a, b));
+                for (cle in modulesPlaces) {
+                    if (modulesPlaces.hasOwnProperty(cle)) {
+                        var module = modulesPlaces[cle];
+                        for (cle2 in modulesNR) {
+                            if (modulesNR.hasOwnProperty(cle2)) {
+                                var moduleNR = modulesNR[cle2];
+                                if (module.dateDebut < moduleNR.dateDebut < module.dateFin ||
+                                    module.dateDebut < moduleNR.dateFin < module.dateFin ||
+                                    moduleNR.dateDebut < module.dateDebut < moduleNR.dateFin ||
+                                    moduleNR.dateDebut < module.dateFin < moduleNR.dateFin) {
+                                    div_header = $('#' + cle)[0]
+                                    var div_contrainte = createDivContraite(div_header, '- Le stagiaire ' + contrainte.P1 + ' est lui aussi en formation pendant cette periode');
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-    //gestion de l'ordre logique des modules
+        //gestion de l'ordre logique des modules
 
-    {
+        {
 
-        //pour chaque ordremodule
-        for (cle in calendrier.formation.ordresModule) {
-            if (calendrier.formation.ordresModule.hasOwnProperty(cle)) {
-                var ordreModule = calendrier.formation.ordresModule[cle];
+            //pour chaque ordremodule
+            for (cle in calendrier.formation.ordresModule) {
+                if (calendrier.formation.ordresModule.hasOwnProperty(cle)) {
+                    var ordreModule = calendrier.formation.ordresModule[cle];
 
-                //pour chaque moduleCalendrier placé
-                for (cleMCPlace in calendrier.modulesCalendrierPlaces) {
-                    if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleMCPlace)) {
-                        var mcPlace = calendrier.modulesCalendrierPlaces[cleMCPlace];
-                        var txtCOL = '';
-                        //si le calendrier placé correspond à l'ordre module
-                        if (mcPlace.module.idModule === ordreModule.idModule) {
-                            var tableModuleFail = [];
-                            for (cleGroupe in ordreModule.groupes) {
-                                if (ordreModule.groupes.hasOwnProperty(cleGroupe)) {
-                                    var groupe = ordreModule.groupes[cleGroupe];
-                                    //maintenant qu'on a un groupe, on va faire une condition graces aux modules de ses 1 ou 2 sousgroupes
-                                    var sousgroupe1 = null;
-                                    var sousgroupe2 = null;
-                                    var moduleFailGroupe = []
-                                    var module1 = [];
-                                    var module2 = [];
-                                    var moduleCompare = null;
-                                    var sg1Vide = true;
-                                    var sg2Vide = true;
-                                    for (i = 0; i < 10; i++) {
-                                        moduleFailGroupe[i] = null;
-                                        module1[i] = true;
-                                        module2[i] = true;
-                                    }
-                                    //region sg1
-                                    var i = 0;
-                                    moduleCompare = null;
-                                    if (groupe.sousGroupes != null) {
-                                        for (var j in groupe.sousGroupes) {
-                                            sousgroupe1 = groupe.sousGroupes[j];
-                                            break;
+                    //pour chaque moduleCalendrier placé
+                    for (cleMCPlace in calendrier.modulesCalendrierPlaces) {
+                        if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleMCPlace)) {
+                            var mcPlace = calendrier.modulesCalendrierPlaces[cleMCPlace];
+                            var txtCOL = '';
+                            //si le calendrier placé correspond à l'ordre module
+                            if (mcPlace.module.idModule === ordreModule.idModule) {
+                                var tableModuleFail = [];
+                                for (cleGroupe in ordreModule.groupes) {
+                                    if (ordreModule.groupes.hasOwnProperty(cleGroupe)) {
+                                        var groupe = ordreModule.groupes[cleGroupe];
+                                        //maintenant qu'on a un groupe, on va faire une condition graces aux modules de ses 1 ou 2 sousgroupes
+                                        var sousgroupe1 = null;
+                                        var sousgroupe2 = null;
+                                        var moduleFailGroupe = []
+                                        var module1 = [];
+                                        var module2 = [];
+                                        var moduleCompare = null;
+                                        var sg1Vide = true;
+                                        var sg2Vide = true;
+                                        for (i = 0; i < 10; i++) {
+                                            moduleFailGroupe[i] = null;
+                                            module1[i] = true;
+                                            module2[i] = true;
                                         }
-                                        if (sousgroupe1) {
-                                            for (CleSG1 in sousgroupe1.modules) {
-                                                if (sousgroupe1.modules.hasOwnProperty(CleSG1)) {
-                                                    var module = sousgroupe1.modules[CleSG1];
-                                                    if (module !== null) {
-                                                        for (cleCompare in calendrier.modulesCalendrierPlaces) {
-                                                            if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
-                                                                var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
-                                                                if (moduletest.module.idModule === module.idModule) {
-                                                                    moduleCompare = moduletest;
-                                                                    break;
+                                        //region sg1
+                                        var i = 0;
+                                        moduleCompare = null;
+                                        if (groupe.sousGroupes != null) {
+                                            for (var j in groupe.sousGroupes) {
+                                                sousgroupe1 = groupe.sousGroupes[j];
+                                                break;
+                                            }
+                                            if (sousgroupe1) {
+                                                for (CleSG1 in sousgroupe1.modules) {
+                                                    if (sousgroupe1.modules.hasOwnProperty(CleSG1)) {
+                                                        var module = sousgroupe1.modules[CleSG1];
+                                                        if (module !== null) {
+                                                            for (cleCompare in calendrier.modulesCalendrierPlaces) {
+                                                                if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
+                                                                    var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
+                                                                    if (moduletest.module.idModule === module.idModule) {
+                                                                        moduleCompare = moduletest;
+                                                                        break;
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                        if (moduleCompare) {
-                                                            moduleFailGroupe[i] = (moduleCompare.libelle);
-                                                            sg1Vide = false;
-                                                            if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
-                                                                module1[i] = false;
-                                                            } else {
+                                                            if (moduleCompare) {
+                                                                moduleFailGroupe[i] = (moduleCompare.libelle);
+                                                                sg1Vide = false;
+                                                                if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
+                                                                    module1[i] = false;
+                                                                } else {
+                                                                    module1[i] = true;
+                                                                }
+                                                            }
+                                                            else {
+                                                                moduleFailGroupe[i] = null;
                                                                 module1[i] = true;
                                                             }
                                                         }
@@ -566,10 +573,48 @@ function verifContraintes() {
                                                             moduleFailGroupe[i] = null;
                                                             module1[i] = true;
                                                         }
+                                                        i++;
                                                     }
-                                                    else {
+                                                }
+                                            }
+                                        }
+                                        //endregion
+                                        i = 5;
+                                        moduleCompare = null;
+                                        //region sg2
+                                        if (groupe.sousGroupes != null) {
+                                            var sousgroupe2 = groupe.sousGroupes[Object.keys(groupe.sousGroupes)[Object.keys(groupe.sousGroupes).length - 1]];
+                                            if (sousgroupe2 && sousgroupe2 != sousgroupe1) {
+                                                for (CleSG2 in sousgroupe2.modules) {
+                                                    if (sousgroupe2.modules.hasOwnProperty(CleSG2)) {
+                                                        var module = sousgroupe2.modules[CleSG2];
+                                                        if (module !== null) {
+                                                            for (cleCompare in calendrier.modulesCalendrierPlaces) {
+                                                                if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
+                                                                    var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
+                                                                    if (moduletest.module.idModule === module.idModule) {
+                                                                        moduleCompare = moduletest;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (moduleCompare) {
+                                                                moduleFailGroupe[i] = (moduleCompare.libelle);
+                                                                sg2Vide = false;
+                                                                if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
+                                                                    module2[i] = false;
+                                                                } else {
+                                                                    module2[i] = true;
+                                                                }
+                                                            }
+                                                            else {
+                                                                moduleFailGroupe[i] = null;
+                                                                module2[i] = true;
+                                                            }
+                                                        }
+                                                    } else {
                                                         moduleFailGroupe[i] = null;
-                                                        module1[i] = true;
+                                                        module2[i] = true;
                                                     }
                                                     i++;
                                                 }
@@ -577,102 +622,60 @@ function verifContraintes() {
                                         }
                                     }
                                     //endregion
-                                    i = 5;
-                                    moduleCompare = null;
-                                    //region sg2
-                                    if (groupe.sousGroupes != null) {
-                                        var sousgroupe2 = groupe.sousGroupes[Object.keys(groupe.sousGroupes)[Object.keys(groupe.sousGroupes).length - 1]];
-                                        if (sousgroupe2 && sousgroupe2 != sousgroupe1) {
-                                            for (CleSG2 in sousgroupe2.modules) {
-                                                if (sousgroupe2.modules.hasOwnProperty(CleSG2)) {
-                                                    var module = sousgroupe2.modules[CleSG2];
-                                                    if (module !== null) {
-                                                        for (cleCompare in calendrier.modulesCalendrierPlaces) {
-                                                            if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cleCompare)) {
-                                                                var moduletest = calendrier.modulesCalendrierPlaces[cleCompare];
-                                                                if (moduletest.module.idModule === module.idModule) {
-                                                                    moduleCompare = moduletest;
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                        if (moduleCompare) {
-                                                            moduleFailGroupe[i] = (moduleCompare.libelle);
-                                                            sg2Vide = false;
-                                                            if (moduleCompare.dateDebut.date > mcPlace.dateDebut.date) {
-                                                                module2[i] = false;
-                                                            } else {
-                                                                module2[i] = true;
-                                                            }
-                                                        }
-                                                        else {
-                                                            moduleFailGroupe[i] = null;
-                                                            module2[i] = true;
-                                                        }
-                                                    }
-                                                } else {
-                                                    moduleFailGroupe[i] = null;
-                                                    module2[i] = true;
-                                                }
-                                                i++;
-                                            }
+                                    //on fait le if
+                                    //si on a aucune valeur dans l'un des deux groupes, alors on fait un if que sur celui qui a de la valeur
+                                    if (sg1Vide === false && sg2Vide === false) {
+                                        if (((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) ||
+                                            (module2[5] && module2[6] && module2[7] && module2[3] && module2[4])) === false) {
+                                            // le groupe ne suit pas l'ordre logique --> on ajoutes les modules posant pb à la liste.
+                                            tableModuleFail.push(moduleFailGroupe)
+                                        }
+                                    } else if (sg1Vide === false && sg2Vide === true) {
+                                        if ((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) === false) {
+                                            tableModuleFail.push(moduleFailGroupe);
+                                        }
+                                    } else if (sg1Vide === true && sg2Vide === false) {
+                                        if ((module2[5] && module2[6] && module2[7] && module2[3] && module2[4]) === false) {
+                                            tableModuleFail.push(moduleFailGroupe);
                                         }
                                     }
                                 }
-                                //endregion
-                                //on fait le if
-                                //si on a aucune valeur dans l'un des deux groupes, alors on fait un if que sur celui qui a de la valeur
-                                if (sg1Vide === false && sg2Vide === false) {
-                                    if (((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) ||
-                                        (module2[5] && module2[6] && module2[7] && module2[3] && module2[4])) === false) {
-                                        // le groupe ne suit pas l'ordre logique --> on ajoutes les modules posant pb à la liste.
-                                        tableModuleFail.push(moduleFailGroupe)
-                                    }
-                                } else if (sg1Vide === false && sg2Vide === true) {
-                                    if ((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) === false) {
-                                        tableModuleFail.push(moduleFailGroupe);
-                                    }
-                                } else if (sg1Vide === true && sg2Vide === false) {
-                                    if ((module2[5] && module2[6] && module2[7] && module2[3] && module2[4]) === false) {
-                                        tableModuleFail.push(moduleFailGroupe);
-                                    }
-                                }
-                            }
 
-                            if (tableModuleFail) {
-                                for (i = 0; i < tableModuleFail.length; i++) {
-                                    for (j = 0; j < 10; j++) {
-                                        if (tableModuleFail[i][j] != null) {
-                                            if (j != 0 && j != 5) {
-                                                txtCOL += "et " + tableModuleFail[i][j] + " ";
-                                            } else if (j === 0) {
-                                                txtCOL += "- " + tableModuleFail[i][j] + " ";
-                                            } else if (j === 5) {
-                                                txtCOL += "ou bien " + tableModuleFail[i][j] + " ";
+                                if (tableModuleFail) {
+                                    for (i = 0; i < tableModuleFail.length; i++) {
+                                        for (j = 0; j < 10; j++) {
+                                            if (tableModuleFail[i][j] != null) {
+                                                if (j != 0 && j != 5) {
+                                                    txtCOL += "et " + tableModuleFail[i][j] + " ";
+                                                } else if (j === 0) {
+                                                    txtCOL += "- " + tableModuleFail[i][j] + " ";
+                                                } else if (j === 5) {
+                                                    txtCOL += "ou bien " + tableModuleFail[i][j] + " ";
+                                                }
                                             }
                                         }
+                                        txtCOL += "<br/>";
                                     }
-                                    txtCOL += "<br/>";
+                                    if (tableModuleFail.length > 0) {
+                                        var div_header = $('#' + cleMCPlace)[0];
+                                        var div_contrainte = createDivContraite(div_header, "L\'ordre logique des modules n\'est pas suivi: les modules suivant doivent PRÉCEDER ce module:" + '<br/>' + txtCOL);
+                                    }
                                 }
-                                if (tableModuleFail.length > 0) {
-                                    var div_header = $('#' + cleMCPlace)[0];
-                                    var div_contrainte = createDivContraite(div_header, "L\'ordre logique des modules n\'est pas suivi: les modules suivant doivent PRÉCEDER ce module:" + '<br/>' + txtCOL);
-                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
             }
         }
-    }
 
-    $('.tooltipped').tooltip({delay: 50, html: true}).each(function () {
-        var background = $(this).data('background-color');
-        if (background) {
-            $("#" + $(this).data('tooltip-id')).find(".backdrop").addClass(background);
-        }
-    });
+        $('.tooltipped').tooltip({delay: 50, html: true}).each(function () {
+            var background = $(this).data('background-color');
+            if (background) {
+                $("#" + $(this).data('tooltip-id')).find(".backdrop").addClass(background);
+            }
+        });
+    }
 }
 
 function sortModulesByDate(moduleA, moduleB) {

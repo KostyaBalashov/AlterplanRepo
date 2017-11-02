@@ -31,25 +31,26 @@ You should have received a copy of the GNU Affero General Public License along w
             {% if ( calendars != null ) %}
                 {% for calendar in calendars %}
                     {% if (stagiaire is defined) %}
-                        <tr class="clickable clickable-row-calendar" data-action="applyModel" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier, 'codeStagiaire': stagiaire.codeStagiaire }) }}">
+                    <tr class="clickable clickable-row-calendar" data-action="applyModel"
+                        data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier, 'codeStagiaire': stagiaire.codeStagiaire }) }}">
                     {% else %}
                         <tr class="clickable clickable-row-calendar" data-action="gestionModel" data-href="{{ path( nameAction, { 'codeCalendrier': calendar.codeCalendrier}) }}">
                     {% endif %}
-                        <td>
-                            {{ calendar.titre }}
-                        </td>
+                    <td>
+                        {{ calendar.titre }}
+                    </td>
 
-                        <td>
-                            {{ calendar.formation.libelleCourt }}
-                        </td>
+                    <td>
+                        {{ calendar.formation.libelleCourt }}
+                    </td>
 
-                        <td>
-                            {{ calendar.dateDebut.format('d/m/Y') }}
-                        </td>
+                    <td>
+                        {{ calendar.dateDebut.format('d/m/Y') }}
+                    </td>
 
-                        <td>
-                            {{ calendar.dateFin.format('d/m/Y') }}
-                        </td>
+                    <td>
+                        {{ calendar.dateFin.format('d/m/Y') }}
+                    </td>
                     </tr>
                 {% endfor %}
             {% else %}
@@ -71,7 +72,7 @@ You should have received a copy of the GNU Affero General Public License along w
             var url = $(this).data("href");
             var action = $(this).data("action");
 
-            if(action === 'applyModel' || action === 'duplicate') {
+            if (action === 'applyModel' || action === 'duplicate') {
                 $('#form_search_tab_calendar').attr('action', url);
             } else if (action === 'gestionModel') {
                 window.location = url;
@@ -80,7 +81,10 @@ You should have received a copy of the GNU Affero General Public License along w
 
         $('#btn_new_model').click(function () {
             var url = "{{ path('model_new') }}";
-            renderModal('model',url,false);
+            renderModal('model', url, false);
         });
+
+        //gestion des boutons hors form pour les navigateurs non-compatibles
+        addFormFeature();
     })
 </script>

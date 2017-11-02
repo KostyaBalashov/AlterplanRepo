@@ -1,7 +1,7 @@
 {% extends 'consultationBase.html.twig' %}
 
 {% block customCSS %}
-    <link rel="stylesheet" href="{{ asset('css/stagiaire.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/stagiaire.css') }}"/>
 {% endblock %}
 
 {% block title %} Liste des stagiaires {% endblock %}
@@ -12,7 +12,9 @@
 
 {% block search_action_buttons %}
     <button type="submit" form="stagiaire_search" class="waves-effect waves-light btn">Rechercher</button>
-    <button type="reset" form="stagiaire_search" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+    <button type="reset" form="stagiaire_search" class="waves-effect waves-light btn red lighten-3">Effacer les
+        critères
+    </button>
 {% endblock %}
 
 {% block resultRenderer %}
@@ -22,28 +24,31 @@
 {% endblock %}
 
 {% block searchJS %}
-<script type="text/javascript">
-    $(document).ready(function () {
-        //Récupération du formulaire de recherche
-        var frm = $('#stagiaire_search');
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Récupération du formulaire de recherche
+            var frm = $('#stagiaire_search');
 
-        //Abonnement à l'événement submit du formulaire
-        frm.submit(function (event) {
-            showLoader();
-            event.preventDefault();
+            //Abonnement à l'événement submit du formulaire
+            frm.submit(function (event) {
+                showLoader();
+                event.preventDefault();
 
-            var url = frm.attr('action');
-            $.post(url, frm.serialize(), function (data) {
-                //En cas de succès on mets à jour le tabeau
-                var stagiaireTableDiv = $('#stagiaire_table');
-                stagiaireTableDiv.empty();
-                stagiaireTableDiv.html(data);
-            }).fail(function () {
-                showToast('Erreur de recherche', 'error');
-            }).always(function () {
-                dismissLoader();
-            })
-        });
-    })
-</script>
+                var url = frm.attr('action');
+                $.post(url, frm.serialize(), function (data) {
+                    //En cas de succès on mets à jour le tabeau
+                    var stagiaireTableDiv = $('#stagiaire_table');
+                    stagiaireTableDiv.empty();
+                    stagiaireTableDiv.html(data);
+                }).fail(function () {
+                    showToast('Erreur de recherche', 'error');
+                }).always(function () {
+                    dismissLoader();
+                })
+            });
+
+            //gestion des boutons hors form pour les navigateurs non-compatibles
+            addFormFeature();
+        })
+    </script>
 {% endblock %}

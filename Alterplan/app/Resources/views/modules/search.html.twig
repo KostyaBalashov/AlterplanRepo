@@ -28,7 +28,9 @@ You should have received a copy of the GNU Affero General Public License along w
         {{ form_end(formSearch) }}
         <div class="card-action right-align">
             <button type="submit" form="modules_search_form" class="waves-effect waves-light btn">Rechercher</button>
-            <button type="reset" form="modules_search_form" class="waves-effect waves-light btn red lighten-3">Effacer les critères</button>
+            <button type="reset" form="modules_search_form" class="waves-effect waves-light btn red lighten-3">Effacer
+                les critères
+            </button>
         </div>
     </div>
 </div>
@@ -41,5 +43,8 @@ You should have received a copy of the GNU Affero General Public License along w
             event.preventDefault();
             postForm(frm, postFormSearchSubmit);
         });
+
+        //gestion des boutons hors form pour les navigateurs non-compatibles
+        addFormFeature();
     });
 </script>
