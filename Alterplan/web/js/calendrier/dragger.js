@@ -75,8 +75,8 @@ var PlacementManager = function (calendrier) {
     };
 
     var splitCours = function (trCours, semaines) {
-        var dateDebut = new Date(trCours.data('cours').dateDebut.date);
-        var dateFin = new Date(trCours.data('cours').dateFin.date);
+        var dateDebut = new Date(new Date(trCours.data('cours').dateDebut.date).toDateString());
+        var dateFin = new Date(new Date(trCours.data('cours').dateFin.date).toDateString());
 
         var nwDateFin = new Date(dateDebut.getTime() + (Math.round((dateFin - dateDebut) / semaines) - oneD));
         var nbH = Math.round((nwDateFin - dateDebut) / oneD) * 7;
