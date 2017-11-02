@@ -78,15 +78,15 @@ var PlacementManager = function (calendrier) {
         var dateDebut = new Date(trCours.data('cours').dateDebut.date);
         var dateFin = new Date(trCours.data('cours').dateFin.date);
 
-        var nwDateFin = new Date(dateDebut.getTime() + ((dateFin - dateDebut) / semaines) - oneD);
+        var nwDateFin = new Date(dateDebut.getTime() + ((dateFin - dateDebut) / semaines - oneD));
         var nbH = Math.round((nwDateFin - dateDebut) / oneD) * 7;
 
         trCours.data('cours').dateFin = {date: nwDateFin.toDateString()};
         trCours.data('cours').nbHeures = nbH;
         trCours.find('span.date').text(getDateStr(dateDebut) + '-' + getDateStr(nwDateFin));
         trCours.find('span.heures').text(nbH + 'H');
-
-        var nwDateDebut = new Date(nwDateFin.getTime() + (3 * oneD - 12 * oneH));
+        
+        var nwDateDebut = new Date(nwDateFin.getTime() + (3 * oneD));
         nbH = Math.round((dateFin - nwDateDebut + oneD) / oneD) * 7;
         var cloneTr = trCours.clone();
 
