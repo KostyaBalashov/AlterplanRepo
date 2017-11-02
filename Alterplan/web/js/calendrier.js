@@ -393,7 +393,7 @@ function verifContraintes() {
         if (calendrier.contraintes.hasOwnProperty(cle)) {
             var contrainte = calendrier.contraintes[cle];
             if (contrainte.typeContrainte.codeTypeContrainte === 2) {
-                if (nbHeuresFormationnbHeuresFormation < contrainte.P1 || nbHeuresFormation > contrainte.p2) {
+                if (nbHeuresFormation < contrainte.P1 || nbHeuresFormation > contrainte.p2) {
                     div_header = $('#calandar-hearder')[0];
                     var div_contrainte = createDivContraite(div_header, '- Le volume horaire actuel (' + nbHeuresFormation + 'h) ne convient pas (min: ' + contrainte.P1 + 'h, max: ' + contrainte.P2 + 'h)');
                     //div_header.append(div_contrainte);
