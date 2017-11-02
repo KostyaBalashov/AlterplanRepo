@@ -55,7 +55,8 @@ nav {
 }
 
 .eni-logo {
-    zoom: 50%;
+    transform: scale(0.5);
+    transform-origin: 50% 0;
     margin-top: 12px;
 }
 
