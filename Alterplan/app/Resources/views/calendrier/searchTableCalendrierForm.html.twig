@@ -25,7 +25,9 @@ You should have received a copy of the GNU Affero General Public License along w
                 <th>Formation</th>
                 <th>Date de début</th>
                 <th>Date de fin</th>
+                {% if(nameAction == 'calendrier_edit') %}
                 <th>Suppression</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody class="calendrier_rows">
@@ -52,11 +54,13 @@ You should have received a copy of the GNU Affero General Public License along w
                     <td>
                         {{ calendar.dateFin.format('d/m/Y') }}
                     </td>
+                    {% if(nameAction == 'calendrier_edit') %}
                     <td>
                         <a href="#">
                             <i class="material-icons deleteIcon" data-href="{{ path('model_delete', {'codeCalendrier': calendar.codeCalendrier})}}">delete</i>
                         </a>
                     </td>
+                    {% endif %}
                     </tr>
 
                 {% endfor %}
@@ -73,18 +77,34 @@ You should have received a copy of the GNU Affero General Public License along w
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.calendrier_rows td:not(:last-child)').click(function () {
-            // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
-            $(this).addClass('selected').siblings().removeClass("selected");
-            var url = $(this).closest('tr').data("href");
-            var action = $(this).closest('tr').data("action");
+        var nameAct = {{ nameAction|json_encode|raw }};
+        if(nameAct === 'calendrier_edit') {
+            $('.calendrier_rows td:not(:last-child)').click(function () {
+                // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
+                $(this).closest('tr').addClass('selected').siblings().removeClass("selected");
+                var url = $(this).closest('tr').data("href");
+                var action = $(this).closest('tr').data("action");
 
-            if (action === 'applyModel' || action === 'duplicate') {
-                $('#form_search_tab_calendar').attr('action', url);
-            } else if (action === 'gestionModel') {
-                window.location = url;
-            }
-        });
+                if (action === 'applyModel' || action === 'duplicate') {
+                    $('#form_search_tab_calendar').attr('action', url);
+                } else if (action === 'gestionModel') {
+                    window.location = url;
+                }
+            });
+        } else {
+            $('.calendrier_rows tr').click(function () {
+                // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
+                $(this).addClass('selected').siblings().removeClass("selected");
+                var url = $(this).data("href");
+                var action = $(this).data("action");
+
+                if (action === 'applyModel' || action === 'duplicate') {
+                    $('#form_search_tab_calendar').attr('action', url);
+                } else if (action === 'gestionModel') {
+                    window.location = url;
+                }
+            });
+        }
 
         $('#btn_new_model').click(function () {
             var url = "{{ path('model_new') }}";
