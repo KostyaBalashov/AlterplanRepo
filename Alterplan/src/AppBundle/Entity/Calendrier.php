@@ -57,7 +57,7 @@ class Calendrier implements \JsonSerializable
      *
      * @ORM\Column(name="DureeEnHeures", type="integer", nullable=true)
      */
-    private $dureeEnHeures;
+    private $dureeEnHeures = 0;
 
     /**
      * @var \AppBundle\Entity\Formation
@@ -116,6 +116,8 @@ class Calendrier implements \JsonSerializable
     {
         $result = [];
         $result['codeCalendrier'] = $this->codeCalendrier;
+        $result['titre'] = $this->titre;
+        $result['nbHeures'] = $this->dureeEnHeures;
 
         $result['formation'] = json_encode([
                 'CodeFormation' => $this->formation->getCodeFormation(),
@@ -136,8 +138,28 @@ class Calendrier implements \JsonSerializable
         $result['modulesCalendrierAPlacer'] = json_encode($this->modulesCalendrier->matching($criteria)->toArray());
 
         $result['modulesCalendrierPlaces'] = json_encode($this->getModuleCalendrierPlaces()->toArray());
+        $result['keysModulesCalendriers'] = json_encode(array_reduce($this->modulesCalendrier->toArray(), function ($p1, $p2) {
+            $p1[] = $p2->getCodeModuleCalendrier();
+            return $p1;
+        }, []));
 
         return $result;
+    }
+
+    public function addModuleCalendrier(ModuleCalendrier $mc)
+    {
+        if (!$this->modulesCalendrier->contains($mc)) {
+            $mc->setCalendrier($this);
+            $this->modulesCalendrier->add($mc);
+        }
+    }
+
+    public function getMatchingModuleCalendrier(Criteria $criteria)
+    {
+        if ($criteria != null) {
+            return $this->modulesCalendrier->matching($criteria);
+        }
+        return $this->modulesCalendrier;
     }
 
     public function getModuleCalendrierPlaces()
@@ -251,16 +273,6 @@ class Calendrier implements \JsonSerializable
      */
     public function getDureeEnHeures()
     {
-        if (sizeof($this->modulesCalendrier) > 0) {
-
-            $result = 0;
-            foreach ($this->modulesCalendrier as $value) {
-                $result += $value->getNombreHeuresReel();
-            }
-
-            return $result;
-        }
-
         return $this->dureeEnHeures;
     }
 

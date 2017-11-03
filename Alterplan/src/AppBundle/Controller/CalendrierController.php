@@ -25,7 +25,6 @@ use AppBundle\Entity\ModuleCalendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\CalendrierFiltre;
-use AppBundle\Service\ModuleAPlanifierService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Dompdf\Options;
@@ -36,6 +35,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Dompdf\Dompdf;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\TypeContrainte;
 
@@ -132,7 +133,7 @@ class CalendrierController extends Controller
                     $calendrier->getModulesCalendrier()->add($moduleCalendrier);
                 }
             }
-            if($stagiaire != null) {
+            if ($stagiaire != null) {
                 $today = date("d/m/Y");
                 if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
                     $newTitre = $today . "-"
@@ -370,7 +371,7 @@ class CalendrierController extends Controller
             // Affichage de la fiche du stagiaire avec la liste de ses calendrier
             $repo = $this->getDoctrine()->getRepository(Calendrier::class);
             // Si le stagiaireParEntreprise est null c'est que le calendrier est un modele
-            if($stagiaireParEntreprise != null) {
+            if ($stagiaireParEntreprise != null) {
 
                 $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 0));
                 $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 1));
@@ -640,4 +641,90 @@ class CalendrierController extends Controller
         return new JsonResponse($calendrieCompare);
     }
 
+
+    /**
+     * Enregistre les modifications du planning du calendrier
+     * @param Request $request
+     * @param Calendrier $calendrierReference
+     * @Route("/save/{codeCalendrier}", name="calendrier_save", options={"expose"=true})
+     * @Method({"POST"})
+     */
+    public function saveCalendrierAction(Request $request, Calendrier $calendrierReference)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $modulesRepo = $this->getDoctrine()->getRepository(Module::class);
+        $coursRepo = $this->getDoctrine()->getRepository(Cours::class);
+
+        $received = $request->get('calendrier');
+        $receivedModulesAPlacer = array_filter(json_decode($received['modulesAPlacer']));
+        $receivedModulesPlaces = array_filter(json_decode($received['modulesPlaces']));
+
+        $calendrierReference->setTitre($received['titre']);
+        $calendrierReference->setDureeEnHeures($received['nbHeures']);
+
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->in('codeModuleCalendrier', array_keys($receivedModulesAPlacer)));
+
+        $modulesAPlacer = $calendrierReference->getMatchingModuleCalendrier($criteria);
+        foreach ($modulesAPlacer as $mcap) {
+            $mcap->setCours(null);
+            $mcap->setNbSemaines($mcap->getModule()->getDureeEnSemaines());
+            $mcap->setLibelle($receivedModulesAPlacer[$mcap->getCodeModuleCalendrier()]->libelle);
+            $mcap->setDateDebut(null)->setDateFin(null);
+        }
+
+        $criteria->where(Criteria::expr()->in('codeModuleCalendrier', array_keys($receivedModulesPlaces)));
+        $modulesPlaces = $calendrierReference->getMatchingModuleCalendrier($criteria);
+        foreach ($modulesPlaces as $mcp) {
+            $cours = $coursRepo->find($receivedModulesPlaces[$mcp->getCodeModuleCalendrier()]->cours->idCours);
+            $mcp->setCours($cours);
+            $mcp->setNbSemaines($receivedModulesPlaces[$mcp->getCodeModuleCalendrier()]->nbSemaines);
+            $mcp->setLibelle($receivedModulesPlaces[$mcp->getCodeModuleCalendrier()]->libelle);
+            $mcp->setDateDebut(new DateTime($receivedModulesPlaces[$mcp->getCodeModuleCalendrier()]->dateDebut->date));
+            $mcp->setDateFin(new DateTime($receivedModulesPlaces[$mcp->getCodeModuleCalendrier()]->dateFin->date));
+        }
+
+        $refMC = array_reduce($calendrierReference->getModulesCalendrier()->toArray(), function ($p1, $p2) {
+            $p1[] = $p2->getCodeModuleCalendrier();
+            return $p1;
+        }, []);
+
+        $recMcp = array_keys($receivedModulesPlaces);
+        $recMcap = array_keys($receivedModulesAPlacer);
+        $nouveauxMcp = array_diff($recMcp, $refMC, $recMcap);
+        $nouveauxMcap = array_diff($recMcap, $refMC, $recMcp);
+
+        foreach ($nouveauxMcp as $keyModulePlace) {
+            $stdModuleCalendrierPlace = $receivedModulesPlaces[$keyModulePlace];
+            $module = $modulesRepo->find($stdModuleCalendrierPlace->module->idModule);
+            $cours = $coursRepo->find($stdModuleCalendrierPlace->cours->idCours);
+
+            $newModuleCalendrierPlace = new ModuleCalendrier();
+            $newModuleCalendrierPlace->setModule($module);
+            $newModuleCalendrierPlace->setLibelle($stdModuleCalendrierPlace->libelle);
+            $newModuleCalendrierPlace->setNbSemaines($stdModuleCalendrierPlace->nbSemaines);
+            $newModuleCalendrierPlace->setDateDebut(new DateTime($stdModuleCalendrierPlace->dateDebut->date));
+            $newModuleCalendrierPlace->setDateFin(new DateTime($stdModuleCalendrierPlace->dateFin->date));
+            $newModuleCalendrierPlace->setCours($cours);
+
+            $calendrierReference->addModuleCalendrier($newModuleCalendrierPlace);
+        }
+
+        foreach ($nouveauxMcap as $keyModuleAPlace) {
+            $stdModuleCalendrierAPlace = $receivedModulesAPlacer[$keyModuleAPlace];
+            $module = $modulesRepo->find($stdModuleCalendrierAPlace->module->idModule);
+
+            $newModuleCalendrierAPlace = new ModuleCalendrier();
+            $newModuleCalendrierAPlace->setModule($module);
+            $newModuleCalendrierAPlace->setLibelle($stdModuleCalendrierAPlace->libelle);
+            $newModuleCalendrierAPlace->setCours(null);
+
+            $calendrierReference->addModuleCalendrier($newModuleCalendrierAPlace);
+        }
+
+        $em->persist($calendrierReference);
+        $em->flush();
+
+        return new Response();
+    }
 }

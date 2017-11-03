@@ -68,6 +68,14 @@ class ModuleCalendrier implements \JsonSerializable
     private $calendrier;
 
     /**
+     * @var Cours
+     *
+     * @ORM\OneToOne(targetEntity="Cours")
+     * @ORM\JoinColumn(name="IdCours", referencedColumnName="IdCours")
+     */
+    private $cours;
+
+    /**
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Dispense", mappedBy="moduleCalendrier",  fetch="EAGER")
@@ -84,12 +92,12 @@ class ModuleCalendrier implements \JsonSerializable
         $result = 0;
 
         if ($this->dateDebut && $this->dateFin) {
-            $result = date_diff($this->dateFin, $this->dateDebut, true);;
+            $result = (date_diff($this->dateFin, $this->dateDebut, true)->days + 1) * 7;
 
             foreach ($this->dispenses as $dispense) {
                 $interval = date_diff($dispense->getDateFin(), $dispense->getDateDebut(), true);
                 if ($interval) {
-                    $result = $result - ($interval->days + 1);
+                    $result = $result - (($interval->days + 1) * 7);
                 }
             }
         } else {
@@ -107,13 +115,35 @@ class ModuleCalendrier implements \JsonSerializable
         $result['codeCalendrier'] = $this->calendrier->getCodeCalendrier();
         $result['nbHeures'] = $this->getNombreHeuresReel();
         $result['nbSemaines'] = $this->getNbSemaines();
-        $result['dateDebut'] = json_encode($this->dateDebut);
-        $result['dateFin'] = json_encode($this->dateFin);
+        $result['dateDebut'] = $this->dateDebut;
+        $result['dateFin'] = $this->dateFin;
         $result['libelle'] = $this->libelle;
         $result['module'] = $this->module->jsonSerialize();
         $result['dispenses'] = json_encode($this->dispenses->toArray());
 
+        if ($this->cours) {
+            $result['cours'] = $this->cours->jsonSerialize();
+        }
+
         return $result;
+    }
+
+    /**
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
+    }
+
+    /**
+     * @param Cours $cours
+     * @return ModuleCalendrier
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+        return $this;
     }
 
     /**

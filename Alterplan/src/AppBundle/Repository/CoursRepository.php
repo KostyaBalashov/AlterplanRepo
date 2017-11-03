@@ -20,14 +20,17 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Calendrier;
 use AppBundle\Entity\Module;
+use AppBundle\Entity\Promotion;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class CoursRepository extends EntityRepository
 {
     public function search(Module $module, Calendrier $calendrier)
     {
         $qb = $this->createQueryBuilder('c');
-
+        $qb->join(Promotion::class, 'p', Join::WITH, 'c.promotion = p.codePromotion');
+        $qb->where('p.isActive = 1');
         if ($module != null) {
             $qb->andWhere('c.module = :module')->setParameter('module', $module);
         }

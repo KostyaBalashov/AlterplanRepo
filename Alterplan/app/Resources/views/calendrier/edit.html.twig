@@ -20,7 +20,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
     <div class="row center blue lighten-1">
         <div class="col s6 offset-s3">
-            <div class="hoverable clickable">
+            <div id="titre_calendrier" class="hoverable clickable">
                 <span class="center-align flow-text white-text">{{ calendrier.titre }}</span>
             </div>
             <input class="clickedit white" type="text" style="margin: 7px 0 7px 0"/>
@@ -73,7 +73,7 @@ You should have received a copy of the GNU Affero General Public License along w
                     <span class="card-title">Calendrier</span>
                     <div class="row center">
                         <div class="col s3 offset-s4">
-                            <span class="flow-text">Volume : {{ calendrier.dureeEnHeures }} H</span>
+                            <span class="flow-text">Volume : <span id="nb-heures">{{ calendrier.dureeEnHeures }}</span> H</span>
                         </div>
                     </div>
                     <div id="calendar" class="row">
@@ -128,7 +128,7 @@ You should have received a copy of the GNU Affero General Public License along w
                 </a>
             </li>
             <li>
-                <a class="btn-floating green tooltipped"
+                <a id="save_calendrier" class="btn-floating green tooltipped"
                    data-position="left"
                    data-delay="50"
                    data-tooltip="Enregistrer les modifications">
@@ -156,6 +156,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </div>
     {% include ':composants/templates:cours.html.twig' %}
     {% include ':composants/templates:entreprise.html.twig' %}
+    {% include ':composants/templates:module.html.twig' %}
 {% endblock %}
 
 {% block modal %}
@@ -218,11 +219,15 @@ You should have received a copy of the GNU Affero General Public License along w
         $(document).ready(function () {
             initTitleInput('{{ calendrier.titre }}');
             calendrier.displayPlaceableElements();
-
+            displayPlacedElements(calendrier);
             $('#modules_search').click(function () {
                 renderModal('gestion-modules',
                     '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
                     true, undefined, modulesManager.onModaleOpen);
+            });
+
+            $('#save_calendrier').click(function () {
+                saveCalendrier(calendrier);
             });
 
             $('#editContraintes').click(function () {
@@ -232,7 +237,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
             $('#inscrireCalendrier').click(function () {
                 var url = "{{ path('calendrier_inscrire', { 'codeCalendrier' : calendrier.codeCalendrier}) }}";
-                renderModal('inscrire_calendrier',url,false);
+                renderModal('inscrire_calendrier', url, false);
             });
 
             var drake = new dragula({
@@ -250,7 +255,7 @@ You should have received a copy of the GNU Affero General Public License along w
             // de syntaxe.
             var calendrierInsrit = {{ calendrier.isInscrit }}+"";
             // Si le calendrier est inscrit, on retir la possibilité de cliquer sur le lien
-            if(calendrierInsrit === "1") {
+            if (calendrierInsrit === "1") {
                 $('#inscrireCalendrier').addClass('disabled');
             }
         });

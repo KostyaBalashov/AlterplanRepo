@@ -12,19 +12,25 @@ var Calendrier = function (jCalendrier) {
     var parsedPeriode = JSON.parse(jCalendrier.periode);
     var me = this;
 
+    this.titre = jCalendrier.titre;
+    this.nbHeures = jCalendrier.nbHeures;
     this.codeCalendrier = jCalendrier.codeCalendrier;
     this.periode = {'debut': JSON.parse(parsedPeriode.debut), 'fin': JSON.parse(parsedPeriode.fin)};
     this.formation = JSON.parse(jCalendrier.formation);
     this.contraintes = JSON.parse(jCalendrier.contraintes);
 
+    this.keysModulesCalendrier = JSON.parse(jCalendrier.keysModulesCalendriers);
 
-    this.modulesCalendrierPlaces = JSON.parse(jCalendrier.modulesCalendrierPlaces).reduce(function (p1, p2) {
-        p1[p2.module.idModule + '-' + p2.codeModuleCalendrier] = p2;
+
+    var parsedMCP = JSON.parse(jCalendrier.modulesCalendrierPlaces);
+    this.modulesCalendrierPlaces = Object.keys(parsedMCP).reduce(function (p1, p2) {
+        p1[parsedMCP[p2].module.idModule + '-' + parsedMCP[p2].codeModuleCalendrier] = parsedMCP[p2];
         return p1;
     }, []);
 
-    this.modulesCalendrierAPlacer = JSON.parse(jCalendrier.modulesCalendrierAPlacer).reduce(function (p1, p2) {
-        p1[p2.module.idModule + '-' + p2.codeModuleCalendrier] = p2;
+    var parsedMCAP = JSON.parse(jCalendrier.modulesCalendrierAPlacer);
+    this.modulesCalendrierAPlacer = Object.keys(parsedMCAP).reduce(function (p1, p2) {
+        p1[parsedMCAP[p2].module.idModule + '-' + parsedMCAP[p2].codeModuleCalendrier] = parsedMCAP[p2];
         return p1;
     }, []);
 
@@ -53,12 +59,13 @@ var Calendrier = function (jCalendrier) {
     this.addModuleCalendrierAPlacer = function (jModuleCalendrier) {
         if (!jModuleCalendrier.hasOwnProperty('codeModuleCalendrier')) {
             var code = 0;
-            for (cle in this.modulesCalendrierAPlacer) {
-                if (this.modulesCalendrierAPlacer.hasOwnProperty(cle)) {
-                    code = code < this.modulesCalendrierAPlacer[cle].codeModuleCalendrier ? this.modulesCalendrierAPlacer[cle].codeModuleCalendrier : code;
+            for (cle in this.keysModulesCalendrier) {
+                if (this.keysModulesCalendrier.hasOwnProperty(cle)) {
+                    code = code < this.keysModulesCalendrier[cle] ? this.keysModulesCalendrier[cle] : code;
                 }
             }
             jModuleCalendrier.codeModuleCalendrier = ++code;
+            this.keysModulesCalendrier.push(code);
         }
         this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
         return jModuleCalendrier;
@@ -67,12 +74,13 @@ var Calendrier = function (jCalendrier) {
     this.addModuleCalendrierPlace = function (jModuleCalendrier) {
         if (!jModuleCalendrier.hasOwnProperty('codeModuleCalendrier')) {
             var code = 0;
-            for (cle in this.modulesCalendrierPlaces) {
-                if (this.modulesCalendrierPlaces.hasOwnProperty(cle)) {
-                    code = code < this.modulesCalendrierPlaces[cle].codeModuleCalendrier ? this.modulesCalendrierPlaces[cle].codeModuleCalendrier : code;
+            for (cle in this.keysModulesCalendrier) {
+                if (this.keysModulesCalendrier.hasOwnProperty(cle)) {
+                    code = code < this.keysModulesCalendrier[cle] ? this.keysModulesCalendrier[cle] : code;
                 }
             }
             jModuleCalendrier.codeModuleCalendrier = ++code;
+            this.keysModulesCalendrier.push(code);
         }
 
         this.modulesCalendrierPlaces[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
@@ -80,6 +88,7 @@ var Calendrier = function (jCalendrier) {
             delete this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier];
         }
 
+        this.updateNbHeures();
         return jModuleCalendrier;
     };
 
@@ -90,9 +99,54 @@ var Calendrier = function (jCalendrier) {
             this.addModuleCalendrierAPlacer(this.modulesCalendrierPlaces[identifiant]);
             delete this.modulesCalendrierPlaces[identifiant];
             verifContraintes();
+            this.updateNbHeures();
         }
     };
+
+    this.updateNbHeures = function () {
+        this.nbHeures = 0;
+        for (cle in this.modulesCalendrierPlaces) {
+            if (this.modulesCalendrierPlaces.hasOwnProperty(cle)) {
+                this.nbHeures += this.modulesCalendrierPlaces[cle].nbHeures
+            }
+        }
+        $('#nb-heures').text(this.nbHeures);
+    };
+
+    this.toJSON = function () {
+        return {
+            codeCalendrier: this.codeCalendrier,
+            titre: this.titre,
+            nbHeures: this.nbHeures,
+            formation: JSON.stringify(this.formation),
+            contraintes: JSON.stringify(this.contraintes),
+            modulesPlaces: JSON.stringify(Object.keys(this.modulesCalendrierPlaces).reduce(function (p1, p2) {
+                p1[me.modulesCalendrierPlaces[p2].codeModuleCalendrier] = me.modulesCalendrierPlaces[p2];
+                return p1;
+            }, [])),
+            modulesAPlacer: JSON.stringify(Object.keys(this.modulesCalendrierAPlacer).reduce(function (p1, p2) {
+                p1[me.modulesCalendrierAPlacer[p2].codeModuleCalendrier] = me.modulesCalendrierAPlacer[p2];
+                return p1;
+            }, []))
+        };
+    };
 };
+
+function displayPlacedElements(calendrier) {
+    var $container = $('#calnendar-body');
+    var temp = Object.keys(calendrier.modulesCalendrierPlaces).reduce(function (p1, p2) {
+        p1[calendrier.modulesCalendrierPlaces[p2].codeModuleCalendrier] = calendrier.modulesCalendrierPlaces[p2];
+        return p1;
+    }, []);
+    var sorted = temp.sort(sortModulesByDate);
+    var indexes = Object.keys(sorted);
+    for (cle in sorted) {
+        if (sorted.hasOwnProperty(cle)) {
+            $container.append(getPlacedRendering(sorted[cle]));
+        }
+    }
+    insertEntreprise();
+}
 
 function getPlaceableRendering(jPlaceable) {
     var div = $(document.createElement('div'));
@@ -108,6 +162,28 @@ function getPlaceableRendering(jPlaceable) {
     div.append(span);
 
     return div;
+}
+
+function getPlacedRendering(jPlaced) {
+    var ligne = $('#module-template').children().clone();
+    ligne.removeClass('template');
+    ligne.find('span.date').text(getDateStr(new Date(jPlaced.dateDebut.date)) + ' - ' + getDateStr(new Date(jPlaced.dateFin.date)));
+    var lieu = " - ";
+    if (jPlaced.cours.hasOwnProperty('lieu')) {
+        lieu = jPlaced.cours.lieu.libelle;
+    }
+    ligne.find('span.lieu').text(lieu);
+    ligne.find('span.heures').text(jPlaced.nbHeures + ' H');
+    ligne.find('span.programme').text(jPlaced.libelle);
+    ligne.find('div.module-place').attr('id', jPlaced.module.idModule + '-' + jPlaced.codeModuleCalendrier);
+    ligne.find('div.module-place').data('placeable', jPlaced);
+    ligne.find('div.module-place').click(function () {
+        selectPlaceable($(this));
+    });
+
+    ligne.data('cours', jPlaced.cours);
+
+    return ligne;
 }
 
 function selectPlaceable(clickedElement) {
@@ -151,6 +227,7 @@ function endEdit(e, defaultText) {
         div = input && input.prev();
 
     div.find('span').text(input.val() === '' ? defaultText : input.val());
+    calendrier.titre = input.val() === '' ? defaultText : input.val();
     input.hide();
     div.show();
 }
@@ -350,6 +427,7 @@ function inscrireCalendrier() {
     closeModaleInscrireCalendrier();
     dismissLoader();
 }
+
 function verifContraintes() {
 
     //on commence par supprimer toutes les divs warning
@@ -636,7 +714,7 @@ function verifContraintes() {
                                     //si on a aucune valeur dans l'un des deux groupes, alors on fait un if que sur celui qui a de la valeur
                                     if (sg1Vide === false && sg2Vide === false) {
                                         if (((module1[0] && module1[1] && module1[2] && module1[3] && module1[4]) ||
-                                            (module2[5] && module2[6] && module2[7] && module2[3] && module2[4])) === false) {
+                                                (module2[5] && module2[6] && module2[7] && module2[3] && module2[4])) === false) {
                                             // le groupe ne suit pas l'ordre logique --> on ajoutes les modules posant pb à la liste.
                                             tableModuleFail.push(moduleFailGroupe)
                                         }
@@ -689,10 +767,12 @@ function verifContraintes() {
 }
 
 function sortModulesByDate(moduleA, moduleB) {
-    if (moduleA.dateDebut < moduleB.dateDebut) {
+    var dateA = new Date(moduleA.dateDebut.date);
+    var dateB = new Date(moduleB.dateDebut.date);
+    if (dateA < dateB) {
         return -1;
     }
-    if (moduleA.dateDebut > moduleB.dateDebut) {
+    if (dateA > dateB) {
         return 1;
     }
     return 0;
@@ -731,4 +811,17 @@ function createDivContraite(parentDiv, tooltip) {
 
 function findModuleById(modules, id) {
 
+}
+
+function saveCalendrier(calendrier) {
+    showLoader();
+    calendrier.titre = $('#titre_calendrier').find('span').text();
+    var url = Routing.generate('calendrier_save', {codeCalendrier: calendrier.codeCalendrier});
+    $.post(url, {'calendrier': calendrier.toJSON()}).done(function (data) {
+        showToast('Les modifications ont été enregistrées');
+    }).fail(function () {
+        showToast('Echec de l\'enregistrement');
+    }).always(function () {
+        dismissLoader();
+    });
 }

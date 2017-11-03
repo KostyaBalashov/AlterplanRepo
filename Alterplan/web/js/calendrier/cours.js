@@ -40,7 +40,7 @@ var CoursManager = function (jCours) {
         clone.data('cours', jCour);
 
         var added = false;
-        $('.tr-module').each(function (index, item) {
+        $('.tr-module').not('.template').each(function (index, item) {
             if ($(item).data('cours').idCours !== jCour.idCours) {
                 var dateDebutCours = new Date(jCour.dateDebut.date);
                 var dateFinCours = new Date(jCour.dateFin.date);

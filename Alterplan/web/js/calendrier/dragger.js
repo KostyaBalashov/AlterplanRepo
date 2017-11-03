@@ -9,14 +9,15 @@
  * You should have received a copy of the GNU Affero General Public License along with Alterplan. If not, see <http://www.gnu.org/licenses/>.
  */
 
+var oneH = 3600000;
+var oneD = 24 * oneH;
+
 var PlacementManager = function (calendrier) {
 
     var oldModuleClasses = 'flow-text card-panel module';
     var newModuleClasses = 'module-place center valign-wrapper hoverable bordered';
     var spanClasses = 'center-align col s12';
     var containerClasse = 'valign-wrapper';
-    var oneH = 3600000;
-    var oneD = 24 * oneH;
 
     var me = this;
     this.calendar = calendrier;
@@ -146,6 +147,7 @@ var PlacementManager = function (calendrier) {
             }
             me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
         }
+        $(element).data('placeable').cours = $(container).parents('.tr').data('cours');
         $(element).parent().removeClass('module-container');
         verifContraintes();
     };
@@ -154,56 +156,55 @@ var PlacementManager = function (calendrier) {
         $(container).parents('.tr').toggleClass('no-remove');
         $(container).parents('.tr').toggleClass('tr-cours');
         $(container).parents('.tr').toggleClass('tr-module');
+        $(container).parents('.tr').toggleClass('cyan lighten-5');
 
-        //TODO prendre en charge la bonne coloration
-        $(container).parents('.tr').find('.indicateur').toggleClass('amber lighten-4');
         $(container).parent().toggleClass('cours');
         $(container).parent().toggleClass('module-planifie');
     };
+};
 
-    var insertEntreprise = function () {
-        function getEntreprise(periode, semaines) {
-            var entrepriseTemplate = $('#entreprise-template').children();
-            entrepriseTemplate.find("span.date").text(periode);
-            entrepriseTemplate.find("span.semaines").text(semaines);
-            return entrepriseTemplate.clone().removeClass('no-remove');
+function insertEntreprise() {
+    function getEntreprise(periode, semaines) {
+        var entrepriseTemplate = $('#entreprise-template').children();
+        entrepriseTemplate.find("span.date").text(periode);
+        entrepriseTemplate.find("span.semaines").text(semaines);
+        return entrepriseTemplate.clone().removeClass('no-remove');
+    }
+
+    $('.tr-module').not('.template').each(function (index, item) {
+        var dateDebut = null;
+        var dateFin = null;
+        var strDateDebut;
+        var strDateFin;
+        var semaines;
+
+        var prev = $(item).prev();
+        if (prev.length > 0) {
+            dateDebut = new Date(new Date($(prev).data('cours').dateFin.date).getTime() + 3 * oneD);
+            dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
+        } else {
+            dateDebut = new Date(calendrier.periode.debut.date);
+            dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
         }
 
-        $('.tr-module').each(function (index, item) {
-            var dateDebut = null;
-            var dateFin = null;
-            var strDateDebut;
-            var strDateFin;
-            var semaines;
+        strDateDebut = getDateStr(dateDebut);
+        strDateFin = getDateStr(dateFin);
+        semaines = Math.round((dateFin - dateDebut) / 604800000);
+        if (semaines > 0) {
+            $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertBefore(item);
+        }
 
-            var prev = $(item).prev();
-            if (prev.length > 0) {
-                dateDebut = new Date(new Date($(prev).data('cours').dateFin.date).getTime() + 3 * oneD);
-                dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
-            } else {
-                dateDebut = new Date(me.calendar.periode.debut.date);
-                dateFin = new Date(new Date($(item).data('cours').dateDebut.date).getTime() - 3 * oneD);
-            }
-
+        var next = $(item).next();
+        if (next.length === 0) {
+            dateDebut = new Date(new Date($(item).data('cours').dateFin.date).getTime() + 3 * oneD);
+            dateFin = new Date(calendrier.periode.fin.date);
             strDateDebut = getDateStr(dateDebut);
             strDateFin = getDateStr(dateFin);
             semaines = Math.round((dateFin - dateDebut) / 604800000);
             if (semaines > 0) {
-                $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertBefore(item);
+                $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertAfter(item);
             }
-
-            var next = $(item).next();
-            if (next.length === 0) {
-                dateDebut = new Date(new Date($(item).data('cours').dateFin.date).getTime() + 3 * oneD);
-                dateFin = new Date(me.calendar.periode.fin.date);
-                strDateDebut = getDateStr(dateDebut);
-                strDateFin = getDateStr(dateFin);
-                semaines = Math.round((dateFin - dateDebut) / 604800000);
-                if (semaines > 0) {
-                    $(getEntreprise(strDateDebut + ' - ' + strDateFin, (semaines > 1 ? semaines + ' semaines' : semaines + ' semaines'))).insertAfter(item);
-                }
-            }
-        });
-    };
-};
+        }
+    });
+}
 
