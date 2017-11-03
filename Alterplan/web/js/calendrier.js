@@ -365,6 +365,15 @@ function verifContraintes() {
         var modulesPlaces = calendrier.modulesCalendrierPlaces;
         for (cle in calendrier.modulesCalendrierPlaces) {
             if (calendrier.modulesCalendrierPlaces.hasOwnProperty(cle)) {
+                var div_header = $('#' + cle)[0]
+                var promotion = $(div_header).parents('.tr').data('cours').promotion;
+                if (promotion) {
+                    var isActive = promotion.isActive;
+                    if (isActive === false) {
+                        createDivContraite(div_header, '- Le module est placé sur un cours dont la promotion est obsolète.')
+                    }
+                }
+
                 modulePlace = calendrier.modulesCalendrierPlaces[cle];
                 nbHeuresFormation += modulePlace.nbHeures;
                 if (firstModule != null && lastModule != null) {

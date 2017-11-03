@@ -85,7 +85,7 @@ var CoursManager = function (jCours) {
     var setPromotion = function ($template, jCour) {
         var promotion = ' - ';
         if (jCour.hasOwnProperty('promotion')) {
-            promotion = jCour.promotion;
+            promotion = jCour.promotion.libelle;
         }
         $template.find("span.promotion").text(promotion);
     };

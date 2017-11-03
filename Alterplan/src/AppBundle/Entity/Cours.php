@@ -136,7 +136,7 @@ class Cours implements \JsonSerializable
         }
 
         if ($this->promotion != null) {
-            $result['promotion'] = $this->promotion->getLibelle();
+            $result['promotion'] = ['codePromotion' => $this->promotion->getCodePromotion(), 'libelle' => $this->promotion->getLibelle(), 'isActive' => $this->getPromotion()->isActive()];
         }
 
         $result['fromToday'] = date_diff(new \DateTime(), $this->debut, false)->format('%R%a');;
