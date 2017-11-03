@@ -382,9 +382,12 @@ class CalendrierController extends Controller
                 ));
             } else {
                 $modeles = $repo->findBy(array('isModele' => 1));
-
+                $titreTableau = "Liste des modèles";
+                $nameAction = "calendrier_edit";
                 return $this->render('calendrier/searchTableCalendrierForm.html.twig', array(
                     'calendars' => $modeles,
+                    'titreTableau' => $titreTableau,
+                    'nameAction' => $nameAction,
                 ));
             }
         }

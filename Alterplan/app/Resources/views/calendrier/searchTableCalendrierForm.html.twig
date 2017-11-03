@@ -10,7 +10,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <div id="search_calendar_table" class="card-content bloc_calendrier" style="max-height: 19em;overflow-x: auto;">
     <div class="col s6">
-        <h5 class="card-title">{{ titreTableau }} ({{ calendars|length }})</h5>
+            <h5 class="card-title">{{ titreTableau }} ({{ calendars|length }})</h5>
     </div>
     {% if (stagiaire is not defined) %}
         <div class="col s2 offset-s4">
@@ -58,6 +58,7 @@ You should have received a copy of the GNU Affero General Public License along w
                         </a>
                     </td>
                     </tr>
+
                 {% endfor %}
             {% else %}
                 <tr>
@@ -72,11 +73,11 @@ You should have received a copy of the GNU Affero General Public License along w
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".calendrier_rows tr").click(function () {
+        $('.calendrier_rows td:not(:last-child)').click(function () {
             // On modifie la class de la ligne pour ajouter la class selected ou l'enlever d'une ligne
             $(this).addClass('selected').siblings().removeClass("selected");
-            var url = $(this).data("href");
-            var action = $(this).data("action");
+            var url = $(this).closest('tr').data("href");
+            var action = $(this).closest('tr').data("action");
 
             if (action === 'applyModel' || action === 'duplicate') {
                 $('#form_search_tab_calendar').attr('action', url);
