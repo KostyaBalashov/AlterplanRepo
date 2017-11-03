@@ -25,6 +25,7 @@ You should have received a copy of the GNU Affero General Public License along w
                 <th>Formation</th>
                 <th>Date de début</th>
                 <th>Date de fin</th>
+                <th>Suppression</th>
             </tr>
             </thead>
             <tbody class="calendrier_rows">
@@ -50,6 +51,11 @@ You should have received a copy of the GNU Affero General Public License along w
 
                     <td>
                         {{ calendar.dateFin.format('d/m/Y') }}
+                    </td>
+                    <td>
+                        <a href="#">
+                            <i class="material-icons deleteIcon" data-href="{{ path('model_delete', {'codeCalendrier': calendar.codeCalendrier})}}">delete</i>
+                        </a>
                     </td>
                     </tr>
                 {% endfor %}
@@ -84,6 +90,29 @@ You should have received a copy of the GNU Affero General Public License along w
             renderModal('model', url, false);
         });
 
+        $('.deleteIcon').click(function () {
+            var url = $(this).data("href");
+            deleteCalendar(url);
+        });
+
+        function deleteCalendar(urlAction) {
+            showLoader();
+            $.ajax({
+                url: urlAction,
+                type: 'DELETE',
+                success: function (data) {
+                    dismissLoader();
+                    showToast('Le calendrier a bien été supprimé');
+                    var calendarTableDiv = $('.bloc_calendrier');
+                    calendarTableDiv.empty();
+                    calendarTableDiv.html(data);
+                },
+                error: function () {
+                    dismissLoader();
+                    showToast('Erreur de la suppression', 'error');
+                }
+            });
+        }
         //gestion des boutons hors form pour les navigateurs non-compatibles
         addFormFeature();
     })

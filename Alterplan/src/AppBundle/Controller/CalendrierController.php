@@ -132,13 +132,22 @@ class CalendrierController extends Controller
                     $calendrier->getModulesCalendrier()->add($moduleCalendrier);
                 }
             }
-            $today = date("d/m/Y");
-            if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
-                $newTitre = $today . "-"
-                    . $calendrier->getFormation()->getLibelleCourt() . "-"
-                    . $calendrier->getStagiaire()->getNom() . " "
-                    . $calendrier->getStagiaire()->getPrenom();
-                $calendrier->setTitre($newTitre);
+            if($stagiaire != null) {
+                $today = date("d/m/Y");
+                if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
+                    $newTitre = $today . "-"
+                        . $calendrier->getFormation()->getLibelleCourt() . "-"
+                        . $calendrier->getStagiaire()->getNom() . " "
+                        . $calendrier->getStagiaire()->getPrenom();
+                    $calendrier->setTitre($newTitre);
+                }
+            } else {
+                $today = date("d/m/Y");
+                if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
+                    $newTitre = $today . "-"
+                        . $calendrier->getFormation()->getLibelleCourt();
+                    $calendrier->setTitre($newTitre);
+                }
             }
 
             //region gestion de la contrainte periode contractuelle
@@ -343,10 +352,11 @@ class CalendrierController extends Controller
      * @param $calendar Calendrier
      * @param $stagiaireParEntreprise StagiaireParEntreprise
      * @Route("/{codeCalendrier}/{numLien}", name="calendar_delete")
+     * @Route("/{codeCalendrier}", name="model_delete")
      * @Method("DELETE")
      * @return Response
      */
-    public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise)
+    public function deleteAction(Request $request, Calendrier $calendar, StagiaireParEntreprise $stagiaireParEntreprise = null)
     {
 
         if ($calendar->isInscrit()) {
@@ -359,14 +369,24 @@ class CalendrierController extends Controller
 
             // Affichage de la fiche du stagiaire avec la liste de ses calendrier
             $repo = $this->getDoctrine()->getRepository(Calendrier::class);
-            $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 0));
-            $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 1));
+            // Si le stagiaireParEntreprise est null c'est que le calendrier est un modele
+            if($stagiaireParEntreprise != null) {
 
-            return $this->render('stagiaire/tableCalendrier.html.twig', array(
-                'stagiaireParEntreprise' => $stagiaireParEntreprise,
-                'calendars' => $calendrierNonInscrit,
-                'calendarRegistered' => $calendrierInscrit,
-            ));
+                $calendrierNonInscrit = $repo->findBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 0));
+                $calendrierInscrit = $repo->findOneBy(array('stagiaire' => $calendar->getStagiaire(), 'isInscrit' => 1));
+
+                return $this->render('stagiaire/tableCalendrier.html.twig', array(
+                    'stagiaireParEntreprise' => $stagiaireParEntreprise,
+                    'calendars' => $calendrierNonInscrit,
+                    'calendarRegistered' => $calendrierInscrit,
+                ));
+            } else {
+                $modeles = $repo->findBy(array('isModele' => 1));
+
+                return $this->render('calendrier/searchTableCalendrierForm.html.twig', array(
+                    'calendars' => $modeles,
+                ));
+            }
         }
     }
 
