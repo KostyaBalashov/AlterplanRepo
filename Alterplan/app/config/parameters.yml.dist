@@ -19,5 +19,4 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     # App log files location
-    dev_logs: C:/Users/void/Documents/Alterplan/Logs/Dev
-    prod_logs: C:/Users/void/Documents/Alterplan/Logs/Prod
+    prod_logs: C:/Alterplan/Logs/Prod
