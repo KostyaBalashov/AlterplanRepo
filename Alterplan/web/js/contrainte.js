@@ -348,14 +348,11 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         label.innerHTML = "Au ";
                         input.className = "datepicker dateFin inputContrainte";
                         input.id = "dateFin"
-
+                        $(div_input).append(label);
+                        $(div_input).append(input);
                         initDP();
-
                         $(input).attr('data-value', contrainte.P2);
                     }
-
-                    $(div_input).append(label);
-                    $(div_input).append(input);
                     break;
 
                 //cas 2 : deux int Volume horaire
@@ -523,11 +520,11 @@ var ContraintesManager = function (calendrier, urlAllTC) {
 };
 
 function initDP() {
-    initDatePicker('#dateDebut', onSetDateDebut);
-    initDatePicker('#dateFin', onSetDateFin);
+    initDatePicker('.dateDebut', onSetDateDebut);
+    initDatePicker('.dateFin', onSetDateFin);
 
-    var from_picker = getDateDebutPicker('#dateDebut');
-    var to_picker = getDateFinPicker('#dateFin');
+    var from_picker = getDateDebutPicker('.dateDebut');
+    var to_picker = getDateFinPicker('.dateFin');
     if (from_picker != undefined) {
         if (from_picker.get('value')) {
             to_picker.set('min', from_picker.get('select'))
