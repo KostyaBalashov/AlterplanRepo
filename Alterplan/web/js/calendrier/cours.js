@@ -43,11 +43,18 @@ var CoursManager = function (jCours) {
         $('.tr-module').not('.template').each(function (index, item) {
             if ($(item).data('cours').idCours !== jCour.idCours) {
                 var dateDebutCours = new Date(new Date(jCour.dateDebut.date).toDateString());
-                var dateFinCours = new Date(new Date(jCour.dateFin.date));
+                var dateFinCours = new Date(new Date(jCour.dateFin.date).toDateString());
                 var dateDebutModule = new Date($(item).data('cours').dateDebut.date);
+                var dateFinModule = new Date($(item).data('cours').dateFin.date);
                 var dateFinModulePrecedent = $(item).prev().lenght > 0 ? new Date($(item).prev().data('cours').dateFin.date) : new Date(1970, 0, 1);
-                if (dateFinCours < dateDebutModule && dateDebutCours > dateFinModulePrecedent) {
-                    clone.insertBefore(item);
+                if (dateDebutCours > dateFinModule || dateFinCours < dateDebutModule) {
+                    if (dateFinCours < dateDebutModule
+                        && dateDebutCours > dateFinModulePrecedent) {
+                        clone.insertBefore(item);
+                        added = true;
+                        return false;
+                    }
+                } else {
                     added = true;
                     return false;
                 }

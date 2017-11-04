@@ -138,7 +138,7 @@ class CalendrierController extends Controller
                 $calendrier->getModulesCalendrier()->add($moduleCalendrier);
 
             }
-            
+
             if ($stagiaire != null) {
                 $today = date("d/m/Y");
                 if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
@@ -162,9 +162,9 @@ class CalendrierController extends Controller
             $contrainte->setCalendrier($calendrier);
             $dateContrainte = new \DateTime("now");
             $contrainte->setDateCreation($dateContrainte);
-            $contrainte->setP1($calendrier->getDateDebut()->format('d-m-Y'));
+            $contrainte->setP1($calendrier->getDateDebut()->format('Y/m/d'));
             $contrainte->setTypeP1('date');
-            $contrainte->setP2($calendrier->getDateFin()->format('d-m-Y'));
+            $contrainte->setP2($calendrier->getDateFin()->format('Y/m/d'));
             $contrainte->setTypeP2('date');
             $tcRepository = $this->getDoctrine()->getRepository(TypeContrainte::class);
             $typecontrainte = $tcRepository->findOneBy(array('codeTypeContrainte' => 1));

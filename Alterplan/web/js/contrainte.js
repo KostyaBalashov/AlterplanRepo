@@ -341,8 +341,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         input.id = "dateDebut";
                         $(div_input).append(label);
                         $(div_input).append(input);
-                        initDP();
                         $(input).attr('data-value', contrainte.P1);
+                        initDP();
                     } else {
                         label.htmlFor = "dateFin";
                         label.innerHTML = "Au ";
@@ -350,8 +350,8 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                         input.id = "dateFin"
                         $(div_input).append(label);
                         $(div_input).append(input);
-                        initDP();
                         $(input).attr('data-value', contrainte.P2);
+                        initDP();
                     }
                     break;
 

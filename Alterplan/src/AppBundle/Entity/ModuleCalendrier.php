@@ -90,9 +90,10 @@ class ModuleCalendrier implements \JsonSerializable
     public function getNombreHeuresReel()
     {
         $result = 0;
+        $nbWeekends = $this->nbSemaines - 1;
 
         if ($this->dateDebut && $this->dateFin) {
-            $result = (date_diff($this->dateFin, $this->dateDebut, true)->days + 1) * 7;
+            $result = (date_diff($this->dateFin, $this->dateDebut, true)->days + 1) * 7 - ($nbWeekends * 14);
 
             foreach ($this->dispenses as $dispense) {
                 $interval = date_diff($dispense->getDateFin(), $dispense->getDateDebut(), true);
