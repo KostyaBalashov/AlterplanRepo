@@ -32,32 +32,34 @@ use Doctrine\ORM\QueryBuilder;
 
 class ModuleRepository extends EntityRepository
 {
-    public function search(ModuleFiltre $filtre = null){
-        if ($filtre !== null){
+    public function search(ModuleFiltre $filtre = null)
+    {
+        if ($filtre !== null) {
             $qb = $this->createQueryBuilder('m');
             $this->joinOnFormation($qb);
             if ($filtre->getTitre() !== null
-                && '' !== trim($filtre->getTitre())){
-                $qb->andWhere('m.libelle LIKE :titre')->setParameter('titre', $filtre->getTitre().'%');
+                && '' !== trim($filtre->getTitre())) {
+                $qb->andWhere('m.libelle LIKE :titre')->setParameter('titre', $filtre->getTitre() . '%');
             }
-            if ($filtre->getFormation() !== null){
+            if ($filtre->getFormation() !== null) {
                 $qb->andWhere('f.codeFormation = :code')
                     ->setParameter('code', $filtre->getFormation()->getCodeFormation());
             }
-            if ($filtre->getLieu() !== null){
+            if ($filtre->getLieu() !== null) {
                 $qb->andWhere('f.codeLieu = :codeLieu')
                     ->setParameter('codeLieu', $filtre->getLieu()->getCodeLieu());
             }
             $qb->andWhere('f.archiver = false')->andWhere('m.archiver = false');
             return $qb->getQuery()->getResult();
-        }else{
+        } else {
             return $this->findAll();
         }
     }
 
-    private function joinOnFormation(QueryBuilder $qb){
+    private function joinOnFormation(QueryBuilder $qb)
+    {
         return $qb->join(ModuleParUnite::class, 'mp', Join::WITH, 'm.idModule = mp.module')
-            ->join(UniteParFormation::class, 'uf', Join::WITH, 'mp.uniteParFormation = uf.id')
+            ->join(UniteParFormation::class, 'uf', Join::WITH, 'mp.uniteParFormation = uf.uniteFormation')
             ->join(Formation::class, 'f', Join::WITH, 'uf.formation = f.codeFormation');
     }
 }

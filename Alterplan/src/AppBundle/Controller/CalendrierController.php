@@ -25,6 +25,7 @@ use AppBundle\Entity\ModuleCalendrier;
 use AppBundle\Entity\Stagiaire;
 use AppBundle\Entity\StagiaireParEntreprise;
 use AppBundle\Filtre\CalendrierFiltre;
+use AppBundle\Filtre\ModuleFiltre;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Dompdf\Options;
@@ -122,17 +123,22 @@ class CalendrierController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $moduleRepo = $this->getDoctrine()->getRepository(Module::class);
+            $filtreModule = new ModuleFiltre();
+            $filtreModule->setFormation($calendrier->getFormation());
+            $modules = $moduleRepo->search($filtreModule);
 
-            foreach ($calendrier->getFormation()->getAllModules() as $module) {
-                if (!$module->isArchiver()) {
-                    $moduleCalendrier = new ModuleCalendrier();
-                    $moduleCalendrier->setModule($module);
-                    $moduleCalendrier->setCalendrier($calendrier);
-                    $moduleCalendrier->setLibelle($module->getLibelle());
-                    $moduleCalendrier->setNbSemaines($module->getDureeEnSemaines());
-                    $calendrier->getModulesCalendrier()->add($moduleCalendrier);
-                }
+            foreach ($modules as $module) {
+
+                $moduleCalendrier = new ModuleCalendrier();
+                $moduleCalendrier->setModule($module);
+                $moduleCalendrier->setCalendrier($calendrier);
+                $moduleCalendrier->setLibelle($module->getLibelle());
+                $moduleCalendrier->setNbSemaines($module->getDureeEnSemaines());
+                $calendrier->getModulesCalendrier()->add($moduleCalendrier);
+
             }
+            
             if ($stagiaire != null) {
                 $today = date("d/m/Y");
                 if ($calendrier->getTitre() == null || empty($calendrier->getTitre())) {
