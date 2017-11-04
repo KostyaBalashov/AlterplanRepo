@@ -35,7 +35,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <script type="text/javascript">
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('select').material_select();
 
         $('select[required]').css({
@@ -54,13 +54,13 @@ You should have received a copy of the GNU Affero General Public License along w
         initDatePicker('#appbundle_calendrier_dateDebut', onSetDateDebut);
         initDatePicker('#appbundle_calendrier_dateFin', onSetDateFin);
 
-        var from_picker = getDateDebutPicker();
-        var to_picker = getDateFinPicker();
+        var from_picker = getDateDebutPicker('#appbundle_calendrier_dateDebut');
+        var to_picker = getDateFinPicker('#appbundle_calendrier_dateFin');
 
-        if ( from_picker.get('value') ) {
+        if (from_picker.get('value')) {
             to_picker.set('min', from_picker.get('select'))
         }
-        if ( to_picker.get('value') ) {
+        if (to_picker.get('value')) {
             from_picker.set('max', to_picker.get('select'))
         }
     });
@@ -78,20 +78,20 @@ You should have received a copy of the GNU Affero General Public License along w
         }
     }
 
-    $('form').submit(function() {
+    $('form').submit(function () {
         checkDate();
-        if ($('.dateDebut').val() == '' || $('.dateFin').val()== ''  ) {
+        if ($('.dateDebut').val() == '' || $('.dateFin').val() == '') {
             return false;
         } else {
             return true;
         }
     });
 
-    $('.dateDebut').change(function() {
+    $('.dateDebut').change(function () {
         checkDate();
     });
 
-    $('.dateFin').change(function() {
+    $('.dateFin').change(function () {
         checkDate();
     });
 

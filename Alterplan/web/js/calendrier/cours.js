@@ -42,8 +42,8 @@ var CoursManager = function (jCours) {
         var added = false;
         $('.tr-module').not('.template').each(function (index, item) {
             if ($(item).data('cours').idCours !== jCour.idCours) {
-                var dateDebutCours = new Date(jCour.dateDebut.date);
-                var dateFinCours = new Date(jCour.dateFin.date);
+                var dateDebutCours = new Date(new Date(jCour.dateDebut.date).toDateString());
+                var dateFinCours = new Date(new Date(jCour.dateFin.date));
                 var dateDebutModule = new Date($(item).data('cours').dateDebut.date);
                 var dateFinModulePrecedent = $(item).prev().lenght > 0 ? new Date($(item).prev().data('cours').dateFin.date) : new Date(1970, 0, 1);
                 if (dateFinCours < dateDebutModule && dateDebutCours > dateFinModulePrecedent) {

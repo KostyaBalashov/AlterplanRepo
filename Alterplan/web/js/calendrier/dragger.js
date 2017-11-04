@@ -62,6 +62,7 @@ var PlacementManager = function (calendrier) {
             if ($(target).hasClass('module-container')) {
                 elementDroped(el, target);
             } else {
+                $(el).data('placeable').nbHeures = $(el).data('placeable').module.nbHeures;
                 me.calendar.removeModulePlace(el.id);
             }
 
@@ -106,8 +107,14 @@ var PlacementManager = function (calendrier) {
         var nbHeuresCours = $(container).parents('.tr').data('cours').nbHeures;
         if (nbHeuresModule === nbHeuresCours) {
 
-            $(element).data('placeable').dateDebut = $(container).parents('.tr').data('cours').dateDebut;
-            $(element).data('placeable').dateFin = $(container).parents('.tr').data('cours').dateFin;
+            $(element).data('placeable').dateDebut = {
+                date: new Date($(container).parents('.tr').data('cours').dateDebut.date).toDateString()
+            };
+
+            $(element).data('placeable').dateFin = {
+                date: new Date($(container).parents('.tr').data('cours').dateFin.date).toDateString()
+            };
+
             me.calendar.addModuleCalendrierPlace($(element).data('placeable'));
 
         } else if (nbHeuresModule > nbHeuresCours) {
@@ -116,8 +123,14 @@ var PlacementManager = function (calendrier) {
             var nbSemainesRestante = Math.round((nbHeuresModule - nbHeuresCours) / 35);
             var nbSemainesPlaces = nbTotaleSemaines - nbSemainesRestante;
 
-            $(element).data('placeable').dateDebut = $(container).parents('.tr').data('cours').dateDebut;
-            $(element).data('placeable').dateFin = $(container).parents('.tr').data('cours').dateFin;
+            $(element).data('placeable').dateDebut = {
+                date: new Date($(container).parents('.tr').data('cours').dateDebut.date).toDateString()
+            };
+
+            $(element).data('placeable').dateFin = {
+                date: new Date($(container).parents('.tr').data('cours').dateFin.date).toDateString()
+            };
+
             $(element).data('placeable').nbHeures = nbHeuresCours;
             $(element).data('placeable').nbSemaines = nbSemainesPlaces;
             if (nbSemainesRestante > 0) {

@@ -521,12 +521,13 @@ var ContraintesManager = function (calendrier, urlAllTC) {
 
     }
 };
+
 function initDP() {
     initDatePicker('#dateDebut', onSetDateDebut);
     initDatePicker('#dateFin', onSetDateFin);
 
-    var from_picker = getDateDebutPicker();
-    var to_picker = getDateFinPicker();
+    var from_picker = getDateDebutPicker('#dateDebut');
+    var to_picker = getDateFinPicker('#dateFin');
     if (from_picker != undefined) {
         if (from_picker.get('value')) {
             to_picker.set('min', from_picker.get('select'))

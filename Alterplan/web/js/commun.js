@@ -46,6 +46,9 @@ function renderModal(idModalForm, controllerUrl, useCustomSubmit, postSubmitCall
 
                     });
                 }
+            },
+            complete: function () {
+                $(modalSelector + " > .modal-content").empty();
             }
         });
     }).always(function () {
@@ -138,24 +141,50 @@ function setPickerMinOrMaxVlueFromPickerValue(event, pickerToSet, pickerContaini
     }
 }
 
-function getDateDebutPicker() {
-    var from_$input = $("input[id*='dateDebut']").pickadate();
+function getDateDebutPicker(selector) {
+    if (!selector) {
+        selector = "input[id*='dateDebut']";
+    }
+    var from_$input = $(selector).pickadate();
     return from_$input.pickadate('picker');
 }
 
-function getDateFinPicker() {
-    var to_$input = $("input[id*='dateFin']").pickadate();
+function getDateFinPicker(selector) {
+    if (!selector) {
+        selector = "input[id*='dateFin']";
+    }
+    var to_$input = $(selector).pickadate();
     return to_$input.pickadate('picker');
 }
 
 function onSetDateFin(event) {
-    setPickerMinOrMaxVlueFromPickerValue(event, getDateDebutPicker(),
-        getDateFinPicker(), 'max');
+    var idPicker = $('.picker.picker--opened.picker--focused').attr('id');
+    if (idPicker) {
+        var idInputFin = replaceString('_root', '', idPicker);
+        var idInputDebut = replaceString('dateFin', 'dateDebut', idInputFin);
+        setPickerMinOrMaxVlueFromPickerValue(event, getDateDebutPicker('#' + idInputDebut),
+            getDateFinPicker('#' + idInputFin), 'max');
+    }
 }
 
 function onSetDateDebut(event) {
-    setPickerMinOrMaxVlueFromPickerValue(event, getDateFinPicker(),
-        getDateDebutPicker(), 'min');
+    var idPicker = $('.picker.picker--opened.picker--focused').attr('id');
+    if (idPicker) {
+        var idInputDebut = replaceString('_root', '', idPicker);
+        var idInputFin = replaceString('dateDebut', 'dateFin', idInputDebut);
+        setPickerMinOrMaxVlueFromPickerValue(event, getDateFinPicker('#' + idInputFin),
+            getDateDebutPicker('#' + idInputDebut), 'min');
+    }
+}
+
+function replaceString(oldS, newS, fullS) {
+// On remplace oldS avec newS dans fullS
+    for (var i = 0; i < fullS.length; i++) {
+        if (fullS.substring(i, i + oldS.length) == oldS) {
+            fullS = fullS.substring(0, i) + newS + fullS.substring(i + oldS.length, fullS.length);
+        }
+    }
+    return fullS;
 }
 
 function getDateStr(date) {
