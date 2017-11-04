@@ -120,7 +120,7 @@ function initDatePicker(selector, onSetCallBack) {
         weekdaysShort: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
         weekdaysLetter: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
         today: 'Aujourd\'hui',
-        clear: 'Annuler',
+        clear: 'Effacer',
         close: 'Fermer',
         formatSubmit: 'yyyy/mm/dd',
         format: 'dd/mm/yyyy',

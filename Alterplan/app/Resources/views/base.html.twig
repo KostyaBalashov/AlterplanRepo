@@ -21,6 +21,8 @@ You should have received a copy of the GNU Affero General Public License along w
     <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/materialize/dist/js/materialize.min.js') }}"></script>
     <script src="{{ asset('js/commun.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     {% block javascripts %}{% endblock %}
 </head>
 
