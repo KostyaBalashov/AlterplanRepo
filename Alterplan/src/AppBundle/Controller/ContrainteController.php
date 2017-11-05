@@ -45,8 +45,6 @@ class ContrainteController extends Controller
         if ($request->getMethod() == 'POST') {
             $updatedContraintes = $request->get('updatedContraintes');
             $removedContraintes = $request->get('removedContraintes');
-            dump($updatedContraintes);
-            dump($removedContraintes);
             $em = $this->getDoctrine()->getManager();
             if ($updatedContraintes != null || !empty($updatedContraintes)) {
                 foreach ($updatedContraintes as $arrayContrainte) {

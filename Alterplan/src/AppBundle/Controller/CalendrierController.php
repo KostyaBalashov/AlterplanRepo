@@ -588,7 +588,6 @@ class CalendrierController extends Controller
         $dateDebut = $request->get('dateDebut');
         $dateFin = $request->get('dateFin');
         $codeCalendrier = $request->get('codeCalendrier');
-        dump($codeCalendrier);
         $repo = $this->getDoctrine()->getRepository(Calendrier::class);
         $calendrier = $repo->findOneBy(array('codeCalendrier' => $codeCalendrier));
         if ($calendrier != null) {

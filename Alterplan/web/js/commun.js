@@ -108,7 +108,6 @@ function initDatePicker(selector, onSetCallBack) {
     if (!selector) {
         selector = '.datepicker';
     }
-    console.log('selector!');
     var $input = $(selector).pickadate({
         labelMonthNext: 'mois suivant',
         labelMonthPrev: 'mois précédent',

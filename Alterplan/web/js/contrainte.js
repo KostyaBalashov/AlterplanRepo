@@ -472,8 +472,7 @@ var ContraintesManager = function (calendrier, urlAllTC) {
                             }
                             ,
                             error: function () {
-                                console.log('an error occured');
-                                console.log(arguments);//get debugging!
+                                showToast('Erreur interne', 'error');
                             }
                         }
                     )
@@ -559,8 +558,7 @@ function getAllTypeContraintes(url) {
             }
             ,
             error: function () {
-                console.log('an error occured');
-                console.log(arguments);//get debugging!
+                showToast('Erreur interne', 'error');
             }
         }
     );
