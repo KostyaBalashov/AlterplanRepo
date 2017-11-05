@@ -38,3 +38,11 @@ monolog:
         console:
             type: console
             process_psr_3_messages: false
+
+assetic:
+    debug: '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    bundles:
+        - FrameworkBundle
+    filters:
+        cssrewrite: ~
