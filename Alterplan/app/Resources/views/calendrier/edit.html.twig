@@ -20,54 +20,58 @@ You should have received a copy of the GNU Affero General Public License along w
 
     <div class="row center blue lighten-1">
         <div class="col s6 offset-s3">
-            <div id="titre_calendrier" class="hoverable clickable">
+            <div id="titre_calendrier" {% if is_granted('ROLE_ADMIN') %} class="hoverable clickable" {% endif %}>
                 <span class="center-align flow-text white-text">{{ calendrier.titre }}</span>
             </div>
-            <input class="clickedit white" type="text" style="margin: 7px 0 7px 0"/>
+            {% if is_granted('ROLE_ADMIN') %}
+                <input class="clickedit white" type="text" style="margin: 7px 0 7px 0"/>
+            {% endif %}
         </div>
     </div>
     <div class="row">
-        <div class="col s3">
-            <div class="card">
-                <div class="card-content">
-                    <div class="card-title">
-                        <span class="flow-text">Modules</span>
-                        <div class="fixed-action-btn horizontal right"
-                             style="position: relative;display: inline-block;z-index: 1;top: -0.9em;right: -0.6em;">
-                            <a class="btn-floating btn-large teal lighten-2 tooltipped"
-                               data-position="top"
-                               data-delay="50"
-                               data-tooltip="Modifier la liste des modules">
-                                <i class="large material-icons" style="line-height: 56px;">mode_edit</i>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a id="modules_search"
-                                       class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
-                                       data-position="top"
-                                       data-delay="50"
-                                       data-tooltip="Rechercher parmis des modules d'une autre formation">
-                                        <i class="material-icons" style="line-height: 41px;">search</i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
-                                       data-position="top"
-                                       data-delay="50"
-                                       data-tooltip="Ajouter un module indépendant">
-                                        <i class="material-icons" style="line-height: 41px;">add_circle_outline</i>
-                                    </a>
-                                </li>
-                            </ul>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col s3">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-title">
+                            <span class="flow-text">Modules</span>
+                            <div class="fixed-action-btn horizontal right"
+                                 style="position: relative;display: inline-block;z-index: 1;top: -0.9em;right: -0.6em;">
+                                <a class="btn-floating btn-large teal lighten-2 tooltipped"
+                                   data-position="top"
+                                   data-delay="50"
+                                   data-tooltip="Modifier la liste des modules">
+                                    <i class="large material-icons" style="line-height: 56px;">mode_edit</i>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a id="modules_search"
+                                           class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
+                                           data-position="top"
+                                           data-delay="50"
+                                           data-tooltip="Rechercher parmis des modules d'une autre formation">
+                                            <i class="material-icons" style="line-height: 41px;">search</i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="btn-floating waves-effect waves-light light-blue lighten-2 tooltipped"
+                                           data-position="top"
+                                           data-delay="50"
+                                           data-tooltip="Ajouter un module indépendant">
+                                            <i class="material-icons" style="line-height: 41px;">add_circle_outline</i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div id="modules-planifiables-container" class="row">
-                        {# le contenu est ajouté dans refreshModules(modules) du calendrier.js#}
+                        <div id="modules-planifiables-container" class="row">
+                            {# le contenu est ajouté dans refreshModules(modules) du calendrier.js#}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col s9">
+        {% endif %}
+        <div class="col {% if not is_granted('ROLE_ADMIN') %} s12 {% else %} s9 {% endif %}">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Calendrier</span>
@@ -109,32 +113,38 @@ You should have received a copy of the GNU Affero General Public License along w
             <i class="large material-icons">menu</i>
         </a>
         <ul>
-            <li>
-                <a id="editContraintes"
-                   class="btn-floating red tooltipped"
-                   data-position="left"
-                   data-delay="50"
-                   data-tooltip="Gérer les contraintes">
-                    <i class="material-icons">security</i>
-                </a>
-            </li>
-            <li>
-                <a id="inscrireCalendrier"
-                   class="btn-floating yellow darken-1 tooltipped"
-                   data-position="left"
-                   data-delay="50"
-                   data-tooltip="Inscrire">
-                    <i class="material-icons">check_circle</i>
-                </a>
-            </li>
-            <li>
-                <a id="save_calendrier" class="btn-floating green tooltipped"
-                   data-position="left"
-                   data-delay="50"
-                   data-tooltip="Enregistrer les modifications">
-                    <i class="material-icons">save</i>
-                </a>
-            </li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li>
+                    <a id="editContraintes"
+                       class="btn-floating red tooltipped"
+                       data-position="left"
+                       data-delay="50"
+                       data-tooltip="Gérer les contraintes">
+                        <i class="material-icons">security</i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if (not calendrier.modele) and is_granted('ROLE_ADMIN') %}
+                <li>
+                    <a id="inscrireCalendrier"
+                       class="btn-floating yellow darken-1 tooltipped"
+                       data-position="left"
+                       data-delay="50"
+                       data-tooltip="Inscrire">
+                        <i class="material-icons">check_circle</i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <li>
+                    <a id="save_calendrier" class="btn-floating green tooltipped"
+                       data-position="left"
+                       data-delay="50"
+                       data-tooltip="Enregistrer les modifications">
+                        <i class="material-icons">save</i>
+                    </a>
+                </li>
+            {% endif %}
             <li>
                 <a class="btn-floating blue tooltipped"
                    data-position="left"
@@ -144,14 +154,16 @@ You should have received a copy of the GNU Affero General Public License along w
                     <i class="material-icons">file_download</i>
                 </a>
             </li>
-            <li>
-                <a class="btn-floating blue tooltipped"
-                   data-position="left"
-                   data-delay="50"
-                   data-tooltip="Comparer">
-                    <i class="material-icons">view_stream</i>
-                </a>
-            </li>
+            {% if not calendrier.modele %}
+                <li>
+                    <a class="btn-floating blue tooltipped"
+                       data-position="left"
+                       data-delay="50"
+                       data-tooltip="Comparer">
+                        <i class="material-icons">view_stream</i>
+                    </a>
+                </li>
+            {% endif %}
         </ul>
     </div>
     {% include ':composants/templates:cours.html.twig' %}
@@ -159,104 +171,106 @@ You should have received a copy of the GNU Affero General Public License along w
     {% include ':composants/templates:module.html.twig' %}
 {% endblock %}
 
-{% block modal %}
-    {{ parent() }}
-    {% embed ':composants:modale.html.twig' with {'id' : 'contrainte', 'formId' : 'contrainte'} %}
-        {% block modal_action_buttons %}
-            <button type="button" onclick="closeModaleGestionContraintes()"
-                    class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
-            </button>
-            <button type="button" onclick="saveContraintes()"
-                    class="modal-action waves-effect waves-green btn">Valider
-            </button>
-        {% endblock %}
-    {% endembed %}
+    {% block modal %}
+        {{ parent() }}
+        {% embed ':composants:modale.html.twig' with {'id' : 'contrainte', 'formId' : 'contrainte'} %}
+            {% block modal_action_buttons %}
+                <button type="button" onclick="closeModaleGestionContraintes()"
+                        class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
+                </button>
+                <button type="button" onclick="saveContraintes()"
+                        class="modal-action waves-effect waves-green btn">Valider
+                </button>
+            {% endblock %}
+        {% endembed %}
 
 
 
 
-    {% embed ':composants:modale.html.twig' with {'id' : 'gestion-modules',
-    'customClass' : 'modules-modale'} %}
-        {% block modal_action_buttons %}
-            <button type="button" onclick="closeModaleGestionModules()"
-                    class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
-            </button>
-            <button type="button" onclick="saveModulesAPlanifier()"
-                    class="modal-action waves-effect waves-green btn">Valider
-            </button>
-        {% endblock %}
-    {% endembed %}
+        {% embed ':composants:modale.html.twig' with {'id' : 'gestion-modules',
+        'customClass' : 'modules-modale'} %}
+            {% block modal_action_buttons %}
+                <button type="button" onclick="closeModaleGestionModules()"
+                        class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
+                </button>
+                <button type="button" onclick="saveModulesAPlanifier()"
+                        class="modal-action waves-effect waves-green btn">Valider
+                </button>
+            {% endblock %}
+        {% endembed %}
 
-    {% embed ':composants:modale.html.twig' with {'id' : 'inscrire_calendrier'} %}
-        {% block modal_action_buttons %}
-            <button type="button" onclick="closeModaleInscrireCalendrier()"
-                    class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
-            </button>
-            <button type="button" onclick="inscrireCalendrier()"
-                    class="modal-action waves-effect waves-green btn">Valider
-            </button>
-        {% endblock %}
-    {% endembed %}
+        {% embed ':composants:modale.html.twig' with {'id' : 'inscrire_calendrier'} %}
+            {% block modal_action_buttons %}
+                <button type="button" onclick="closeModaleInscrireCalendrier()"
+                        class="modal-action waves-effect waves-green btn left red lighten-3">Annuler
+                </button>
+                <button type="button" onclick="inscrireCalendrier()"
+                        class="modal-action waves-effect waves-green btn">Valider
+                </button>
+            {% endblock %}
+        {% endembed %}
 
-{% endblock %}
+    {% endblock %}
 
-{% block customJS %}
-    <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/calendrier/dragger.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/contrainte.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
-    <script type="text/javascript">
+    {% block customJS %}
+        <script type="text/javascript" src="{{ asset('js/dragula/3.7.2/dragula.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/calendrier/dragger.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/calendrier/module.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/calendrier/cours.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/contrainte.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/calendrier.js') }}"></script>
+        <script type="text/javascript">
 
-        var calendrier = new Calendrier({{ calendrier|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
-        var modulesManager = new ModulesManager(calendrier);
-        var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
-        var placementManager = new PlacementManager(calendrier);
+            var calendrier = new Calendrier({{ calendrier|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+            var modulesManager = new ModulesManager(calendrier);
+            var contraintesManager = new ContraintesManager(calendrier, '{{ path("all_typeContraintes", { 'codeCalendrier': calendrier.CodeCalendrier }) }}');
+            var placementManager = new PlacementManager(calendrier);
 
-        $(document).ready(function () {
-            initTitleInput('{{ calendrier.titre }}');
-            calendrier.displayPlaceableElements();
-            displayPlacedElements(calendrier);
-            $('#modules_search').click(function () {
-                renderModal('gestion-modules',
-                    '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
-                    true, undefined, modulesManager.onModaleOpen);
+            $(document).ready(function () {
+                displayPlacedElements(calendrier, {{ is_granted('ROLE_ADMIN') }});
+                {% if is_granted('ROLE_ADMIN') %}
+                initTitleInput('{{ calendrier.titre }}');
+                calendrier.displayPlaceableElements();
+                $('#modules_search').click(function () {
+                    renderModal('gestion-modules',
+                        '{{ path('modules_show', {'codeCalendrier' : calendrier.codeCalendrier}) }}',
+                        true, undefined, modulesManager.onModaleOpen);
+                });
+
+                $('#save_calendrier').click(function () {
+                    saveCalendrier(calendrier);
+                });
+
+                $('#editContraintes').click(function () {
+                    var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
+                    renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
+                });
+
+                $('#inscrireCalendrier').click(function () {
+                    var url = "{{ path('calendrier_inscrire', { 'codeCalendrier' : calendrier.codeCalendrier}) }}";
+                    renderModal('inscrire_calendrier', url, false);
+                });
+
+                var drake = new dragula({
+                    isContainer: placementManager.isContainer,
+                    moves: placementManager.moves,
+                    accepts: placementManager.accepts,
+                    revertOnSpill: false,
+                    delay: 1000
+                });
+
+                drake.on('over', placementManager.onOver);
+                drake.on('drop', placementManager.onDrop);
+
+                // On concatène le boolean isInscrit car lorsque le isInscrit est false, il affiche vide ce qui remonte une erreur
+                // de syntaxe.
+                var calendrierInsrit = {{ calendrier.isInscrit }}+"";
+                // Si le calendrier est inscrit, on retir la possibilité de cliquer sur le lien
+                if (calendrierInsrit === "1") {
+                    $('#inscrireCalendrier').addClass('disabled');
+                }
+                verifContraintes();
+                {% endif %}
             });
-
-            $('#save_calendrier').click(function () {
-                saveCalendrier(calendrier);
-            });
-
-            $('#editContraintes').click(function () {
-                var url = "{{ path('contraintes_edit',{'codeCalendrier' : calendrier.codeCalendrier }) }}";
-                renderModal('contrainte', url, true, undefined, contraintesManager.onModaleOpen);
-            });
-
-            $('#inscrireCalendrier').click(function () {
-                var url = "{{ path('calendrier_inscrire', { 'codeCalendrier' : calendrier.codeCalendrier}) }}";
-                renderModal('inscrire_calendrier', url, false);
-            });
-
-            var drake = new dragula({
-                isContainer: placementManager.isContainer,
-                moves: placementManager.moves,
-                accepts: placementManager.accepts,
-                revertOnSpill: false,
-                delay: 1000
-            });
-
-            drake.on('over', placementManager.onOver);
-            drake.on('drop', placementManager.onDrop);
-
-            // On concatène le boolean isInscrit car lorsque le isInscrit est false, il affiche vide ce qui remonte une erreur
-            // de syntaxe.
-            var calendrierInsrit = {{ calendrier.isInscrit }}+"";
-            // Si le calendrier est inscrit, on retir la possibilité de cliquer sur le lien
-            if (calendrierInsrit === "1") {
-                $('#inscrireCalendrier').addClass('disabled');
-            }
-            verifContraintes();
-        });
-    </script>
-{% endblock %}
+        </script>
+    {% endblock %}

@@ -21,7 +21,7 @@ class Utilisateur extends User
      * @ORM\Column(name="CodeUtilisateur", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    public $id;
 
     /**
      * @var string
@@ -53,7 +53,8 @@ class Utilisateur extends User
     /**
      * @inheritdoc
      */
-    public function setPlainPassword($password){
+    public function setPlainPassword($password)
+    {
         parent::setPlainPassword($password);
     }
 
@@ -146,9 +147,9 @@ class Utilisateur extends User
     public function setIsAdministrateur($isAdministrateur)
     {
         $this->isAdministrateur = (bool)$isAdministrateur;
-        if ($isAdministrateur){
+        if ($isAdministrateur) {
             parent::addRole('ROLE_ADMIN');
-        }else{
+        } else {
             parent::removeRole('ROLE_ADMIN');
         }
         return $this;

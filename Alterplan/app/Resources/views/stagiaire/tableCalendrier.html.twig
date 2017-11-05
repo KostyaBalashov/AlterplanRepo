@@ -44,54 +44,63 @@ You should have received a copy of the GNU Affero General Public License along w
         <div class="col s6">
             <h5>Liste des calendriers ({{ calendars|length }})</h5>
         </div>
-        <div class="col s2 offset-s4">
-            <a class='dropdown-button modal-action waves-effect waves-green btn' href='#' data-activates='creerDopDown'>Créer</a>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col s2 offset-s4">
+                <a class='dropdown-button modal-action waves-effect waves-green btn' href='#'
+                   data-activates='creerDopDown'>Créer</a>
 
-            {#Dropdown Créer un nouveau calendrier#}
-            <ul id='creerDopDown' class='dropdown-content'>
-                <li><a id="btn_new">Nouveau</a></li>
-                <li><a id="btn_duplicate">Dupliquer</a></li>
-                <li><a id="btn_apply_model">Appliquer un modèle</a></li>
-            </ul>
-        </div>
+                {#Dropdown Créer un nouveau calendrier#}
+                <ul id='creerDopDown' class='dropdown-content'>
+                    <li><a id="btn_new">Nouveau</a></li>
+                    <li><a id="btn_duplicate">Dupliquer</a></li>
+                    <li><a id="btn_apply_model">Appliquer un modèle</a></li>
+                </ul>
+            </div>
+        {% endif %}
     </div>
 
-    <table  id="calendar_table" class="centered highlight">
+    <table id="calendar_table" class="centered highlight">
         <thead>
         <tr>
             <th>Titre</th>
             <th>Formation</th>
             <th>Date de début</th>
             <th>Date de fin</th>
-            <th>Suppression</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th>Suppression</th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
         {% if ( calendars != null ) %}
             {% for calendar in calendars %}
-                    <tr class="clickable clickable-row-calendar" data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
-                        <td>
-                            {{ calendar.titre }}
-                        </td>
+                <tr class="clickable clickable-row-calendar"
+                    data-href="{{ path('calendrier_edit', { 'codeCalendrier': calendar.codeCalendrier }) }}">
+                    <td>
+                        {{ calendar.titre }}
+                    </td>
 
-                        <td>
-                            {{ calendar.formation.libelleCourt }}
-                        </td>
+                    <td>
+                        {{ calendar.formation.libelleCourt }}
+                    </td>
 
-                        <td>
-                            {{ calendar.dateDebut.format('d/m/Y') }}
-                        </td>
+                    <td>
+                        {{ calendar.dateDebut.format('d/m/Y') }}
+                    </td>
 
-                        <td>
-                            {{ calendar.dateFin.format('d/m/Y') }}
-                        </td>
+                    <td>
+                        {{ calendar.dateFin.format('d/m/Y') }}
+                    </td>
 
+                    {% if is_granted('ROLE_ADMIN') %}
                         <td>
                             <a href="#">
-                                <i class="material-icons deleteIcon" data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier, "numLien": stagiaireParEntreprise.numLien})}}">delete</i>
+                                <i class="material-icons deleteIcon"
+                                   data-href="{{ path('calendar_delete', {'codeCalendrier': calendar.codeCalendrier, "numLien": stagiaireParEntreprise.numLien}) }}">delete</i>
                             </a>
                         </td>
-                    </tr>
+                    {% endif %}
+                </tr>
             {% endfor %}
         {% else %}
             <tr>
@@ -107,33 +116,38 @@ You should have received a copy of the GNU Affero General Public License along w
 
 <script type="text/javascript">
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        $('.clickable-row-calendar td:not(:last-child)').click(function() {
+        $('.clickable-row-calendar td:not(:last-child)').click(function () {
             //Récupération de la ligne contenant l'url cible
             var urlCalendrier = $(this).closest('tr').data("href");
             window.location = urlCalendrier;
         });
 
-        $('.deleteIcon').click(function () {
-            var url = $(this).data("href");
-            deleteCalendar(url);
-        });
+        var $deleteIcons = $('.deleteIcon');
+        if ($deleteIcons) {
+            $deleteIcons.click(function () {
+                var url = $(this).data("href");
+                deleteCalendar(url);
+            });
+        }
 
+        {% if is_granted('ROLE_ADMIN') %}
         $('#btn_new').click(function () {
             var url = "{{ path('calendrier_new', { 'codeStagiaire' : stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
-            renderModal('calendrier',url,false);
+            renderModal('calendrier', url, false);
         });
 
         var urlDuplicate = "{{ path('calendrier_search', {'nameModal' : 'duplicate', 'codeStagiaire': stagiaireParEntreprise.stagiaire.codeStagiaire}) }}";
         $('#btn_duplicate').click(function () {
-            renderModal('modal_search_calendar_to_duplicate',urlDuplicate, false);
-        })
+            renderModal('modal_search_calendar_to_duplicate', urlDuplicate, false);
+        });
 
         var urlApplyModel = "{{ path('calendrier_search', {'nameModal' : 'applyModel', 'codeStagiaire': stagiaireParEntreprise.stagiaire.codeStagiaire }) }}";
         $('#btn_apply_model').click(function () {
-            renderModal('modal_search_calendar_to_apply_model',urlApplyModel, false);
-        })
+            renderModal('modal_search_calendar_to_apply_model', urlApplyModel, false);
+        });
+        {% endif %}
     });
 
     function deleteCalendar(urlAction) {
@@ -155,6 +169,4 @@ You should have received a copy of the GNU Affero General Public License along w
             }
         });
     }
-
-
 </script>

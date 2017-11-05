@@ -132,7 +132,7 @@ var Calendrier = function (jCalendrier) {
     };
 };
 
-function displayPlacedElements(calendrier) {
+function displayPlacedElements(calendrier, isAdmin) {
     var $container = $('#calnendar-body');
     var temp = Object.keys(calendrier.modulesCalendrierPlaces).reduce(function (p1, p2) {
         p1[calendrier.modulesCalendrierPlaces[p2].codeModuleCalendrier] = calendrier.modulesCalendrierPlaces[p2];
@@ -142,7 +142,7 @@ function displayPlacedElements(calendrier) {
 
     for (cle in sorted) {
         if (sorted.hasOwnProperty(cle)) {
-            $container.append(getPlacedRendering(sorted[cle]));
+            $container.append(getPlacedRendering(sorted[cle], isAdmin));
         }
     }
     insertEntreprise();
@@ -164,7 +164,7 @@ function getPlaceableRendering(jPlaceable) {
     return div;
 }
 
-function getPlacedRendering(jPlaced) {
+function getPlacedRendering(jPlaced, isAdmin) {
     var ligne = $('#module-template').children().clone();
     ligne.removeClass('template');
     ligne.find('span.date').text(getDateStr(new Date(jPlaced.dateDebut.date)) + ' - ' + getDateStr(new Date(jPlaced.dateFin.date)));
@@ -177,9 +177,13 @@ function getPlacedRendering(jPlaced) {
     ligne.find('span.programme').text(jPlaced.libelle);
     ligne.find('div.module-place').attr('id', jPlaced.module.idModule + '-' + jPlaced.codeModuleCalendrier);
     ligne.find('div.module-place').data('placeable', jPlaced);
-    ligne.find('div.module-place').click(function () {
-        selectPlaceable($(this));
-    });
+    if (isAdmin) {
+        ligne.find('div.module-place').click(function () {
+            selectPlaceable($(this));
+        });
+    } else {
+        ligne.find('div.module-place').toggleClass('clickable hoverable');
+    }
     jPlaced.cours.dateDebut.date = new Date(jPlaced.dateDebut.date);
     jPlaced.cours.dateFin.date = new Date(jPlaced.dateFin.date);
     jPlaced.cours.nbHeures = jPlaced.nbHeures;
