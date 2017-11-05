@@ -20,3 +20,4 @@ app/DoctrineMigrations/
 src/AppBundle/Entity/Enums/
 src/AppBundle/Resources/
 web/assets/materialize/test/
+/web/bundles/
