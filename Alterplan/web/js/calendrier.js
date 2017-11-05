@@ -35,7 +35,10 @@ var Calendrier = function (jCalendrier) {
     }, []);
 
     this.modules = Object.keys(this.modulesCalendrierAPlacer).reduce(function (p1, p2) {
-        p1[me.modulesCalendrierAPlacer[p2].module.idModule] = me.modulesCalendrierAPlacer[p2].module;
+        if (parseInt(me.modulesCalendrierAPlacer[p2].nbSemaines, 10)
+            === parseInt(me.modulesCalendrierAPlacer[p2].module.nbSemaines, 10)) {
+            p1[me.modulesCalendrierAPlacer[p2].module.idModule] = me.modulesCalendrierAPlacer[p2].module;
+        }
         return p1;
     }, []);
 
@@ -50,8 +53,11 @@ var Calendrier = function (jCalendrier) {
     };
 
     this.updateModules = function () {
-        this.modules = this.modulesCalendrierAPlacer.reduce(function (p1, p2) {
-            p1[p2.module.idModule] = p2.module;
+        this.modules = Object.keys(this.modulesCalendrierAPlacer).reduce(function (p1, p2) {
+            if (parseInt(me.modulesCalendrierAPlacer[p2].nbSemaines, 10)
+                === parseInt(me.modulesCalendrierAPlacer[p2].module.nbSemaines, 10)) {
+                p1[me.modulesCalendrierAPlacer[p2].module.idModule] = me.modulesCalendrierAPlacer[p2].module;
+            }
             return p1;
         }, [])
     };
@@ -68,6 +74,7 @@ var Calendrier = function (jCalendrier) {
             this.keysModulesCalendrier.push(code);
         }
         this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier] = jModuleCalendrier;
+        this.updateModules();
         return jModuleCalendrier;
     };
 
@@ -87,7 +94,7 @@ var Calendrier = function (jCalendrier) {
         if (this.modulesCalendrierAPlacer.hasOwnProperty(jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier)) {
             delete this.modulesCalendrierAPlacer[jModuleCalendrier.module.idModule + '-' + jModuleCalendrier.codeModuleCalendrier];
         }
-
+        this.updateModules();
         this.updateNbHeures();
         return jModuleCalendrier;
     };

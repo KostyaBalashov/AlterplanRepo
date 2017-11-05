@@ -13,10 +13,12 @@ You should have received a copy of the GNU Affero General Public License along w
         font-size: 28px;
         font-weight: bold;
     }
+
     .sousTitrePDF {
         text-align: center;
     }
-    table thead{
+
+    table thead {
         border-color: black;
         border-width: 1px;
         background-color: yellow;
@@ -29,17 +31,17 @@ You should have received a copy of the GNU Affero General Public License along w
         text-align: center;
     }
 
-    table
-    {
+    table {
         margin: auto;
         margin-top: 20px;
         width: 85%;
     }
-    td
-    {
-        text-align :center;
+
+    td {
+        text-align: center;
         padding: 7px;
     }
+
     .heures {
         background-color: #00ffff;
     }
@@ -48,18 +50,18 @@ You should have received a copy of the GNU Affero General Public License along w
         font-size: 24px;
     }
 
-    .debutFormation, .entreprise{
-        width:50%;
+    .debutFormation, .entreprise {
+        width: 50%;
         text-align: left;
     }
 
-    .finFormation,  .salarie{
-        width:50%;
+    .finFormation, .salarie {
+        width: 50%;
         text-align: right;
     }
 
     .column {
-        float:left;
+        float: left;
     }
 
     .nbHeureTotal {
@@ -80,11 +82,12 @@ You should have received a copy of the GNU Affero General Public License along w
         text-align: left;
     }
 
-    .blocTitre{
-        margin:auto;
+    .blocTitre {
+        margin: auto;
         width: 85%;
         margin-bottom: 20px;
     }
+
     .blocFormation {
         margin-bottom: 15px;
     }
@@ -100,27 +103,27 @@ You should have received a copy of the GNU Affero General Public License along w
 </div>
 
 <div class="blocTitre">
-    <div class="titrePDF" >
+    <div class="titrePDF">
         {{ calendrier.formation.libelleLong }}
     </div>
-    <div class="sousTitrePDF" >
+    <div class="sousTitrePDF">
         Préparation au titre <br>
         «{{ calendrier.formation.libelleLong }}» <br>
-            Niveau 1
+        Niveau 1
     </div>
 </div>
 <div class="blocFormation">
     <div class="row">
-        <div class="column debutFormation textBold" >
+        <div class="column debutFormation textBold">
             Date de début (Formation) : {{ calendrier.dateDebut.format('d/m/Y') }}
         </div>
 
-        <div class="column finFormation textBold" >
+        <div class="column finFormation textBold">
             Date de fin (Formation) : {{ calendrier.dateFin.format('d/m/Y') }}
         </div>
     </div>
     <div class="row">
-        <div class="nbHeureTotal textBold" >
+        <div class="nbHeureTotal textBold">
             Formation en centre :
             {% if(calendrier.dureeEnHeures != null) %}
                 {{ calendrier.dureeEnHeures }} heures
@@ -128,17 +131,17 @@ You should have received a copy of the GNU Affero General Public License along w
         </div>
     </div>
     <div class="row">
-        <div class="column entreprise textBold" >
+        <div class="column entreprise textBold">
             Entreprise :
             {% if(calendrier.stagiaire != null
-                and calendrier.stagiaire.stagiaireParEntreprise != null
-                and calendrier.stagiaire.stagiaireParEntreprise|length  > 0)
-                and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise != null
-                and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale != null %}
+            and calendrier.stagiaire.stagiaireParEntreprise != null
+            and calendrier.stagiaire.stagiaireParEntreprise|length  > 0)
+            and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise != null
+            and calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale != null %}
                 {{ calendrier.stagiaire.stagiaireParEntreprise.get(0).entreprise.raisonSociale }}
             {% endif %}
         </div>
-        <div class="column salarie textBold" >
+        <div class="column salarie textBold">
             Salarié : {{ calendrier.stagiaire.nom }} {{ calendrier.stagiaire.prenom }}
         </div>
     </div>
@@ -169,16 +172,17 @@ You should have received a copy of the GNU Affero General Public License along w
                         {% if(key=="entreprise") %}
                             <td class="textBold">{{ val["debut"] }}</td>
                             <td class="textBold">{{ val["fin"] }}</td>
-                            <td colspan="2" class="libelleEntreprise textBold" >{{ val["libelle"] }}</td>
+                            <td colspan="2" class="libelleEntreprise textBold">{{ val["libelle"] }}</td>
                         {% else %}
                             {% for module in value %}
-                                <td class="textBold">{{ module.cours.debut.format('d/m/Y') }}</td>
-                                <td class="textBold">{{ module.cours.fin.format('d/m/Y') }}</td>
+                                <td class="textBold">{{ module.dateDebut.format('d/m/Y') }}</td>
+                                <td class="textBold">{{ module.dateFin.format('d/m/Y') }}</td>
                                 <td class="heures textBold">
                                     {% if(module.cours.lieu!=null) %}
                                         ENI ({{ module.cours.lieu.libelle }}) <br>
                                     {% endif %}
-                                    {{ module.cours.dureePrevueEnHeures }} heures </td>
+                                    {{ module.getNombreHeuresReel() }} heures
+                                </td>
                                 <td class="libelleModule">{{ module.module.libelle }}</td>
                             {% endfor %}
                         {% endif %}
