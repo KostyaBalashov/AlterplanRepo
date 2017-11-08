@@ -316,6 +316,7 @@ class CalendrierController extends Controller
 
         $newCalendrier->setStagiaire($stagiaire);
         $newCalendrier->setDateCreation(new DateTime());
+        $newCalendrier->setIsInscrit(0);
         $em = $this->getDoctrine()->getManager();
         $em->persist($newCalendrier);
         $em->flush();
